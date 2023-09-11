@@ -39,10 +39,25 @@ data.reset_index()
 # print('total data = ',len(data))
 
 #timestamp / duration
-end_ts = datetime.strptime(input('end ts (YYYY-mm-dd HH:MM:SS): '), 
-                           '%Y-%m-%d %H:%M:%S')
-start_ts = (end_ts - timedelta(hours=int(input('time difference (in hours): ')
-                                         ))).strftime('%Y-%m-%d %H:%M:%S')
+ts_select = input("start or end? : ")
+
+while ((ts_select != "start") or (ts_select != "end")):
+    if ts_select==str('end'):
+        end_ts = datetime.strptime(input('end ts (YYYY-mm-dd HH:MM:SS): '), 
+                               '%Y-%m-%d %H:%M:%S')
+        start_ts = (end_ts - timedelta(hours=int(input('time difference (in hours): ')
+                                             ))).strftime('%Y-%m-%d %H:%M:%S')
+        break
+
+    if ts_select==str('start'):
+        start_ts = datetime.strptime(input('start ts (YYYY-mm-dd HH:MM:SS): '), 
+                               '%Y-%m-%d %H:%M:%S')
+        end_ts = (start_ts + timedelta(hours=int(input('time difference (in hours): ')
+                                             ))).strftime('%Y-%m-%d %H:%M:%S')
+        break
+
+    print("choose: 'start' or 'end'")
+    break
 print('')
 
 horizontal_accuracy = 0.0141

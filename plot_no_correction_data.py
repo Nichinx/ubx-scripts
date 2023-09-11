@@ -13,12 +13,12 @@ import math
 import matplotlib.gridspec as gridspec
 
 
-data = pd.read_csv('ubx_data.csv')
-data = data.loc[data[data.columns[0]].str.contains('data to send')]
+data = pd.read_csv('ublox_data_no_correction.csv')
+
 
 column1_split = data[data.columns[0]].str.split(':', expand=True)
-logger_name = column1_split[1]
-rtk_fix = column1_split[2]
+logger_name = column1_split[0]
+rtk_fix = column1_split[1]
 
 column8_split = data[data.columns[8]].str.split('*', expand=True)
 rtc_volt = column8_split[0]
@@ -52,30 +52,9 @@ df_lat_lon_counter = pd.DataFrame.from_dict(lat_lon_counter,
 df_lat_lon_counter.columns = ['lat_lon','freq']
 df_lat_lon_counter = df_lat_lon_counter.reset_index(drop=True)
 print(df_lat_lon_counter)
-
-# hacc_vacc_list = list(zip(new_df.hacc))
-# hacc_vacc_counter = Counter(hacc_vacc_list)
-# df_hacc_vacc_counter = pd.DataFrame.from_dict(hacc_vacc_counter, 
-#                                               orient='index').reset_index()
-# df_hacc_vacc_counter.columns = ['hacc','freq']
-# df_hacc_vacc_counter = df_hacc_vacc_counter.reset_index(drop=True)
-
-
-#HISTOGRAM
-def addlabels(x,y):
-    for i in range(len(x)):
-        plt.text(i, y[i], y[i], ha='center')
-    
-x_axis = df_lat_lon_counter.lat_lon
-x_axis_array = np.stack(x_axis).astype(None)
-y_axis = (df_lat_lon_counter.freq/len(new_df.ts))*100
-y_axis = np.round(y_axis,2)
-ax = df_lat_lon_counter.plot(kind="bar", width=0.15, align='center')
-
-ax.set_title("Position coordinate data vs Frequency - 1hr data", fontweight='bold')
-ax.set_xticklabels(x_axis_array)
-addlabels(x_axis,y_axis)
-    
+ 
+lat_long_freq_filtered = df_lat_lon_counter.loc[(df_lat_lon_counter.freq != 1)]
+print(lat_long_freq_filtered)
 
 #LAT LON DISP PLOTTER
 new_df['ts'] = pd.to_datetime(new_df['ts'], format='%y%m%d%H%M%S')
@@ -115,32 +94,8 @@ new_df_copy['dist'] = dist
 
 
 fig = plt.figure()
-fig.suptitle('Longitude vs. Latitude : 1hr data', fontweight='bold')
-# gs = gridspec.GridSpec(2, 2) #2 by 2 subplot
+fig.suptitle('longitude vs. latitude : TESUA (no correction data)', fontweight='bold')
 gs = gridspec.GridSpec(3, 1) #3 by 1 subplot
-
-
-#2 by 2 subplot
-# plt.subplot(gs[0,0])
-# plt.plot(new_df_copy.ts, new_df_copy.lat2, "green", alpha=0.5)
-# # plt.plot(df_new_mva.ts,df_new_mva.mva_lat2)
-# plt.ylabel('latitude, °', fontweight='bold')
-# plt.grid(color = 'gray', linestyle = '--', linewidth = 0.5)
-# plt.xticks(color='w')
-
-# plt.subplot(gs[0,1])
-# plt.plot(new_df_copy.ts, new_df_copy.lon2, "blue", alpha=0.5)
-# # plt.plot(df_new_mva.ts,df_new_mva.mva_lon2)
-# plt.ylabel('longitude, °', fontweight='bold')
-# plt.grid(color = 'gray', linestyle = '--', linewidth = 0.5)
-# plt.xticks(color='w')
-
-# plt.subplot(gs[1,:])
-# plt.plot(new_df_copy.ts, new_df_copy.dist, "red")
-# plt.ylabel('dist, m', fontweight='bold')
-# plt.grid(color = 'gray', linestyle = '--', linewidth = 0.5)
-# plt.xticks(rotation=90)
-
 
 #3 by 1 subplot
 plt.subplot(gs[0,0])
@@ -166,3 +121,17 @@ plt.xticks(rotation=90)
 plt.show()
 
 
+#HISTOGRAM
+def addlabels(x,y):
+    for i in range(len(x)):
+        plt.text(i, y[i], y[i], ha='center')
+    
+x_axis = lat_long_freq_filtered.lat_lon
+x_axis_array = np.stack(x_axis).astype(None)
+y_axis = (lat_long_freq_filtered.freq/len(new_df.ts))*100
+y_axis = np.round(y_axis,2)
+ax = lat_long_freq_filtered.plot(kind="bar", width=0.15, align='center')
+
+ax.set_title("Position coordinate data vs Frequency - no correction data")
+ax.set_xticklabels(x_axis_array)
+# addlabels(x_axis,y_axis)
