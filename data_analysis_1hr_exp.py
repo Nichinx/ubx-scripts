@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np 
 import math
 import matplotlib.gridspec as gridspec
+import matplotlib.ticker as mticker
 
 
 data = pd.read_csv('ubx_data.csv')
@@ -166,3 +167,14 @@ plt.xticks(rotation=90)
 plt.show()
 
 
+
+
+###########################################
+fig, ax = plt.subplots()
+fig.suptitle('msl : hour-long', fontweight='bold')
+ax.plot(new_df.ts, new_df.msl, "red")
+plt.ylabel('msl, m', fontweight='bold')
+plt.xticks(rotation=90)
+
+myLocator = mticker.MultipleLocator(120)
+ax.xaxis.set_major_locator(myLocator)

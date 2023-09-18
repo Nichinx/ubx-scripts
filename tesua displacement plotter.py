@@ -139,7 +139,7 @@ def outlier_filter(df):
     return dff
 
 df = outlier_filter(df)
-# print(df)
+print('df with outlier = ',len(df))
 
 
 
@@ -205,6 +205,33 @@ plt.grid(color = 'gray', linestyle = '--', linewidth = 0.5)
 plt.xticks(rotation=90)
 
 plt.show()
+
+
+
+
+###############################################################################
+fig = plt.figure()
+fig.suptitle('msl : unfiltered vs filtered', fontweight='bold')
+gs = gridspec.GridSpec(3, 1)
+
+plt.subplot(gs[0,0])
+plt.plot(data.ts, data.msl, "red")
+plt.ylabel('msl, m', fontweight='bold')
+plt.grid(color = 'gray', linestyle = '--', linewidth = 0.5)
+
+plt.subplot(gs[1,0])
+plt.plot(df.ts, df.msl_rounded, "blue")
+plt.ylabel('msl, m', fontweight='bold')
+plt.grid(color = 'gray', linestyle = '--', linewidth = 0.5)
+
+plt.subplot(gs[2,0])
+plt.plot(df1.ts, df1.msl_rounded, "green")
+plt.ylabel('msl, m', fontweight='bold')
+plt.grid(color = 'gray', linestyle = '--', linewidth = 0.5)
+current_values1 = plt.gca().get_yticks()
+plt.gca().set_yticklabels(['{:.2f}'.format(x) for x in current_values1])
+plt.setp(ax.get_yticklabels(), rotation=0, ha="center")
+
 
 
 
