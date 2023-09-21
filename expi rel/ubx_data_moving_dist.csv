@@ -1,0 +1,2743 @@
+site,fix,lat,lon,hacc,vacc,msl,sat_num,temp,volt,ts
+data to send: TESUA:0,0.000000000,0.000000000,429496.7188,429496.7188,-17.0000,0,30.75,4.59*230921163613
+1D
+BA
+AC
+D7
+25
+RTK: 0 (No solution)
+Satellite count: 0
+data to send: TESUA:0,0.000000000,0.000000000,429496.7188,429496.7188,-17.0000,0,30.50,4.60*230921163615
+1E
+F0
+85
+4C
+4D
+RTK: 0 (No solution)
+Satellite count: 0
+data to send: TESUA:0,0.000000000,0.000000000,429496.7188,429496.7188,-17.0000,0,30.75,4.59*230921163617
+D
+9
+FD
+CD
+13
+RTK: 0 (No solution)
+Satellite count: 0
+data to send: TESUA:0,0.000000000,0.000000000,429496.7188,429496.7188,-17.0000,0,30.75,4.60*230921163619
+8B
+CD
+8B
+EA
+BB
+RTK: 0 (No solution)
+Satellite count: 0
+data to send: TESUA:0,0.000000000,0.000000000,429496.7188,429496.7188,-17.0000,0,30.75,4.60*230921163622
+91
+33
+4B
+5
+88
+RTK: 0 (No solution)
+Satellite count: 0
+data to send: TESUA:0,0.000000000,0.000000000,429496.7188,429496.7188,-17.0000,0,30.75,4.60*230921163624
+4B
+87
+C0
+75
+D5
+RTK: 0 (No solution)
+Satellite count: 0
+data to send: TESUA:0,0.000000000,0.000000000,429496.7188,429496.7188,-17.0000,0,30.75,4.60*230921163626
+FF
+2D
+95
+4B
+8F
+RTK: 0 (No solution)
+Satellite count: 0
+data to send: TESUA:0,0.000000000,0.000000000,429496.7188,429496.7188,-17.0000,0,30.75,4.60*230921163628
+FF
+52
+CB
+1D
+7
+RTK: 0 (No solution)
+Satellite count: 0
+data to send: TESUA:0,0.000000000,0.000000000,429496.7188,429496.7188,-17.0000,0,30.75,4.61*230921163630
+4B
+AB
+54
+4F
+FE
+RTK: 0 (No solution)
+Satellite count: 0
+data to send: TESUA:0,0.000000000,0.000000000,429496.7188,429496.7188,-17.0000,0,30.75,4.62*230921163632
+A6
+45
+C2
+CB
+C0
+RTK: 0 (No solution)
+Satellite count: 0
+data to send: TESUA:0,0.000000000,0.000000000,429496.7188,429496.7188,-17.0000,0,30.75,4.61*230921163634
+49
+89
+4D
+50
+C5
+RTK: 0 (No solution)
+Satellite count: 4
+data to send: TESUA:0,14.651789665,121.058494568,16.6785,30.4680,47.4370,4,30.75,4.47*230921163636
+4D
+E8
+23
+D2
+42
+RTK: 0 (No solution)
+Satellite count: 4
+data to send: TESUA:0,14.651789665,121.058494568,11.3710,21.3188,48.1781,4,30.75,4.59*230921163638
+89
+16
+F
+4D
+D
+RTK: 0 (No solution)
+Satellite count: 5
+data to send: TESUA:0,14.651790619,121.058494568,11.2095,22.3431,48.4827,5,30.75,4.60*230921163640
+58
+E0
+4D
+AB
+C7
+RTK: 0 (No solution)
+Satellite count: 5
+data to send: TESUA:0,14.651791573,121.058494568,10.2571,20.6740,48.6874,5,30.75,4.60*230921163642
+4D
+50
+3D
+2E
+A4
+RTK: 0 (No solution)
+Satellite count: 8
+data to send: TESUA:0,14.651792526,121.058494568,6.9790,13.1305,48.1136,8,30.75,4.60*230921163644
+BB
+96
+7A
+CD
+7F
+RTK: 0 (No solution)
+Satellite count: 8
+data to send: TESUA:0,14.651939392,121.058448792,3.7444,4.3399,100.4875,8,30.75,4.59*230921163646
+16
+52
+CB
+2A
+13
+RTK: 1 (High precision floating fix)
+Satellite count: 8
+data to send: TESUA:1,14.651968002,121.058441162,1.4373,1.4150,107.8006,8,30.75,4.35*230921163648
+CB
+D3
+9E
+34
+21
+RTK: 1 (High precision floating fix)
+Satellite count: 10
+data to send: TESUA:1,14.651969910,121.058441162,0.9962,0.9738,108.7125,10,30.75,4.60*230921163650
+2D
+DE
+FF
+4B
+11
+RTK: 1 (High precision floating fix)
+Satellite count: 10
+data to send: TESUA:1,14.651971817,121.058441162,0.7395,0.7544,109.4098,10,30.75,4.60*230921163652
+8A
+E0
+4D
+C8
+A1
+RTK: 1 (High precision floating fix)
+Satellite count: 10
+data to send: TESUA:1,14.651967049,121.058456421,0.4294,0.5280,108.2596,10,30.75,4.60*230921163654
+4D
+7D
+41
+E8
+BB
+RTK: 1 (High precision floating fix)
+Satellite count: 13
+data to send: TESUA:1,14.651964188,121.058464050,0.3136,0.3979,107.2967,13,30.75,4.60*230921163656
+F1
+CF
+A6
+CD
+D3
+RTK: 1 (High precision floating fix)
+Satellite count: 14
+data to send: TESUA:1,14.651964188,121.058471680,0.2466,0.3183,106.4547,14,30.75,4.60*230921163658
+DF
+91
+4D
+90
+93
+RTK: 1 (High precision floating fix)
+Satellite count: 14
+data to send: TESUA:1,14.651964188,121.058471680,0.1881,0.2469,107.6513,14,30.75,4.60*230921163700
+4D
+57
+4F
+A1
+79
+RTK: 1 (High precision floating fix)
+Satellite count: 14
+data to send: TESUA:1,14.651964188,121.058471680,0.1616,0.2167,108.9100,14,30.75,4.60*230921163702
+10
+BD
+69
+4D
+B5
+RTK: 1 (High precision floating fix)
+Satellite count: 15
+data to send: TESUA:1,14.651964188,121.058471680,0.1453,0.1984,109.0375,15,30.75,4.60*230921163704
+E7
+5C
+4D
+82
+BF
+RTK: 1 (High precision floating fix)
+Satellite count: 15
+data to send: TESUA:1,14.651963234,121.058471680,0.1345,0.1834,109.5382,15,30.75,4.60*230921163706
+4D
+4D
+87
+DB
+4C
+RTK: 1 (High precision floating fix)
+Satellite count: 15
+data to send: TESUA:1,14.651961327,121.058471680,0.1267,0.1719,110.0348,15,30.75,4.61*230921163708
+52
+1D
+42
+CD
+B6
+RTK: 1 (High precision floating fix)
+Satellite count: 17
+data to send: TESUA:1,14.651957512,121.058471680,0.0141,0.0100,108.4243,17,30.75,4.60*230921163710
+87
+39
+CD
+83
+1A
+RTK: 2 (High precision fix)
+Satellite count: 18
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0136,108.4244,18,31.00,4.60*230921163712
+4D
+5E
+FA
+D1
+36
+RTK: 2 (High precision fix)
+Satellite count: 18
+data to send: TESUA:2,14.651957512,121.058471680,0.0152,0.0228,108.4420,18,30.75,4.59*230921163714
+E3
+48
+35
+4D
+D7
+RTK: 2 (High precision fix)
+Satellite count: 18
+data to send: TESUA:2,14.651957512,121.058471680,0.0149,0.0222,108.4222,18,31.00,4.60*230921163716
+E4
+38
+4D
+B5
+C9
+RTK: 2 (High precision fix)
+Satellite count: 18
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0114,108.4238,18,31.00,4.62*230921163718
+4D
+94
+BB
+78
+3E
+RTK: 2 (High precision fix)
+Satellite count: 18
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0172,108.4623,18,31.00,4.60*230921163720
+B0
+34
+48
+4D
+19
+RTK: 2 (High precision fix)
+Satellite count: 18
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0165,108.4096,18,31.00,4.60*230921163722
+14
+50
+4D
+FA
+AF
+RTK: 2 (High precision fix)
+Satellite count: 18
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0103,108.4154,18,31.00,4.60*230921163724
+4D
+E7
+B8
+EC
+62
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0118,108.4249,20,31.00,4.60*230921163726
+CB
+EA
+72
+4D
+7A
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0144,108.4139,20,31.00,4.60*230921163728
+E4
+85
+4D
+6F
+E6
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0116,108.4180,20,31.00,4.61*230921163730
+61
+FE
+FD
+A0
+4D
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4385,20,31.00,4.60*230921163732
+1A
+1B
+B9
+4D
+0
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4286,20,31.00,4.60*230921163734
+4F
+D5
+CD
+F8
+50
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4301,20,31.00,4.60*230921163736
+FA
+81
+B1
+FD
+CD
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0131,108.4525,20,31.00,4.59*230921163738
+BA
+19
+1F
+CD
+A9
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0124,108.4095,20,31.00,4.61*230921163740
+81
+42
+CD
+B2
+9
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0106,108.4280,20,31.25,4.59*230921163742
+B9
+4C
+3C
+74
+4D
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0179,108.4524,20,31.25,4.60*230921163744
+92
+C8
+9D
+CD
+75
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0189,108.4266,20,31.25,4.60*230921163746
+74
+C8
+CD
+84
+FD
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0119,108.4267,20,31.25,4.60*230921163748
+9A
+58
+8A
+5
+CD
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0121,108.4552,20,31.25,4.61*230921163750
+B9
+4C
+37
+4D
+64
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0125,108.4241,20,31.25,4.60*230921163752
+38
+6A
+CD
+84
+43
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0104,108.4299,20,31.25,4.62*230921163754
+A5
+B0
+6F
+B3
+CD
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0158,108.4626,20,31.25,4.61*230921163756
+1E
+65
+E9
+4D
+7A
+RTK: 2 (High precision fix)
+Satellite count: 20
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0152,108.4128,20,31.25,4.59*230921163758
+77
+22
+4D
+9D
+C1
+RTK: 2 (High precision fix)
+Satellite count: 21
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4197,21,31.25,4.60*230921163800
+C4
+40
+9
+75
+CD
+RTK: 2 (High precision fix)
+Satellite count: 21
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4481,21,31.25,4.60*230921163802
+CC
+43
+B8
+CD
+A8
+RTK: 2 (High precision fix)
+Satellite count: 23
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4381,23,31.25,4.61*230921163804
+AD
+FC
+CD
+DB
+8E
+RTK: 2 (High precision fix)
+Satellite count: 23
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4312,23,31.25,4.61*230921163806
+13
+2C
+9A
+5B
+4D
+RTK: 2 (High precision fix)
+Satellite count: 23
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4482,23,31.50,4.60*230921163808
+C6
+E
+A4
+4D
+7
+RTK: 2 (High precision fix)
+Satellite count: 23
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0111,108.4306,23,31.25,4.60*230921163810
+90
+EE
+4D
+41
+A5
+RTK: 2 (High precision fix)
+Satellite count: 23
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4287,23,31.50,4.65*230921163812
+80
+52
+AE
+5A
+4D
+RTK: 2 (High precision fix)
+Satellite count: 23
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0155,108.4489,23,31.25,4.60*230921163814
+5
+72
+AA
+CD
+82
+RTK: 2 (High precision fix)
+Satellite count: 23
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0178,108.4170,23,31.50,4.60*230921163816
+39
+FF
+4D
+CC
+0
+RTK: 2 (High precision fix)
+Satellite count: 23
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4101,23,31.50,4.60*230921163818
+16
+C6
+9B
+74
+4D
+RTK: 2 (High precision fix)
+Satellite count: 23
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0166,108.4446,23,31.50,4.60*230921163820
+89
+83
+D2
+4D
+26
+RTK: 2 (High precision fix)
+Satellite count: 23
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0191,108.4201,23,31.50,4.61*230921163822
+7B
+2E
+CD
+73
+9C
+RTK: 2 (High precision fix)
+Satellite count: 23
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0123,108.4187,23,31.50,4.60*230921163824
+C5
+78
+43
+AD
+CD
+RTK: 2 (High precision fix)
+Satellite count: 23
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0130,108.4323,23,31.50,4.61*230921163826
+54
+66
+10
+4D
+90
+RTK: 2 (High precision fix)
+Satellite count: 23
+data to send: TESUA:2,14.651957512,121.058471680,0.0165,0.0242,108.4505,23,31.50,4.60*230921163829
+D7
+4
+B9
+CD
+D5
+RTK: 2 (High precision fix)
+Satellite count: 23
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0172,108.4283,23,31.50,4.60*230921163831
+42
+21
+4D
+32
+F
+RTK: 2 (High precision fix)
+Satellite count: 25
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0108,108.4277,25,31.75,4.61*230921163833
+93
+FA
+50
+B1
+CD
+RTK: 2 (High precision fix)
+Satellite count: 25
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0151,108.4521,25,31.50,4.60*230921163835
+F3
+CF
+1F
+CD
+C4
+RTK: 2 (High precision fix)
+Satellite count: 25
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0165,108.4161,25,31.50,4.62*230921163837
+2D
+91
+CD
+2E
+45
+RTK: 2 (High precision fix)
+Satellite count: 25
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4233,25,31.50,4.61*230921163839
+96
+46
+A3
+2A
+CD
+RTK: 2 (High precision fix)
+Satellite count: 25
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4407,25,31.50,4.57*230921163841
+54
+4F
+9E
+4D
+D1
+RTK: 2 (High precision fix)
+Satellite count: 26
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4236,26,31.50,4.61*230921163843
+EF
+16
+4D
+46
+C2
+RTK: 2 (High precision fix)
+Satellite count: 26
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4290,26,31.75,4.60*230921163845
+BC
+DA
+98
+BB
+4D
+RTK: 2 (High precision fix)
+Satellite count: 26
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0146,108.4639,26,31.75,4.60*230921163847
+FF
+76
+3B
+4D
+B
+RTK: 2 (High precision fix)
+Satellite count: 26
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0128,108.4190,26,31.75,4.61*230921163849
+58
+BC
+CD
+8D
+8F
+RTK: 2 (High precision fix)
+Satellite count: 26
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4198,26,31.75,4.60*230921163851
+F
+BE
+3C
+6C
+CD
+RTK: 2 (High precision fix)
+Satellite count: 26
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4360,26,31.75,4.61*230921163853
+F8
+4F
+F2
+CD
+6C
+RTK: 2 (High precision fix)
+Satellite count: 27
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4291,27,31.75,4.60*230921163855
+8B
+82
+CD
+2
+BD
+RTK: 2 (High precision fix)
+Satellite count: 27
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4315,27,31.75,4.59*230921163857
+96
+C
+9
+41
+CD
+RTK: 2 (High precision fix)
+Satellite count: 27
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4530,27,31.75,4.60*230921163859
+71
+7F
+D7
+4D
+12
+RTK: 2 (High precision fix)
+Satellite count: 27
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4267,27,31.75,4.62*230921163901
+4
+69
+4D
+A9
+43
+RTK: 2 (High precision fix)
+Satellite count: 27
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4359,27,31.75,4.60*230921163903
+43
+A4
+96
+30
+CD
+RTK: 2 (High precision fix)
+Satellite count: 27
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0154,108.4777,27,31.75,4.61*230921163905
+6
+1C
+C7
+CD
+C1
+RTK: 2 (High precision fix)
+Satellite count: 27
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0150,108.4281,27,31.75,4.61*230921163907
+AE
+63
+4D
+61
+E3
+RTK: 2 (High precision fix)
+Satellite count: 27
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0107,108.4272,27,32.00,4.61*230921163909
+2
+4E
+8D
+31
+4D
+RTK: 2 (High precision fix)
+Satellite count: 27
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0105,108.4449,27,31.75,4.61*230921163911
+BE
+47
+CE
+CD
+88
+RTK: 2 (High precision fix)
+Satellite count: 28
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0117,108.4300,28,31.75,4.61*230921163913
+F
+6F
+CD
+2B
+B1
+RTK: 2 (High precision fix)
+Satellite count: 28
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0122,108.4305,28,31.75,4.61*230921163915
+D6
+2E
+1F
+4C
+CD
+RTK: 2 (High precision fix)
+Satellite count: 28
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0138,108.4507,28,31.75,4.61*230921163917
+B5
+F8
+F2
+CD
+68
+RTK: 2 (High precision fix)
+Satellite count: 28
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0128,108.4312,28,32.00,4.60*230921163919
+EE
+9A
+CB
+1D
+C6
+RTK: 2 (High precision fix)
+Satellite count: 28
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0122,108.4346,28,32.00,4.60*230921163921
+D2
+5A
+4A
+7D
+CB
+RTK: 2 (High precision fix)
+Satellite count: 28
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0156,108.4454,28,32.00,4.61*230921163923
+F2
+64
+29
+4B
+72
+RTK: 2 (High precision fix)
+Satellite count: 28
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0138,108.4348,28,32.00,4.62*230921163925
+8F
+D7
+CD
+2A
+18
+RTK: 2 (High precision fix)
+Satellite count: 28
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0122,108.4371,28,32.00,4.60*230921163927
+E6
+B9
+23
+C4
+0
+RTK: 2 (High precision fix)
+Satellite count: 28
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0129,108.4641,28,32.00,4.60*230921163929
+61
+65
+7C
+CD
+93
+RTK: 2 (High precision fix)
+Satellite count: 28
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0133,108.4343,28,32.00,4.60*230921163931
+CE
+36
+59
+A2
+3A
+RTK: 2 (High precision fix)
+Satellite count: 28
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0173,108.4574,28,32.00,4.60*230921163933
+23
+5D
+B0
+30
+CB
+RTK: 2 (High precision fix)
+Satellite count: 28
+data to send: TESUA:2,14.651957512,121.058471680,0.0164,0.0253,108.4839,28,32.00,4.61*230921163935
+1D
+32
+EE
+4D
+DE
+RTK: 2 (High precision fix)
+Satellite count: 28
+data to send: TESUA:2,14.651957512,121.058471680,0.0145,0.0203,108.4289,28,32.00,4.60*230921163937
+CA
+AE
+CD
+AE
+7D
+RTK: 2 (High precision fix)
+Satellite count: 28
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0122,108.4335,28,32.00,4.60*230921163939
+7E
+4D
+3
+B6
+CB
+RTK: 2 (High precision fix)
+Satellite count: 28
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0133,108.4564,28,32.00,4.72*230921163941
+21
+BD
+7B
+4B
+47
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0127,108.4433,29,32.00,4.60*230921163943
+85
+44
+4D
+21
+98
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4346,29,32.00,4.60*230921163945
+1
+7A
+0
+52
+4B
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0114,108.4491,29,32.25,4.60*230921163947
+5E
+DC
+20
+0
+D8
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0105,108.4373,29,32.25,4.61*230921163949
+D4
+F2
+0
+BE
+F1
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4390,29,32.25,4.60*230921163951
+AA
+E7
+AB
+C
+0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0110,108.4609,29,32.00,4.61*230921163953
+E2
+D9
+E2
+0
+8E
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4343,29,32.25,4.77*230921163955
+9
+B9
+80
+7F
+8F
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4401,29,32.25,4.60*230921163957
+71
+97
+6
+DE
+0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0134,108.4615,29,32.25,4.61*230921163959
+A6
+62
+BC
+0
+62
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0120,108.4431,29,32.25,4.61*230921164001
+D0
+9C
+0
+5B
+6C
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0104,108.4447,29,32.25,4.62*230921164003
+59
+87
+18
+C9
+0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0133,108.4634,29,32.25,4.60*230921164005
+A9
+A7
+AE
+80
+5A
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0111,108.4396,29,32.25,4.62*230921164007
+4F
+95
+80
+5E
+8A
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4393,29,32.25,4.60*230921164009
+65
+BA
+EB
+CD
+80
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0107,108.4631,29,32.25,4.60*230921164011
+F0
+A0
+BC
+80
+72
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0103,108.4397,29,32.25,4.61*230921164013
+7A
+AC
+80
+7D
+EB
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0100,108.4497,29,32.25,4.60*230921164015
+8B
+2C
+54
+F0
+80
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0119,108.4730,29,32.25,4.60*230921164017
+75
+55
+E2
+80
+A4
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0123,108.4467,29,32.25,4.61*230921164019
+6F
+D9
+80
+BC
+88
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0108,108.4519,29,32.25,4.61*230921164021
+DA
+DF
+A3
+26
+80
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0111,108.4663,29,32.25,4.62*230921164023
+3B
+BE
+21
+80
+2
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0110,108.4460,29,32.25,4.60*230921164025
+0
+21
+80
+23
+6C
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0103,108.4546,29,32.25,4.61*230921164027
+4B
+D4
+74
+78
+0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0137,108.4758,29,32.25,4.60*230921164029
+45
+C5
+7E
+0
+80
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0141,108.4586,29,32.25,4.57*230921164031
+3D
+85
+0
+AF
+8E
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0145,108.4578,29,32.25,4.59*230921164033
+DF
+B
+F4
+E6
+0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0162,108.4856,29,32.25,4.60*230921164035
+8E
+9A
+F4
+0
+23
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0132,108.4600,29,32.50,4.60*230921164037
+3C
+3
+0
+5C
+F0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0115,108.4717,29,32.50,4.61*230921164039
+95
+7D
+2B
+6E
+0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0149,108.4796,29,32.50,4.60*230921164041
+11
+ED
+82
+0
+E5
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0134,108.4595,29,32.50,4.59*230921164043
+C1
+9A
+80
+27
+90
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0112,108.4613,29,32.50,4.60*230921164045
+6D
+33
+FC
+10
+80
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0124,108.4907,29,32.50,4.61*230921164047
+DD
+F4
+2B
+80
+CB
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0132,108.4668,29,32.50,4.61*230921164049
+14
+4A
+0
+1A
+75
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0133,108.4710,29,32.50,4.61*230921164051
+6A
+2D
+9B
+CB
+0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0159,108.4895,29,32.50,4.62*230921164053
+EA
+D1
+EE
+0
+D9
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0150,108.4724,29,32.50,4.61*230921164055
+16
+14
+0
+32
+98
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0112,108.4709,29,32.50,4.61*230921164057
+86
+DC
+A0
+0
+A6
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0142,108.4799,29,32.50,4.61*230921164100
+24
+18
+4F
+92
+0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0148,0.0214,108.5056,29,32.50,4.61*230921164102
+F3
+DF
+C3
+0
+A8
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0190,108.4715,29,32.50,4.61*230921164104
+6B
+F6
+0
+D
+CA
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0132,108.4704,29,32.50,4.60*230921164106
+7A
+B1
+AE
+91
+0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0139,108.4786,29,32.50,4.62*230921164108
+9E
+62
+C6
+0
+9
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0161,108.4939,29,32.75,4.60*230921164110
+3A
+FE
+0
+75
+8D
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0160,108.4879,29,32.75,4.62*230921164112
+E5
+86
+BB
+A2
+80
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0155,108.5115,29,32.75,4.60*230921164114
+85
+BB
+E2
+80
+82
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0160,108.4853,29,32.75,4.60*230921164116
+B4
+23
+80
+FC
+8D
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0158,108.4956,29,32.75,4.60*230921164118
+7A
+9B
+6E
+D3
+0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0189,108.5319,29,32.75,4.60*230921164120
+AE
+8F
+17
+0
+22
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0172,108.4871,29,32.75,4.60*230921164122
+C5
+5F
+0
+A7
+D0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0146,108.4854,29,32.75,4.61*230921164124
+31
+F3
+C5
+1B
+0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0142,108.5003,29,32.75,4.60*230921164126
+19
+1A
+69
+0
+EC
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0164,108.4847,29,32.75,4.61*230921164128
+82
+B9
+0
+7A
+56
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0168,108.4860,29,32.75,4.61*230921164130
+A
+89
+D3
+7B
+0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0143,0.0195,108.5086,29,33.00,4.59*230921164132
+C2
+4F
+CF
+0
+CD
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0153,0.0207,108.4680,29,32.75,4.62*230921164134
+E5
+24
+80
+63
+13
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0125,108.4414,29,33.00,4.60*230921164136
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0143,108.4630,29,32.75,4.56*230921164138
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651957512,121.058471680,0.0141,0.0179,108.5080,29,33.00,4.60*230921164140
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0167,0.0247,108.5228,29,33.00,4.60*230921164142
+62
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0214,0.0322,108.5713,29,33.00,4.60*230921164145
+2E
+3
+C2
+D4
+0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0268,0.0404,108.5981,29,33.00,4.60*230921164147
+6E
+D4
+3C
+80
+17
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0158,0.0222,108.4389,29,32.75,4.60*230921164149
+EB
+A7
+80
+C9
+1
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0141,0.0145,108.4474,29,32.75,4.60*230921164151
+7D
+77
+35
+8E
+0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0141,0.0150,108.4622,29,33.00,4.66*230921164153
+F3
+72
+FB
+0
+74
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0141,0.0150,108.4455,29,33.00,4.60*230921164155
+D2
+6C
+0
+31
+A1
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0141,0.0138,108.4511,29,33.00,4.62*230921164157
+F0
+28
+5B
+5D
+0
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0141,0.0129,108.4742,29,33.00,4.60*230921164159
+B5
+D5
+D3
+80
+F2
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0141,0.0132,108.4495,29,33.00,4.60*230921164201
+4F
+4D
+CB
+BA
+7C
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0141,0.0150,108.4515,29,33.00,4.61*230921164203
+1A
+0
+48
+CB
+C7
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0141,0.0169,108.4496,29,33.00,4.61*230921164206
+DC
+30
+2D
+CA
+4B
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0141,0.0178,108.4574,29,33.00,4.62*230921164208
+DC
+F5
+4D
+4B
+F8
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0141,0.0158,108.4585,29,33.00,4.61*230921164210
+C3
+D1
+CB
+CE
+CA
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0141,0.0142,108.4501,29,33.00,4.60*230921164212
+A6
+83
+F6
+D9
+4B
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0141,0.0162,108.4678,29,33.00,4.60*230921164214
+41
+F2
+64
+CB
+CC
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0141,0.0142,108.4534,29,33.00,4.61*230921164216
+FB
+F0
+4B
+AD
+47
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0141,0.0117,108.4497,29,33.00,4.61*230921164218
+8E
+11
+75
+4
+CB
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651958466,121.058471680,0.0141,0.0165,108.4820,29,33.00,4.60*230921164220
+CB
+97
+10
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651960373,121.058471680,0.0152,0.0192,108.4553,29,33.00,4.62*230921164223
+4A
+C3
+36
+80
+4C
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0163,108.4352,29,33.00,4.59*230921164225
+F
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0145,108.4420,29,33.00,4.61*230921164227
+5B
+EC
+EF
+0
+80
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0186,108.4580,29,33.00,4.60*230921164230
+C4
+RTK: 2 (High precision fix)
+Satellite count: 29
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0134,108.4587,29,33.00,4.60*230921164232
+DA
+D
+42
+80
+F
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0113,108.4326,30,33.00,4.61*230921164234
+99
+E1
+80
+D
+27
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0100,108.4471,30,33.00,4.60*230921164236
+E
+28
+DC
+13
+80
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0148,108.4656,30,33.00,4.61*230921164238
+2F
+8A
+BB
+80
+6B
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0127,108.4358,30,33.00,4.62*230921164240
+6B
+65
+0
+73
+9A
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0100,108.4349,30,33.00,4.61*230921164242
+83
+B5
+E7
+A2
+4B
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0127,108.4523,30,33.00,4.61*230921164244
+D4
+F0
+54
+CB
+F0
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0117,108.4402,30,33.00,4.60*230921164246
+A
+7
+CB
+5
+57
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0113,108.4460,30,33.00,4.60*230921164248
+1F
+80
+ED
+4C
+4B
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0121,108.4600,30,33.25,4.61*230921164250
+AE
+1D
+4
+4B
+96
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0127,108.4463,30,33.00,4.61*230921164252
+60
+BD
+CB
+B0
+48
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0114,108.4480,30,33.25,4.60*230921164254
+D0
+7F
+76
+A
+CB
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0119,108.4600,30,33.25,4.59*230921164256
+BB
+DB
+C9
+CB
+51
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0118,108.4430,30,33.00,4.61*230921164258
+2F
+88
+4B
+78
+68
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0109,108.4625,30,33.00,4.62*230921164300
+9E
+70
+DE
+4B
+1
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651960373,121.058471680,0.0141,0.0120,108.4884,30,33.25,4.60*230921164303
+8E
+D9
+B7
+CF
+CB
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0172,108.5026,30,33.25,4.61*230921164305
+57
+97
+CB
+25
+60
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651962280,121.058471680,0.0148,0.0210,108.4520,30,33.25,4.65*230921164308
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0174,108.4507,30,33.25,4.60*230921164310
+C5
+67
+CB
+66
+64
+RTK: 2 (High precision fix)
+Satellite count: 30
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0149,108.4215,30,33.25,4.61*230921164312
+A5
+D4
+8B
+D2
+CB
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0176,108.4567,31,33.25,4.61*230921164314
+45
+A5
+CB
+4D
+28
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0143,0.0213,108.4720,31,33.25,4.60*230921164317
+C2
+97
+B4
+4B
+6C
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0140,108.4404,31,33.25,4.61*230921164319
+BF
+8D
+4B
+B6
+C9
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0105,108.4447,31,33.25,4.60*230921164321
+6
+54
+28
+A
+4B
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0144,108.4643,31,33.25,4.61*230921164323
+E6
+56
+E8
+4B
+C7
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0149,108.4320,31,33.25,4.62*230921164325
+A5
+C7
+4B
+1B
+0
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0100,108.4493,31,33.25,4.61*230921164327
+73
+9D
+25
+4B
+4B
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0100,108.4734,31,33.25,4.60*230921164329
+3F
+90
+30
+4B
+3F
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0104,108.4372,31,33.25,4.61*230921164331
+22
+17
+4D
+9B
+77
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0100,108.4375,31,33.25,4.60*230921164333
+F8
+24
+DB
+A4
+CD
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0119,108.4672,31,33.25,4.62*230921164335
+D7
+78
+90
+CD
+D5
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0117,108.4397,31,33.25,4.62*230921164337
+2A
+7F
+CB
+3D
+27
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0100,108.4389,31,33.25,4.60*230921164339
+A8
+E8
+3F
+16
+4B
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0110,108.4642,31,33.25,4.60*230921164341
+AF
+8D
+C8
+73
+B2
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0141,0.0183,108.4918,31,33.25,4.60*230921164344
+51
+4B
+FA
+BF
+A0
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0166,0.0276,108.5039,31,33.25,4.60*230921164347
+C5
+4D
+9E
+4B
+6F
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651962280,121.058471680,0.0203,0.0331,108.5690,31,33.25,4.60*230921164349
+63
+9D
+CB
+EA
+47
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0137,108.4662,31,33.25,4.62*230921164351
+6E
+31
+2
+47
+CB
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0118,108.4807,31,33.25,4.60*230921164353
+1E
+43
+4B
+CB
+75
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0135,108.4301,31,33.25,4.60*230921164355
+97
+50
+4B
+FE
+B2
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0100,108.4300,31,33.25,4.60*230921164357
+88
+AB
+5A
+4
+4B
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0100,108.4515,31,33.25,4.60*230921164359
+A7
+CC
+D
+4B
+9C
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0102,108.4345,31,33.25,4.60*230921164401
+53
+17
+CB
+2A
+53
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0100,108.4311,31,33.25,4.60*230921164403
+BD
+5D
+56
+D4
+4B
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0129,108.4444,31,33.25,4.61*230921164405
+6A
+F6
+E3
+CB
+DA
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0102,108.4334,31,33.25,4.60*230921164407
+AB
+F2
+CB
+70
+31
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0100,108.4411,31,33.25,4.60*230921164409
+E
+49
+E4
+B7
+CB
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0133,108.4617,31,33.25,4.60*230921164411
+69
+B0
+CE
+CB
+3B
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0106,108.4266,31,33.50,4.61*230921164413
+93
+E8
+CB
+DA
+47
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0100,108.4313,31,33.25,4.60*230921164415
+87
+76
+15
+B9
+4B
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0109,108.4466,31,33.25,4.62*230921164417
+AE
+1C
+D8
+4B
+C3
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0112,108.4280,31,33.25,4.60*230921164419
+1C
+F7
+4B
+72
+A5
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0103,108.4275,31,33.50,4.35*230921164421
+23
+E3
+E9
+D3
+4B
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0122,108.4326,31,33.50,4.61*230921164423
+29
+1C
+F9
+4B
+6C
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0111,108.4323,31,33.50,4.62*230921164425
+58
+1F
+4B
+24
+38
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0100,108.4379,31,33.25,4.61*230921164427
+E1
+88
+7F
+3
+CB
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0100,108.4521,31,33.25,4.62*230921164429
+DB
+E8
+2E
+CB
+37
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0100,108.4332,31,33.50,4.62*230921164431
+56
+5C
+4B
+F9
+0
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0100,108.4354,31,33.50,4.60*230921164433
+BB
+5E
+9D
+47
+4B
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0100,108.4497,32,33.50,4.87*230921164435
+D8
+1A
+78
+4B
+1B
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0103,108.4439,32,33.50,4.61*230921164437
+B0
+AC
+4B
+E6
+DF
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0114,108.4451,32,33.50,4.60*230921164439
+B4
+E4
+69
+9F
+4B
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0150,108.4475,32,33.50,4.62*230921164441
+E9
+5
+DA
+CB
+25
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0161,108.4380,32,33.50,4.60*230921164443
+EE
+17
+CB
+FC
+EF
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651965141,121.058471680,0.0141,0.0114,108.4597,32,33.50,4.60*230921164445
+D7
+F5
+D3
+16
+4B
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651966095,121.058471680,0.0141,0.0155,108.5174,32,33.50,4.64*230921164447
+FA
+E1
+56
+4B
+56
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0146,108.4239,32,33.50,4.60*230921164449
+CE
+9B
+4B
+37
+0
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0111,108.4150,32,33.50,4.60*230921164451
+1F
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0146,0.0194,108.4403,32,33.50,4.91*230921164453
+B
+47
+F0
+CB
+A5
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0153,108.4240,32,33.50,4.60*230921164455
+70
+3B
+CB
+90
+12
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0109,108.4215,32,33.50,4.61*230921164457
+7B
+23
+E3
+4D
+CB
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0126,108.4315,32,33.50,4.60*230921164459
+DD
+53
+A0
+CB
+19
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0113,108.4190,32,33.50,4.59*230921164501
+AE
+F1
+4B
+E
+7F
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0112,108.4220,32,33.25,4.65*230921164503
+5
+37
+49
+B
+4B
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0131,108.4317,32,33.50,4.60*230921164505
+EE
+CD
+60
+4B
+A3
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0130,108.4289,32,33.50,4.60*230921164507
+58
+B9
+4B
+A1
+A1
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0110,108.4317,32,33.50,4.61*230921164509
+A7
+72
+47
+DE
+CB
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0153,108.4515,32,33.50,4.62*230921164511
+3E
+E1
+39
+CB
+58
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0140,108.4218,32,33.50,4.61*230921164513
+C0
+99
+4B
+62
+9
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0116,108.4238,32,33.50,4.61*230921164515
+71
+EB
+F5
+C7
+4B
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0171,108.4315,32,33.50,4.62*230921164517
+CF
+E1
+2C
+4B
+34
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0146,108.4238,32,33.50,4.62*230921164519
+F6
+95
+4B
+4A
+BD
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0100,108.4230,32,33.50,4.62*230921164521
+5F
+B0
+5F
+CB
+4B
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0116,108.4398,32,33.75,4.60*230921164523
+A6
+85
+36
+4B
+2E
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0104,108.4257,32,33.75,4.60*230921164525
+BA
+A3
+4B
+49
+9A
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0100,108.4312,32,33.50,4.61*230921164527
+66
+9B
+4D
+E3
+CB
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0108,108.4378,32,33.50,4.68*230921164529
+A1
+AE
+55
+CB
+44
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0116,108.4308,32,33.50,4.60*230921164531
+A
+CB
+CB
+6C
+B1
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0101,108.4348,32,33.50,4.60*230921164533
+98
+C2
+F1
+13
+80
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0128,108.4490,32,33.50,4.61*230921164535
+D9
+82
+8D
+4B
+7F
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0127,108.4310,32,33.50,4.60*230921164537
+E8
+9
+49
+AD
+0
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0107,108.4265,32,33.50,4.60*230921164539
+E3
+21
+15
+59
+49
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0128,108.4516,32,33.50,4.61*230921164541
+47
+AE
+D9
+49
+D3
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0135,108.4310,32,33.50,4.61*230921164543
+5A
+5B
+4B
+C
+FB
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0141,0.0166,108.4540,32,33.50,4.62*230921164546
+61
+8C
+4B
+CC
+DB
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0128,108.4179,32,33.50,4.61*230921164548
+F
+17
+E4
+EC
+CB
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968002,121.058471680,0.0146,0.0187,108.4539,32,33.50,4.62*230921164550
+5A
+C5
+76
+CB
+15
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0137,108.4614,32,33.50,4.62*230921164552
+C8
+3
+CB
+62
+BA
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0107,108.4319,32,33.50,4.61*230921164554
+AF
+7
+99
+6D
+4B
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0126,108.4373,32,33.50,4.60*230921164556
+5A
+CB
+FE
+4B
+CB
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0110,108.4346,32,33.50,4.59*230921164558
+14
+91
+1D
+D3
+C6
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0153,108.4483,32,33.50,4.60*230921164601
+3
+DD
+CB
+3
+77
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0136,108.4356,32,33.75,4.60*230921164603
+5D
+DD
+18
+53
+CB
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0144,108.4387,32,33.75,4.45*230921164605
+4C
+8A
+EF
+CB
+88
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0129,108.4273,32,33.50,4.62*230921164607
+5
+8D
+CB
+EC
+E7
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0104,108.4297,32,33.50,4.62*230921164609
+53
+62
+84
+A
+CB
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0112,108.4435,32,33.75,4.57*230921164611
+E3
+1D
+AF
+CB
+8A
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0108,108.4295,32,33.75,4.61*230921164613
+C1
+53
+CB
+F7
+93
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0100,108.4308,32,33.75,4.62*230921164615
+66
+1E
+68
+DA
+CB
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0120,108.4493,32,33.75,4.61*230921164617
+AC
+2D
+82
+CD
+AC
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0117,108.4398,32,33.75,4.61*230921164619
+8
+2B
+CD
+21
+72
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0100,108.4450,32,33.75,4.62*230921164621
+9B
+B
+DB
+BB
+CB
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0100,108.4547,32,33.75,4.60*230921164623
+A9
+EB
+6C
+CB
+EB
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0141,0.0139,108.4402,32,33.75,4.61*230921164625
+1F
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651968956,121.058471680,0.0144,0.0185,108.4634,32,33.75,4.60*230921164627
+EF
+7
+CB
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651969910,121.058471680,0.0159,0.0213,108.4868,32,33.75,4.61*230921164630
+24
+57
+52
+40
+CB
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651969910,121.058471680,0.0162,0.0244,108.4832,32,33.75,4.62*230921164632
+F
+9F
+FB
+CB
+8A
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0186,108.4350,31,33.75,4.80*230921164634
+E7
+B6
+4D
+18
+E
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0117,108.4391,31,33.75,4.60*230921164636
+AB
+D2
+6C
+60
+4D
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0101,108.4522,32,33.75,4.62*230921164638
+99
+E5
+20
+4B
+1C
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0109,108.4556,31,33.75,4.59*230921164640
+5E
+E0
+4D
+AD
+AD
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0114,108.4520,31,33.75,4.61*230921164642
+4C
+82
+1D
+91
+CD
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0143,108.4720,31,33.75,4.61*230921164644
+5B
+BF
+59
+4B
+CD
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0143,108.4545,31,33.75,4.61*230921164646
+72
+22
+4B
+73
+86
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0115,108.4533,31,33.75,4.60*230921164648
+18
+6D
+6B
+DD
+4B
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0123,108.4614,31,33.75,4.71*230921164650
+56
+3C
+AA
+CB
+A2
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0130,108.4548,31,33.75,4.60*230921164652
+14
+78
+CB
+4C
+95
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0118,108.4556,31,33.75,4.62*230921164654
+FF
+8E
+6F
+3B
+CB
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0127,108.4662,31,33.75,4.62*230921164656
+89
+64
+10
+CB
+99
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0135,108.4535,31,33.75,4.62*230921164658
+71
+E8
+CB
+4F
+E1
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0116,108.4565,31,33.75,4.62*230921164700
+8
+EA
+8
+B5
+CB
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651969910,121.058471680,0.0141,0.0121,108.4690,31,33.75,4.63*230921164702
+F7
+CB
+AC
+85
+4B
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651969910,121.058471680,0.0157,0.0216,108.4763,31,33.75,4.60*230921164705
+BE
+68
+57
+4B
+43
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0152,0.0145,108.5510,31,33.75,4.60*230921164707
+D4
+36
+4B
+8
+37
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651970863,121.058471680,0.0192,0.0219,108.5892,32,33.75,4.62*230921164709
+4E
+97
+C
+4B
+B7
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651970863,121.058471680,0.0168,0.0188,108.5561,32,33.75,4.59*230921164712
+63
+AD
+D5
+4B
+4D
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0132,108.5381,32,33.75,4.60*230921164715
+8
+EE
+14
+AA
+4B
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0132,108.4411,32,33.75,4.61*230921164717
+1E
+C1
+95
+4B
+C8
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0125,108.4281,32,33.75,4.60*230921164719
+67
+84
+CB
+A0
+BD
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0117,108.4407,32,33.75,4.60*230921164721
+7E
+FD
+B2
+71
+CB
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0135,108.4566,32,33.75,4.60*230921164723
+42
+6F
+63
+CB
+51
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0115,108.4375,32,33.75,4.60*230921164725
+44
+CB
+35
+FE
+F4
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0149,108.4607,32,33.75,4.61*230921164728
+8F
+48
+4B
+36
+3F
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651970863,121.058471680,0.0159,0.0227,108.4799,32,33.75,4.61*230921164731
+22
+40
+4B
+E6
+7B
+RTK: 2 (High precision fix)
+Satellite count: 32
+data to send: TESUA:2,14.651970863,121.058471680,0.0152,0.0200,108.4394,32,33.75,4.52*230921164733
+D7
+DD
+E1
+3B
+CB
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0126,108.4479,31,33.75,4.61*230921164735
+43
+34
+3D
+CB
+CA
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0121,108.4399,31,33.75,4.60*230921164737
+79
+3E
+CB
+BF
+29
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0100,108.4461,31,33.75,4.60*230921164739
+B8
+9C
+8A
+41
+CB
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0114,108.4623,31,33.75,4.59*230921164741
+15
+ED
+48
+CB
+B7
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0106,108.4346,31,33.75,4.60*230921164743
+61
+50
+CB
+B9
+14
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0100,108.4441,31,33.75,4.64*230921164745
+BD
+9A
+C6
+60
+CB
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0107,108.4515,31,33.75,4.60*230921164747
+24
+4D
+6B
+CB
+C7
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0105,108.4426,31,33.75,4.60*230921164749
+EC
+78
+CB
+CF
+33
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0100,108.4457,31,33.75,4.61*230921164751
+DD
+7F
+8C
+CB
+E2
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0126,108.4713,31,33.75,4.60*230921164754
+F7
+71
+12
+AB
+CB
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0111,108.4691,31,33.75,4.60*230921164756
+12
+5
+C1
+0
+14
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0106,108.4389,31,33.75,4.61*230921164758
+E8
+D7
+CB
+30
+45
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0100,108.4395,31,33.75,4.60*230921164800
+4A
+F2
+D1
+F8
+CB
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0118,108.4487,31,33.75,4.62*230921164802
+AB
+DC
+14
+CB
+78
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0120,108.4402,31,33.75,4.62*230921164804
+FC
+33
+CB
+9B
+FC
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0100,108.4384,31,33.75,4.61*230921164806
+C2
+BB
+1D
+5F
+CB
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0112,108.4409,31,33.75,4.60*230921164808
+7C
+56
+80
+4B
+F9
+RTK: 2 (High precision fix)
+Satellite count: 31
+data to send: TESUA:2,14.651970863,121.058471680,0.0141,0.0123,108.4424,31,33.75,4.60*230921164810
+9B
