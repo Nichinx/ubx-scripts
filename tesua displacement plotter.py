@@ -138,8 +138,9 @@ def outlier_filter(df):
 
     return dff
 
-df = outlier_filter(df)
-print('df with outlier = ',len(df))
+# df = outlier_filter(df)
+# print('df with outlier = ',len(df))
+df = msl_freq_filtered_df  #no outlier filter
 
 
 
