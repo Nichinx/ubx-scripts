@@ -50,6 +50,9 @@ void init_ublox() {
   }
   myGNSS.setI2COutput(COM_TYPE_UBX); //Set the I2C port to output UBX only (turn off NMEA noise)
   myGNSS.setNavigationFrequency(5); //Set output to 20 times a second
+
+  myGNSS.setHighPrecisionMode(true);  
+  myGNSS.powerSaveMode(true);
 }
 
 void setup() {
@@ -74,15 +77,12 @@ void setup() {
   digitalWrite(RFM95_RST, HIGH);
   delay(10);
 
-  while (!rf95.init()) 
-  {
-   Serial.println("LoRa radio init failed");
+  while (!rf95.init()) {
+    Serial.println("LoRa radio init failed");
     while (1);
-  }
-   Serial.println("LoRa radio init OK!");
+  } Serial.println("LoRa radio init OK!");
 
-  if (!rf95.setFrequency(RF95_FREQ)) 
-  {
+  if (!rf95.setFrequency(RF95_FREQ)) {
     Serial.println("setFrequency failed");
     while (1);
   }
@@ -91,8 +91,7 @@ void setup() {
   init_ublox();
 }
 
-void readTimeStamp()
-{
+void readTimeStamp() {
   DateTime now = rtc.now(); //get the current date-time
   String ts = String(now.year());
 
@@ -130,47 +129,40 @@ void readTimeStamp()
   ts.toCharArray(Ctimestamp, 13);
 }
 
-float readTemp()
-{
+float readTemp() {
   float temp;
   rtc.convertTemperature();
   temp = rtc.getTemperature();
   return temp;
 }
 
-void delay_millis(int _delay)
-{
+void delay_millis(int _delay) {
   uint8_t delay_turn_on_flag = 0;
   unsigned long _delayStart = millis();
-  // Serial.println("starting delay . . .");
-  do
-  {
-    if ((millis() - _delayStart) > _delay)
-    {
+
+  do {
+    if ((millis() - _delayStart) > _delay) {
       _delayStart = millis();
       delay_turn_on_flag = 1;
-      // Serial.println("delay timeout!");
     }
   } while (delay_turn_on_flag == 0);
 }
 
-void send_thru_lora(char* radiopacket){
+void send_thru_lora(char* radiopacket) {
     rf95.setModemConfig(RH_RF95::Bw125Cr45Sf128);
     uint8_t payload[RH_RF95_MAX_MESSAGE_LEN];
-    //int len = sizeof(payload);
     int len = String(radiopacket).length();
     int i=0, j=0;
     memset(payload,'\0',255);
 
     Serial.println("Sending to rf95_server");
-    // Send a message to rf95_server
 
     //do not stack
-    for(i=0; i<255; i++){
+    for(i=0; i<255; i++) {
       payload[i] = (uint8_t)'0';
     }
     
-    for(i=0; i<len; i++){
+    for(i=0; i<len; i++) {
       payload[i] = (uint8_t)radiopacket[i];
     }
     payload[i] = (uint8_t)'\0';
@@ -200,10 +192,21 @@ float readBatteryVoltage(uint8_t ver) {
   return measuredvbat;
 }
 
+byte fixType() {
+    byte fixType = myGNSS.getFixType();
+    Serial.print(F("Fix: "));
+    if(fixType == 0) Serial.print(F("No fix"));
+    else if(fixType == 1) Serial.print(F("Dead reckoning"));
+    else if(fixType == 2) Serial.print(F("2D"));
+    else if(fixType == 3) Serial.print(F("3D"));
+    else if(fixType == 4) Serial.print(F("GNSS + Dead reckoning"));
+    else if(fixType == 5) Serial.print(F("Time only"));
+}
+
 byte RTK() {
   byte RTK = myGNSS.getCarrierSolutionType();
   Serial.print("RTK: ");
-  Serial.print(RTK);
+  Serial.println(RTK);
   if (RTK == 0) Serial.println(F(" (No solution)"));
   else if (RTK == 1) Serial.println(F(" (High precision floating fix)"));
   else if (RTK == 2) Serial.println(F(" (High precision fix)"));
