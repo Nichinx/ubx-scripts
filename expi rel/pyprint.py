@@ -5,7 +5,7 @@ import os
 import numpy
 import csv
 
-com_port = 'COM16'
+com_port = 'COM9'
 
 try:
         ser = serial.Serial(

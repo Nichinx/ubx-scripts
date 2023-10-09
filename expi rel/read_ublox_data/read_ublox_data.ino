@@ -12,6 +12,7 @@ SFE_UBLOX_GNSS myGNSS;
 
 char sitecode[6] = "TESUA"; //logger name - sensor site code
 char dataToSend[200];
+char dataToSend_d[200];
 char Ctimestamp[13] = "";
 
 // initialize LoRa global variables
@@ -192,16 +193,16 @@ float readBatteryVoltage(uint8_t ver) {
   return measuredvbat;
 }
 
-byte fixType() {
-    byte fixType = myGNSS.getFixType();
-    Serial.print(F("Fix: "));
-    if(fixType == 0) Serial.print(F("No fix"));
-    else if(fixType == 1) Serial.print(F("Dead reckoning"));
-    else if(fixType == 2) Serial.print(F("2D"));
-    else if(fixType == 3) Serial.print(F("3D"));
-    else if(fixType == 4) Serial.print(F("GNSS + Dead reckoning"));
-    else if(fixType == 5) Serial.print(F("Time only"));
-}
+// byte fixType() {
+//     byte fixType = myGNSS.getFixType();
+//     Serial.print(F("Fix: "));
+//     if(fixType == 0) Serial.print(F("No fix"));
+//     else if(fixType == 1) Serial.print(F("Dead reckoning"));
+//     else if(fixType == 2) Serial.print(F("2D"));
+//     else if(fixType == 3) Serial.print(F("3D"));
+//     else if(fixType == 4) Serial.print(F("GNSS + Dead reckoning"));
+//     else if(fixType == 5) Serial.print(F("Time only"));
+// }
 
 byte RTK() {
   byte RTK = myGNSS.getCarrierSolutionType();
@@ -371,11 +372,84 @@ void printFractional(int32_t fractional, uint8_t places) {
   strncat(dataToSend, tempstr, String(tempstr).length() + 1);
 }
 
+//////////////////
+void read_ubx_in_double() {
+  for (int i = 0; i < 200; i++) {
+    dataToSend_d[i] = 0x00;
+  }
+  memset(dataToSend_d,'\0',200);
+
+  byte rtk_fixtype = RTK();
+  int sat_num_d = SIV();
+
+  char tempstr_d[100];
+  char volt_d[10];
+  char temp_d[10];
+
+  snprintf(volt_d, sizeof volt_d, "%.2f", readBatteryVoltage(10));
+  snprintf(temp_d, sizeof temp_d, "%.2f", readTemp());
+
+    // First, let's collect the position data
+  int32_t latitude = myGNSS.getHighResLatitude();
+  int8_t latitudeHp = myGNSS.getHighResLatitudeHp();
+  int32_t longitude = myGNSS.getHighResLongitude();
+  int8_t longitudeHp = myGNSS.getHighResLongitudeHp();
+  int32_t ellipsoid = myGNSS.getElipsoid();
+  int8_t ellipsoidHp = myGNSS.getElipsoidHp();
+  int32_t msl = myGNSS.getMeanSeaLevel();
+  int8_t mslHp = myGNSS.getMeanSeaLevelHp();
+  uint32_t hor_acc = myGNSS.getHorizontalAccuracy();
+  uint32_t ver_acc = myGNSS.getVerticalAccuracy();
+
+  // Defines storage for the lat and lon as double
+  double d_lat; // latitude
+  double d_lon; // longitude
+
+  // Assemble the high precision latitude and longitude
+  d_lat = ((double)latitude) / 10000000.0; // Convert latitude from degrees * 10^-7 to degrees
+  d_lat += ((double)latitudeHp) / 1000000000.0; // Now add the high resolution component (degrees * 10^-9 )
+  d_lon = ((double)longitude) / 10000000.0; // Convert longitude from degrees * 10^-7 to degrees
+  d_lon += ((double)longitudeHp) / 1000000000.0; // Now add the high resolution component (degrees * 10^-9 )
+
+  // Now define float storage for the heights and accuracy
+  float f_ellipsoid;
+  float f_msl;
+  float f_accuracy_hor_d;
+  float f_accuracy_ver_d;
+
+  // Calculate the height above ellipsoid in mm * 10^-1
+  f_ellipsoid = (ellipsoid * 10) + ellipsoidHp;
+  f_ellipsoid = f_ellipsoid / 10000.0; // Convert from mm * 10^-1 to m
+
+  // Calculate the height above mean sea level in mm * 10^-1
+  f_msl = (msl * 10) + mslHp;
+  f_msl = f_msl / 10000.0; // Convert from mm * 10^-1 to m
+
+  // Convert the accuracy (mm * 10^-1) to a float
+  f_accuracy_hor_d = hor_acc / 10000.0; // Convert from mm * 10^-1 to m
+  f_accuracy_ver_d = ver_acc / 10000.0; // Convert from mm * 10^-1 to m
+
+  sprintf(tempstr_d, "double_%s:%d,%.9f,%.9f,%.4f,%.4f,%.4f,%d", sitecode, rtk_fixtype, d_lat, d_lon, f_accuracy_hor_d, f_accuracy_ver_d, f_msl, sat_num_d);
+  strncpy(dataToSend_d, tempstr_d, String(tempstr_d).length() + 1);
+  strncat(dataToSend_d, ",", 2);
+  strncat(dataToSend_d, temp_d, sizeof(temp_d));
+  strncat(dataToSend_d, ",", 2);
+  strncat(dataToSend_d, volt_d, sizeof(volt_d)); 
+
+  readTimeStamp();
+  strncat(dataToSend_d, "*", 2);
+  strncat(dataToSend_d, Ctimestamp, 13);
+
+  Serial.print("data to send: "); Serial.println(dataToSend_d);
+}
+///////////////////////////////
+
+
 //09.01.23 - get data every seconds
 void loop() {
   get_rtcm();
   read_ublox_data();
-
-  // send_thru_lora(dataToSend);
-  delay(1000);
+  delay(500);
+  read_ubx_in_double();
+  delay(500);
 }
