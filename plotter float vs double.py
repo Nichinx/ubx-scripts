@@ -14,7 +14,7 @@ import matplotlib.gridspec as gridspec
 import matplotlib.ticker as mticker
 
 
-data = pd.read_csv('exp11.csv')
+data = pd.read_csv('exp14.csv')
 data = data.loc[data[data.columns[0]].str.contains('data to send')]
 
 column1_split = data[data.columns[0]].str.split(':', expand=True)
@@ -44,7 +44,7 @@ new_df = pd.DataFrame(data_list, columns = ['logger',
                                             'sat_num',
                                             'temp',
                                             'volt'])
-new_df = new_df.loc[(new_df.fix == '2')]
+new_df = new_df.loc[(new_df.fix == '2') & (new_df.sat_num > 27)]
 
 
 df1 = new_df.loc[~(new_df.logger.str.contains("double"))]
