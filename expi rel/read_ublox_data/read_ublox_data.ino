@@ -11,6 +11,9 @@ SFE_UBLOX_GNSS myGNSS;
 #define RFWAITTIME 500 //maximum milliseconds to wait for next LoRa packet - used to be 600 - may have been too long
 
 char sitecode[6] = "TESUA"; //logger name - sensor site code
+int min_sat = 30;
+int loop_counter = 5;
+
 char dataToSend[200];
 char dataToSend_d[200];
 char Ctimestamp[13] = "";
@@ -192,17 +195,6 @@ float readBatteryVoltage(uint8_t ver) {
   }
   return measuredvbat;
 }
-
-// byte fixType() {
-//     byte fixType = myGNSS.getFixType();
-//     Serial.print(F("Fix: "));
-//     if(fixType == 0) Serial.print(F("No fix"));
-//     else if(fixType == 1) Serial.print(F("Dead reckoning"));
-//     else if(fixType == 2) Serial.print(F("2D"));
-//     else if(fixType == 3) Serial.print(F("3D"));
-//     else if(fixType == 4) Serial.print(F("GNSS + Dead reckoning"));
-//     else if(fixType == 5) Serial.print(F("Time only"));
-// }
 
 byte RTK() {
   byte RTK = myGNSS.getCarrierSolutionType();
@@ -448,8 +440,32 @@ void read_ubx_in_double() {
 //09.01.23 - get data every seconds
 void loop() {
   get_rtcm();
-  read_ublox_data();
-  delay(500);
-  read_ubx_in_double();
+
+  if (RTK() == 2 && SIV() >= min_sat) {
+    if (HACC() == 141 && VACC() == 100) {
+      read_ubx_in_double();
+    }
+
+    else if (HACC() != 141 || VACC() != 100) {
+      for (int c = 0; c <= loop_counter; c++) {
+        get_rtcm();
+
+        if (HACC() == 141 && VACC() == 100) {
+          read_ubx_in_double();
+          break;
+        }
+
+        else if (c == loop_counter) {
+          read_ubx_in_double();
+          break;
+        }
+      }
+    }
+  }
+
+  else if (RTK() != 2 || SIV() < min_sat) {
+    get_rtcm();
+  }
+
   delay(500);
 }
