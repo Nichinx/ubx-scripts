@@ -12,7 +12,7 @@ SFE_UBLOX_GNSS myGNSS;
 
 char sitecode[6] = "TESUA"; //logger name - sensor site code
 int min_sat = 30;
-int loop_counter = 5;
+int loop_counter = 3;
 
 char dataToSend[200];
 char dataToSend_d[200];
@@ -442,6 +442,7 @@ void loop() {
   if (RTK() == 2 && SIV() >= min_sat) {
     if (HACC() == 141 && VACC() == 100) {
       read_ubx_in_double();
+      get_rtcm();
     }
 
     else if (HACC() != 141 || VACC() != 100) {
@@ -450,11 +451,13 @@ void loop() {
 
         if (HACC() == 141 && VACC() == 100) {
           read_ubx_in_double();
+          get_rtcm();
           break;
         }
 
         else if (c == loop_counter) {
           read_ubx_in_double();
+          get_rtcm();
           break;
         }
       }
@@ -465,5 +468,5 @@ void loop() {
     get_rtcm();
   }
 
-  delay(500);
+  // delay(500);
 }
