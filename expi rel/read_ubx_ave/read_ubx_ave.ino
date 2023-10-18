@@ -282,14 +282,14 @@ void read_ubx_in_double() {
   snprintf(temp_d, sizeof temp_d, "%.2f", readTemp());
 
   // Defines storage for the lat and lon as double
-  double d_lat; // latitude
-  double d_lon; // longitude
+  double d_lat = 0.0; // latitude
+  double d_lon = 0.0; // longitude
 
   // Now define float storage for the heights and accuracy
-  float f_ellipsoid;
-  float f_msl;
-  float f_accuracy_hor_d;
-  float f_accuracy_ver_d;
+  float f_ellipsoid = 0.0;
+  float f_msl = 0.0;
+  float f_accuracy_hor_d = 0.0;
+  float f_accuracy_ver_d = 0.0;
 
   for (int i = 0; i <= ave_count; i++) {
     get_rtcm();
@@ -325,11 +325,11 @@ void read_ubx_in_double() {
     f_accuracy_ver_d += f_accuracy_ver_d;
   }
 
-  d_lat = d_lat / ave_count;
-  d_lon = d_lon / ave_count;
-  f_msl = f_msl / ave_count;
-  f_accuracy_hor_d = f_accuracy_hor_d / ave_count;
-  f_accuracy_ver_d = f_accuracy_ver_d / ave_count;
+  // d_lat = d_lat / ave_count;
+  // d_lon = d_lon / ave_count;
+  // f_msl = f_msl / ave_count;
+  // f_accuracy_hor_d = f_accuracy_hor_d / ave_count;
+  // f_accuracy_ver_d = f_accuracy_ver_d / ave_count;
 
   sprintf(tempstr_d, "double_%s:%d,%.9f,%.9f,%.4f,%.4f,%.4f,%d", sitecode, rtk_fixtype, d_lat, d_lon, f_accuracy_hor_d, f_accuracy_ver_d, f_msl, sat_num_d);
   strncpy(dataToSend_d, tempstr_d, String(tempstr_d).length() + 1);
