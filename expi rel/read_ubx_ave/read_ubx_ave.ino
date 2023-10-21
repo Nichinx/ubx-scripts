@@ -13,7 +13,7 @@ SFE_UBLOX_GNSS myGNSS;
 char sitecode[6] = "TESUA"; //logger name - sensor site code
 int min_sat = 29;
 int loop_counter = 5;
-int ave_count = 12;
+int ave_count = 48;
 
 char dataToSend[200];
 char dataToSend_d[200];
@@ -284,15 +284,22 @@ void read_ubx_in_double() {
   // Defines storage for the lat and lon as double
   double d_lat = 0.0; // latitude
   double d_lon = 0.0; // longitude
+  
+  double accu_lat = 0.0; // latitude
+  double accu_lon = 0.0; // longitude
 
   // Now define float storage for the heights and accuracy
-  float f_ellipsoid = 0.0;
   float f_msl = 0.0;
   float f_accuracy_hor_d = 0.0;
   float f_accuracy_ver_d = 0.0;
 
-  for (int i = 0; i <= ave_count; i++) {
+  float accu_msl = 0.0;
+  float accu_accuracy_hor_d = 0.0;
+  float accu_accuracy_ver_d = 0.0;
+
+  for (int i = 1; i <= ave_count; i++) {
     get_rtcm();
+    
     // First, let's collect the position data
     int32_t latitude = myGNSS.getHighResLatitude();
     int8_t latitudeHp = myGNSS.getHighResLatitudeHp();
@@ -317,19 +324,23 @@ void read_ubx_in_double() {
     f_accuracy_hor_d = hor_acc / 10000.0; // Convert from mm * 10^-1 to m
     f_accuracy_ver_d = ver_acc / 10000.0; // Convert from mm * 10^-1 to m
 
-    //summation
-    d_lat += d_lat;
-    d_lon += d_lon;
-    f_msl += f_msl;
-    f_accuracy_hor_d += f_accuracy_hor_d;
-    f_accuracy_ver_d += f_accuracy_ver_d;
+    // Accumulation
+    accu_lat = accu_lat + d_lat;
+    accu_lon = accu_lon + d_lon;
+    accu_msl = accu_msl + f_msl;
+    accu_accuracy_hor_d = accu_accuracy_hor_d + f_accuracy_hor_d;
+    accu_accuracy_ver_d = accu_accuracy_ver_d + f_accuracy_ver_d;
+
+//    Serial.print("i: "); Serial.println(i);
+    get_rtcm();
   }
 
-  // d_lat = d_lat / ave_count;
-  // d_lon = d_lon / ave_count;
-  // f_msl = f_msl / ave_count;
-  // f_accuracy_hor_d = f_accuracy_hor_d / ave_count;
-  // f_accuracy_ver_d = f_accuracy_ver_d / ave_count;
+  // Averaging
+  d_lat = accu_lat / ave_count; 
+  d_lon = accu_lon / ave_count;
+  f_msl = accu_msl / ave_count; 
+  f_accuracy_hor_d = accu_accuracy_hor_d / ave_count;
+  f_accuracy_ver_d = accu_accuracy_ver_d / ave_count;
 
   sprintf(tempstr_d, "double_%s:%d,%.9f,%.9f,%.4f,%.4f,%.4f,%d", sitecode, rtk_fixtype, d_lat, d_lon, f_accuracy_hor_d, f_accuracy_ver_d, f_msl, sat_num_d);
   strncpy(dataToSend_d, tempstr_d, String(tempstr_d).length() + 1);
@@ -341,8 +352,8 @@ void read_ubx_in_double() {
   readTimeStamp();
   strncat(dataToSend_d, "*", 2);
   strncat(dataToSend_d, Ctimestamp, 13);
-
   Serial.print("data to send: "); Serial.println(dataToSend_d);
+  get_rtcm();
 }
 
 //10.07.23 - averaging
