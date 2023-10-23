@@ -266,7 +266,6 @@ void get_rtcm() {
           rfbuflen = RH_RF95_MAX_MESSAGE_LEN;
           if (rf95.recv(bufptr, &rfbuflen)) {
             Serial.println((unsigned char) *bufptr, HEX);
-//            Serial.print(".");
             bufptr += rfbuflen;
             lastTime = millis();
           } else {
@@ -373,7 +372,6 @@ void get_rtcm() {
 //  get_rtcm();
 //}
 
-
 ///////expe
 void read_ubx_in_double() {
   for (int i = 0; i < 200; i++) {
@@ -409,7 +407,7 @@ void read_ubx_in_double() {
   float accu_accuracy_hor_d = 0.0;
   float accu_accuracy_ver_d = 0.0;
 
-  for (int i = 1; i <= ave_count; i++) {
+  for (int i = 0; i <= (ave_count - 1); i++) {
     get_rtcm();
     
     // First, let's collect the position data
@@ -436,29 +434,32 @@ void read_ubx_in_double() {
     f_accuracy_hor_d = hor_acc / 10000.0; // Convert from mm * 10^-1 to m
     f_accuracy_ver_d = ver_acc / 10000.0; // Convert from mm * 10^-1 to m
 
-      if ((HACC() == 141 && VACC() == 100) || (HACC() == 141 && VACC() <= 141)) {
+      // if ((HACC() == 141 && VACC() == 100) || (HACC() == 141 && VACC() <= 141)) {
+      if ((HACC() == 141 && VACC() == 99)) {
         // Accumulation
         accu_lat = accu_lat + d_lat;
         accu_lon = accu_lon + d_lon;
         accu_msl = accu_msl + f_msl;
         accu_accuracy_hor_d = accu_accuracy_hor_d + f_accuracy_hor_d;
         accu_accuracy_ver_d = accu_accuracy_ver_d + f_accuracy_ver_d;
-        accu_count = accu_count + 1;
+        accu_count++;
+        // i++;
         Serial.print("accu_count: "); Serial.println(accu_count);
+        Serial.print("iter_count: "); Serial.println(i);
       } else {
         get_rtcm();
-        i = i - 1; //loop until hacc&vacc conditions are satisfied
-//        i = i + 1; //wont wait 
-      }
-    get_rtcm();
-  }
+        // i = i - 1; //loop until hacc&vacc conditions are satisfied
+        i++; //wont wait for conditions to be satistied, loop continues to iterate regardless
+        Serial.print("iter_count: "); Serial.println(i);
 
-//  // Averaging
-//  d_lat = accu_lat / ave_count; 
-//  d_lon = accu_lon / ave_count;
-//  f_msl = accu_msl / ave_count; 
-//  f_accuracy_hor_d = accu_accuracy_hor_d / ave_count;
-//  f_accuracy_ver_d = accu_accuracy_ver_d / ave_count;
+          // if ((i == (ave_count - 1)) && (VACC() > 141)) { //this if condition exists if loop chosen was 2nd else loop (loop continues to iterate regardless      
+          //   // i = 0;
+          //   // accu_count = 1;
+          //   Serial.print("iter_count: "); Serial.println(i);
+          //   break;
+          // }
+      } 
+  }
 
   // Averaging
   d_lat = accu_lat / accu_count; 
@@ -467,21 +468,31 @@ void read_ubx_in_double() {
   f_accuracy_hor_d = accu_accuracy_hor_d / accu_count;
   f_accuracy_ver_d = accu_accuracy_ver_d / accu_count;
 
-  sprintf(tempstr_d, "double_%s:%d,%.9f,%.9f,%.4f,%.4f,%.4f,%d", sitecode, rtk_fixtype, d_lat, d_lon, f_accuracy_hor_d, f_accuracy_ver_d, f_msl, sat_num_d);
-  strncpy(dataToSend, tempstr_d, String(tempstr_d).length() + 1);
-  strncat(dataToSend, ",", 2);
-  strncat(dataToSend, temp_d, sizeof(temp_d));
-  strncat(dataToSend, ",", 2);
-  strncat(dataToSend, volt_d, sizeof(volt_d)); 
+  if (d_lat != 0) { //this below is the original code:
+    sprintf(tempstr_d, "double_%s:%d,%.9f,%.9f,%.4f,%.4f,%.4f,%d", sitecode, rtk_fixtype, d_lat, d_lon, f_accuracy_hor_d, f_accuracy_ver_d, f_msl, sat_num_d);
+    strncpy(dataToSend, tempstr_d, String(tempstr_d).length() + 1);
+    strncat(dataToSend, ",", 2);
+    strncat(dataToSend, temp_d, sizeof(temp_d));
+    strncat(dataToSend, ",", 2);
+    strncat(dataToSend, volt_d, sizeof(volt_d)); 
 
-  readTimeStamp();
-  strncat(dataToSend, "*", 2);
-  strncat(dataToSend, Ctimestamp, 13);
-  Serial.print("data to send: "); Serial.println(dataToSend);
-  get_rtcm();
+    readTimeStamp();
+    strncat(dataToSend, "*", 2);
+    strncat(dataToSend, Ctimestamp, 13);
+    Serial.print("data to send: "); Serial.println(dataToSend);
+    get_rtcm();
+
+  } else if (d_lat == 0/0) {   //else - if condition exists if 2nd loop chosen (loop continues to iterate regardless)
+    sprintf(tempstr_d, "no data");
+    strncpy(dataToSend, tempstr_d, String(tempstr_d).length() + 1);
+    readTimeStamp();
+    strncat(dataToSend, "*", 2);
+    strncat(dataToSend, Ctimestamp, 13);
+    Serial.print("data to send: "); Serial.println(dataToSend);
+    get_rtcm();
+  }
 }
 ///////////
-
 
 void no_ublox_data() {
   for (int i = 0; i < 200; i++){
@@ -545,7 +556,6 @@ void loop() {
 //  rtc.clearINTStatus();
 //  sleepNow();
 //}
-
 
 //30 minutes interval
 void setAlarmEvery30(int alarmSET)
