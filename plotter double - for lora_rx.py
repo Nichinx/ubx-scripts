@@ -38,8 +38,9 @@ new_df = pd.DataFrame(data_list, columns = ['logger',
                                             'temp',
                                             'volt'])
 # new_df['msl'] = np.round(new_df.msl,2)
-new_df = new_df.loc[(new_df.fix == '2') & (new_df.sat_num > 29)]
-df2 = new_df.loc[(new_df.logger.str.contains("double"))]
+new_df = new_df.loc[(new_df.fix == '2') & (new_df.sat_num > 28)]
+# df2 = new_df.loc[(new_df.logger.str.contains("double"))]
+df2 = new_df.loc[~(np.isnan(new_df.lat))]
 
 
 
