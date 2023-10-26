@@ -395,17 +395,17 @@ void read_ubx_in_double() {
   double d_lat = 0.0; // latitude
   double d_lon = 0.0; // longitude
   
-  double accu_lat = 0.0; // latitude
-  double accu_lon = 0.0; // longitude
+  double accu_lat = 0.0; // latitude accumulator
+  double accu_lon = 0.0; // longitude accumulator
 
   // Now define float storage for the heights and accuracy
   float f_msl = 0.0;
   float f_accuracy_hor_d = 0.0;
   float f_accuracy_ver_d = 0.0;
   
-  float accu_msl = 0.0;
-  float accu_accuracy_hor_d = 0.0;
-  float accu_accuracy_ver_d = 0.0;
+  float accu_msl = 0.0;             //msl accumulator
+  float accu_accuracy_hor_d = 0.0;  //hacc acuumulator
+  float accu_accuracy_ver_d = 0.0;  //vacc accumulator
 
   // for (int i = 0; i <= (ave_count - 1); i++) {
   for (int i = 1; i <= ave_count; i++) {
@@ -461,7 +461,8 @@ void read_ubx_in_double() {
   f_accuracy_hor_d = accu_accuracy_hor_d / accu_count;
   f_accuracy_ver_d = accu_accuracy_ver_d / accu_count;
 
-  if (d_lat != 0) {
+  // if (d_lat != 0) {
+  if (d_lat >1) { //try next na >1 kase ayaw pumasok sa else loop
     sprintf(tempstr_d, "double_%s:%d,%.9f,%.9f,%.4f,%.4f,%.4f,%d", sitecode, rtk_fixtype, d_lat, d_lon, f_accuracy_hor_d, f_accuracy_ver_d, f_msl, sat_num_d);
     strncpy(dataToSend, tempstr_d, String(tempstr_d).length() + 1);
     strncat(dataToSend, ",", 2);
@@ -475,7 +476,8 @@ void read_ubx_in_double() {
     Serial.print("data to send: "); Serial.println(dataToSend);
     get_rtcm();
 
-  } else if (isnan(d_lat)) {
+  // } else if (isnan(d_lat)) {
+  } else {
     sprintf(tempstr_d, "no data");
     strncpy(dataToSend, tempstr_d, String(tempstr_d).length() + 1);
     
