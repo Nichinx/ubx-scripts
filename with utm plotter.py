@@ -10,6 +10,7 @@ from matplotlib.ticker import StrMethodFormatter
 import utm
 
 
+#CSV READER
 data = pd.read_csv('exp22.csv')
 
 column1_split = data[data.columns[0]].str.split(':', expand=True)

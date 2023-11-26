@@ -31,7 +31,10 @@ except Error as e:
         print("Error while connecting to MySQL", e)
         
 
-query = "SELECT * FROM analysis_db.gnss_testa"
+# query = "SELECT * FROM analysis_db.gnss_testa"
+query = "select * from analysis_db.gnss_testa \
+        where ts >= '2023-11-21' \
+        order by ts desc"
 
 sql_data = pd.read_sql(query,connection)
 data = pd.DataFrame(sql_data)
