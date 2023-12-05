@@ -11,7 +11,8 @@ import utm
 
 
 #CSV READER
-data = pd.read_csv('exp22.csv')
+data = pd.read_csv('exp23.csv')
+# data = data.loc[data[data.columns[0]].str.contains('data to send')] #data string row finder
 
 column1_split = data[data.columns[0]].str.split(':', expand=True)
 logger_name = column1_split[0]
@@ -40,11 +41,19 @@ new_df = pd.DataFrame(data_list, columns = ['logger',
                                             'sat_num',
                                             'temp',
                                             'volt'])
-# new_df['msl'] = np.round(new_df.msl,2)
+new_df['msl'] = np.round(new_df.msl,2)
 # new_df = new_df.loc[(new_df.fix == '2') & (new_df.sat_num > 28)]
-df2 = new_df.loc[~(np.isnan(new_df.lat))]
+df2 = new_df.loc[~(np.isnan(new_df.lat))].reset_index(drop=True)
 
-df = utm.from_latlon(new_df.lat.to_numpy(), new_df.lon.to_numpy())
+# df = utm.from_latlon(new_df.lat.to_numpy(), new_df.lon.to_numpy())
+# df = pd.DataFrame([list(df)]).transpose()
+# df2['lat_UTM'] = df.loc[0].explode(list()).reset_index(drop=True)
+# df2['lon_UTM'] = df.loc[1].explode(list()).reset_index(drop=True)
+# # df2.insert(2, 'zone#', df.loc[2])
+# # df2.insert(3, 'zoneL', df.loc[3])
+
+
+df = utm.from_latlon(df2.lat.to_numpy(), df2.lon.to_numpy())
 df = pd.DataFrame([list(df)]).transpose()
 df2['lat_UTM'] = df.loc[0].explode(list()).reset_index(drop=True)
 df2['lon_UTM'] = df.loc[1].explode(list()).reset_index(drop=True)
