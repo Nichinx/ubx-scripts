@@ -45,6 +45,7 @@ data = pd.DataFrame(sql_data)
 data.reset_index()
 print('data: ', len(data))
 
+
 new_df = data
 new_df['msl'] = np.round(new_df.msl,2)
 new_df = new_df.loc[(new_df.fix_type == 2) & (new_df.sat_num > 28)]
@@ -72,6 +73,7 @@ df = pd.DataFrame([list(df)]).transpose()
 df2['lat_UTM'] = df.loc[0].explode(list()).reset_index(drop=True)
 df2['lon_UTM'] = df.loc[1].explode(list()).reset_index(drop=True)
 print('df2 = ',len(df2))
+
 
 # #outlier
 # def outlier_filter(df):
@@ -254,7 +256,7 @@ print('df with outlier 3 = ',len(df2))
 
 #PLOT
 fig = plt.figure()
-fig.suptitle('TESUA DATA : with outlier filter', fontweight='bold')
+fig.suptitle('TESUA DATA : outlier filter applied', fontweight='bold')
 gs = gridspec.GridSpec(4, 1) #4 by 1 subplot
 
 #df2:
@@ -277,7 +279,8 @@ plt.grid(color = 'gray', linestyle = '--', linewidth = 0.5)
 plt.xticks(color='w')
 
 plt.subplot(gs[2,0])
-plt.plot(df2.ts, df2.msl, "violet", alpha=0.5)
+# plt.plot(df2.ts, df2.msl, "violet", alpha=0.5)
+plt.plot(df2.ts, df2.msl, "violet")
 # plt.plot(df_new_mva.ts,df_new_mva.mva_msl, "red")
 plt.ylabel('msl, m', fontweight='bold')
 plt.grid(color = 'gray', linestyle = '--', linewidth = 0.5)
