@@ -8,11 +8,18 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.expand_frame_repr', False)
 pd.set_option('display.float_format', '{:,.9f}'.format)
 
+# db_config = {
+#     'host': '192.168.150.112',
+#     'user': 'pysys_local',
+#     'password': 'NaCAhztBgYZ3HwTkvHwwGVtJn5sVMFgg',
+#     'database': 'analysis_db'
+# }
+
 db_config = {
-    'host': '192.168.150.112',
-    'user': 'pysys_local',
-    'password': 'NaCAhztBgYZ3HwTkvHwwGVtJn5sVMFgg',
-    'database': 'analysis_db'
+    'host': 'localhost',
+    'user': 'root',
+    'password': 'admin123',
+    'database': 'new_schema'
 }
 
 connection = mysql.connector.connect(**db_config)
@@ -36,8 +43,8 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     earth_radius = 6371000
 
     # Calculate the distance
-    distance = earth_radius * c
-    return distance #in meters
+    distance_cm = earth_radius * c * 100
+    return distance_cm #in centimeters
 
 
 def fetch_gnss_table_names():
@@ -88,6 +95,56 @@ def fetch_latest_gps_data(table_name):
             cursor.close()
             connection.close()
         
+#############################################################################
+################# gets from base_station table
+# def fetch_base_name_for_rover(rover_name):
+#     try:
+#         connection = mysql.connector.connect(**db_config)
+#         cursor = connection.cursor()
+
+#         # Fetch base name based on the first 3 characters of rover_name
+#         query = "SELECT base_name FROM base_stations WHERE LEFT(base_name, 3) = %s"
+#         cursor.execute(query, (rover_name[:3],))
+#         row = cursor.fetchone()
+
+#         if not row:
+#             return None
+
+#         return row[0]
+
+#     except mysql.connector.Error as error:
+#         print(f"Error fetching base name for {rover_name}: {error}")
+#         return None
+
+#     finally:
+#         if 'connection' in locals() and connection.is_connected():
+#             cursor.close()
+#             connection.close()
+
+# def fetch_base_coordinates(base_name):
+#     try:
+#         connection = mysql.connector.connect(**db_config)
+#         cursor = connection.cursor()
+
+#         # Fetch base coordinates based on base_name
+#         query = "SELECT latitude, longitude FROM base_stations WHERE base_name = %s"
+#         cursor.execute(query, (base_name,))
+#         row = cursor.fetchone()
+
+#         if not row:
+#             return None
+
+#         return row[0], row[1]
+
+#     except mysql.connector.Error as error:
+#         print(f"Error fetching base coordinates for {base_name}: {error}")
+#         return None
+
+#     finally:
+#         if 'connection' in locals() and connection.is_connected():
+#             cursor.close()
+#             connection.close()
+##############################################################################
 
 def fetch_base_name_for_rover(rover_name):
     try:
@@ -95,7 +152,7 @@ def fetch_base_name_for_rover(rover_name):
         cursor = connection.cursor()
 
         # Fetch base name based on the first 3 characters of rover_name
-        query = "SELECT base_name FROM base_stations WHERE LEFT(base_name, 3) = %s"
+        query = "SELECT base_name FROM rover_reference_point WHERE LEFT(base_name, 3) = %s"
         cursor.execute(query, (rover_name[:3],))
         row = cursor.fetchone()
 
@@ -113,13 +170,13 @@ def fetch_base_name_for_rover(rover_name):
             cursor.close()
             connection.close()
 
-def fetch_base_coordinates(base_name):
+def fetch_reference_coordinates(base_name):
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
 
         # Fetch base coordinates based on base_name
-        query = "SELECT latitude, longitude FROM base_stations WHERE base_name = %s"
+        query = "SELECT latitude, longitude FROM rover_reference_point WHERE base_name = %s"
         cursor.execute(query, (base_name,))
         row = cursor.fetchone()
 
@@ -267,9 +324,6 @@ def outlier_filter(df):
     dff = dff[dflogic.notnull()]
 
     return dff
-
-df_outlier_applied = outlier_filter(df)
-print(df_outlier_applied)
 #end of filters
 
 
@@ -282,37 +336,31 @@ horizontal_accuracy = 0.0141
 vertical_accuracy = 0.01205
 
 #sanity filter accepts datafra,
-def prepare_and_apply_sanity_filters(data, horizontal_accuracy, vertical_accuracy):
-    new_df = data.copy()
+# def prepare_and_apply_sanity_filters(data, horizontal_accuracy, vertical_accuracy):
+#     new_df = data.copy()
 
-    # Round 'msl' column to 2 decimal places
-    new_df['msl'] = np.round(new_df['msl'], 2)
+#     # Round 'msl' column to 2 decimal places
+#     new_df['msl'] = np.round(new_df['msl'], 2)
 
-    # Apply fix_type and sat_num filters
-    new_df = new_df.loc[(new_df['fix_type'] == 2) & (new_df['sat_num'] > 28)]
+#     # Apply fix_type and sat_num filters
+#     new_df = new_df.loc[(new_df['fix_type'] == 2) & (new_df['sat_num'] > 28)]
 
-    print('new_df fix=2, satnum>28:', len(new_df))
+#     print('new_df fix=2, satnum>28:', len(new_df))
 
-    # Apply horizontal and vertical accuracy filters
-    new_df = new_df.loc[(new_df['hacc'] == horizontal_accuracy) & (new_df['vacc'] <= vertical_accuracy)]
-    new_df = new_df.reset_index(drop=True).sort_values(by='ts', ascending=True, ignore_index=True)
+#     # Apply horizontal and vertical accuracy filters
+#     new_df = new_df.loc[(new_df['hacc'] == horizontal_accuracy) & (new_df['vacc'] <= vertical_accuracy)]
+#     new_df = new_df.reset_index(drop=True).sort_values(by='ts', ascending=True, ignore_index=True)
 
-    print('new_df hacc vacc:', len(new_df))
+#     print('new_df hacc vacc:', len(new_df))
 
-    # Filter for complete decimal precision in latitude and longitude
-    # new_df = new_df[(new_df['latitude'].astype(str).str[-10] == '.') & (new_df['longitude'].astype(str).str[-10] == '.')]
+#     # Filter for complete decimal precision in latitude and longitude
+#     # new_df = new_df[(new_df['latitude'].astype(str).str[-10] == '.') & (new_df['longitude'].astype(str).str[-10] == '.')]
 
-    # print('new_df complete deci:', len(new_df))
+#     # print('new_df complete deci:', len(new_df))
 
-    return new_df
-
-def format_float(val):
-    if isinstance(val, float):
-        return '{:.9f}'.format(val).rstrip('0').rstrip('.')
-    return val
+#     return new_df
 
 
-#sanity filter accepts tuples
 def prepare_and_apply_sanity_filters(tuple_data, horizontal_accuracy, vertical_accuracy):
     # Convert tuple to DataFrame
     columns = ['ts', 'fix_type', 'latitude', 'longitude', 'hacc', 'vacc', 'msl', 'sat_num']
@@ -324,13 +372,52 @@ def prepare_and_apply_sanity_filters(tuple_data, horizontal_accuracy, vertical_a
     # Apply fix_type and sat_num filters
     data = data.loc[(data['fix_type'] == 2) & (data['sat_num'] > 28)]
 
+    # Check if DataFrame is empty after the first filtering step
+    if data.empty:
+        return None
+
     # Apply horizontal and vertical accuracy filters
     data = data.loc[(data['hacc'] == horizontal_accuracy) & (data['vacc'] <= vertical_accuracy)]
+
+    # Check if DataFrame is empty after the second filtering step
+    if data.empty:
+        return None
+
     data = data.reset_index(drop=True).sort_values(by='ts', ascending=True, ignore_index=True)
 
-    # Return the filtered data as a tuple
-    filtered_tuple = tuple(data.iloc[0])
-    return filtered_tuple
+    # Check if there's at least one row in the DataFrame
+    if not data.empty:
+        # Return the filtered data as a tuple
+        filtered_tuple = tuple(data.iloc[0])
+        return filtered_tuple
+    else:
+        return None
+
+def format_float(val):
+    if isinstance(val, float):
+        return '{:.9f}'.format(val).rstrip('0').rstrip('.')
+    return val
+
+
+#sanity filter accepts tuples
+# def prepare_and_apply_sanity_filters(tuple_data, horizontal_accuracy, vertical_accuracy):
+#     # Convert tuple to DataFrame
+#     columns = ['ts', 'fix_type', 'latitude', 'longitude', 'hacc', 'vacc', 'msl', 'sat_num']
+#     data = pd.DataFrame([tuple_data], columns=columns)
+
+#     # Round 'msl' column to 2 decimal places
+#     data['msl'] = np.round(data['msl'], 2)
+
+#     # Apply fix_type and sat_num filters
+#     data = data.loc[(data['fix_type'] == 2) & (data['sat_num'] > 28)]
+
+#     # Apply horizontal and vertical accuracy filters
+#     data = data.loc[(data['hacc'] == horizontal_accuracy) & (data['vacc'] <= vertical_accuracy)]
+#     data = data.reset_index(drop=True).sort_values(by='ts', ascending=True, ignore_index=True)
+
+#     # Return the filtered data as a tuple
+#     filtered_tuple = tuple(data.iloc[0])
+#     return filtered_tuple
 
 
 def outlier_filter_for_msl(df):
@@ -399,7 +486,42 @@ def fetch_window_data(table_name, timestamp, window_size=10):
         if 'connection' in locals() and connection.is_connected():
             cursor.close()
             connection.close()
+           
             
+def compute_and_update_displacement_from_previous(rover_name, ts, rover_distref_cm):
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+
+        # Fetch the previous row's rover_distref_cm
+        query = f"SELECT distance_from_reference FROM stored_dist_gnss_{rover_name} WHERE ts < %s ORDER BY ts DESC LIMIT 1"
+        cursor.execute(query, (ts,))
+        previous_displacement_cm = cursor.fetchone()
+
+        if previous_displacement_cm is not None:
+            # Fetch the rover_distref_cm of the previous record
+            previous_displacement_cm = previous_displacement_cm[0]
+
+            # Compute displacement from the previous record
+            displacement_from_previous = abs(rover_distref_cm - previous_displacement_cm)
+
+            # Update the displacement_from_previous column
+            update_query = f"UPDATE stored_dist_gnss_{rover_name} SET displacement_from_previous = %s WHERE ts = %s"
+            cursor.execute(update_query, (displacement_from_previous, ts))
+            connection.commit()
+            print("Displacement from previous updated successfully.")
+        else:
+            print("No previous record found. Skipping update.")
+
+    except mysql.connector.Error as error:
+        print(f"Error computing and updating displacement_from_previous in the database: {error}")
+
+    finally:
+        if 'connection' in locals() and connection.is_connected():
+            cursor.close()
+            connection.close()
+
+
 
 # def check_threshold_and_alert():
 #     # Fetch all GNSS table names in the database
@@ -493,58 +615,237 @@ def fetch_window_data(table_name, timestamp, window_size=10):
             
 
 #cleaner version:
-def check_threshold_and_alert():
-    gnss_table_names = fetch_gnss_table_names() # Fetch all GNSS table names in the database
+# def check_threshold_and_alert():
+#     gnss_table_names = fetch_gnss_table_names() # Fetch all GNSS table names in the database
     
-    for table_name in gnss_table_names:
-        ts, fix_type, latitude, longitude, hacc, vacc, msl, sat_num = fetch_latest_gps_data(table_name)  # Ignore rover_name from fetch_latest_gps_data
-        sanity_filtered_data = prepare_and_apply_sanity_filters((ts, fix_type, latitude, longitude, hacc, vacc, msl, sat_num), horizontal_accuracy, vertical_accuracy)
+#     for table_name in gnss_table_names:
+#         ts, fix_type, latitude, longitude, hacc, vacc, msl, sat_num = fetch_latest_gps_data(table_name)  # Ignore rover_name from fetch_latest_gps_data
+#         sanity_filtered_data = prepare_and_apply_sanity_filters((ts, fix_type, latitude, longitude, hacc, vacc, msl, sat_num), horizontal_accuracy, vertical_accuracy)
         
-        if not (ts and latitude and longitude):
-           continue  # Skip if no valid GPS data for this table
+#         if not (ts and latitude and longitude):
+#            continue  # Skip if no valid GPS data for this table
            
-        rover_name = table_name.replace('gnss_', '', 1) # Extract rover name from table_name
-        base_name = fetch_base_name_for_rover(rover_name) # Fetch base name for the rover
+#         rover_name = table_name.replace('gnss_', '', 1) # Extract rover name from table_name
+#         base_name = fetch_base_name_for_rover(rover_name) # Fetch base name for the rover
         
-        if not base_name:
-            continue  # Base name not found for this rover
+#         if not base_name:
+#             continue  # Base name not found for this rover
             
-        base_lat, base_lon = fetch_base_coordinates(base_name)
+#         base_lat, base_lon = fetch_base_coordinates(base_name)
         
+#         if not (base_lat and base_lon):
+#             continue  # Base station coordinates not found
+
+#         rover_coords = (latitude, longitude)
+#         base_coords = (base_lat, base_lon)
+        
+#         window_data = fetch_window_data(table_name, ts, window_size=10) # Fetch window data
+#         filtered_window_data = outlier_filter_for_latlon(window_data) # Apply outlier filter to window data
+#         latest_fetched_data = filtered_window_data.iloc[0] # Check if the latest fetched data (index 0) is an outlier
+        
+#         # Check if any of the values in the latest fetched data are NaN (indicating they were filtered out)
+#         if latest_fetched_data.isnull().values.any():
+#             print("Latest fetched data is an outlier and was filtered out.")
+#         else:
+#             print("Latest fetched data is not an outlier.")
+#             # Proceed with distance computation using the latest fetched data
+#             # Calculate distance...
+#             displacement_cm = haversine_distance(rover_coords[0], rover_coords[1], base_coords[0], base_coords[1])
+            
+#             # Check threshold
+#             threshold_velocity_alert_2_cm_hr = 0.25
+#             threshold_velocity_alert_3_cm_hr = 1.8
+#             # Assuming you have time data as well for velocity calculation
+#             time_difference_hours = 15/60  # Calculate time difference between current and previous GPS data
+            
+#             # Calculate velocity in cm/hr
+#             velocity_cm_hr = displacement_cm / time_difference_hours
+            
+#             # Check velocity against thresholds
+#             if velocity_cm_hr >= threshold_velocity_alert_3_cm_hr:
+#                 print(f"Velocity Threshold Alert 3 exceeded for {rover_name}! Velocity: {velocity_cm_hr:.2f} cm/hr")
+#                 # Code to trigger alert (e.g., send email, push notification, etc.)
+#             elif velocity_cm_hr >= threshold_velocity_alert_2_cm_hr:
+#                 print(f"Velocity Threshold Alert 2 exceeded for {rover_name}! Velocity: {velocity_cm_hr:.2f} cm/hr")
+#                 # Code to trigger alert (e.g., send email, push notification, etc.)
+                
+                
+# def check_threshold_and_alert():
+#     gnss_table_names = fetch_gnss_table_names() # Fetch all GNSS table names in the database
+    
+#     for table_name in gnss_table_names:
+#         ts, fix_type, latitude, longitude, hacc, vacc, msl, sat_num = fetch_latest_gps_data(table_name)  # Ignore rover_name from fetch_latest_gps_data
+#         sanity_filtered_data = prepare_and_apply_sanity_filters((ts, fix_type, latitude, longitude, hacc, vacc, msl, sat_num), horizontal_accuracy, vertical_accuracy)
+    
+#         if sanity_filtered_data is None:
+#             continue  # Skip if no valid GPS data for this table
+    
+#         # Check if any of the required GPS data is missing
+#         if not all([ts, latitude, longitude]):
+#             continue  # Skip if any required GPS data is missing
+    
+#         rover_name = table_name.replace('gnss_', '', 1)  # Extract rover name from table_name
+#         base_name = fetch_base_name_for_rover(rover_name)  # Fetch base name for the rover
+    
+#         if not base_name:
+#             continue  # Base name not found for this rover
+    
+#         base_lat, base_lon = fetch_base_coordinates(base_name)
+    
+#         if not (base_lat and base_lon):
+#             continue  # Base station coordinates not found
+    
+#         rover_coords = (latitude, longitude)
+#         base_coords = (base_lat, base_lon)
+    
+#         # Perform operations only if sanity_filtered_data is not empty
+#         if sanity_filtered_data:
+#             window_data = fetch_window_data(table_name, ts, window_size=10)  # Fetch window data
+#             filtered_window_data = outlier_filter_for_latlon(window_data)  # Apply outlier filter to window data
+#             latest_fetched_data = filtered_window_data.iloc[0]  # Check if the latest fetched data (index 0) is an outlier
+    
+#             # Check if any of the values in the latest fetched data are NaN (indicating they were filtered out)
+#             if latest_fetched_data.isnull().values.any():
+#                 print("Latest fetched data is an outlier and was filtered out.")
+#             else:
+#                 print("Latest fetched data is not an outlier.")
+#                 # Proceed with distance computation using the latest fetched data
+#                 # Calculate distance...
+#                 displacement_cm = haversine_distance(rover_coords[0], rover_coords[1], base_coords[0], base_coords[1])
+    
+#                 # Store the computed displacement_cm in the database
+#                 try:
+#                     connection = mysql.connector.connect(**db_config)
+#                     cursor = connection.cursor()
+                
+#                     # Check if a record with the same 'ts' value already exists
+#                     query = f"SELECT COUNT(*) FROM stored_dist_gnss_{rover_name} WHERE ts = %s"
+#                     cursor.execute(query, (ts,))
+#                     count = cursor.fetchone()[0]
+                
+#                     if count == 0:
+#                         # Insert the computed displacement_cm into the table
+#                         query = f"""
+#                             INSERT INTO stored_dist_gnss_{rover_name} (ts, ts_written, distance_from_reference, displacement_from_previous) 
+#                             VALUES (%s, NOW(), %s, NULL)
+#                         """
+#                         cursor.execute(query, (ts, displacement_cm))
+#                         connection.commit()
+#                         print("Displacement_cm stored successfully.")
+#                     else:
+#                         print("Duplicate entry found. Skipping insertion.")
+                
+#                 except mysql.connector.Error as error:
+#                     print(f"Error storing displacement_cm in the database: {error}")
+                
+#                 finally:
+#                     if 'connection' in locals() and connection.is_connected():
+#                         cursor.close()
+#                         connection.close()
+
+    
+#                 # Check threshold
+#                 threshold_velocity_alert_2_cm_hr = 0.25
+#                 threshold_velocity_alert_3_cm_hr = 1.8
+#                 # Assuming you have time data as well for velocity calculation
+#                 time_difference_hours = 15/60  # Calculate time difference between current and previous GPS data
+    
+#                 # Calculate velocity in cm/hr
+#                 velocity_cm_hr = displacement_cm / time_difference_hours
+    
+#                 # Check velocity against thresholds
+#                 if velocity_cm_hr >= threshold_velocity_alert_3_cm_hr:
+#                     print(f"Velocity Threshold Alert 3 exceeded for {rover_name}! Velocity: {velocity_cm_hr:.2f} cm/hr")
+#                     # Code to trigger alert (e.g., send email, push notification, etc.)
+#                 elif velocity_cm_hr >= threshold_velocity_alert_2_cm_hr:
+#                     print(f"Velocity Threshold Alert 2 exceeded for {rover_name}! Velocity: {velocity_cm_hr:.2f} cm/hr")
+#                     # Code to trigger alert (e.g., send email, push notification, etc.)
+
+
+def alert_on_velocity_threshold(rover_name, velocity_cm_hr):
+    threshold_velocity_alert_2_cm_hr = 0.25
+    threshold_velocity_alert_3_cm_hr = 1.8
+
+    if velocity_cm_hr >= threshold_velocity_alert_3_cm_hr:
+        print(f"Velocity Threshold Alert 3 exceeded for {rover_name}! Velocity: {velocity_cm_hr:.2f} cm/hr")
+        # Code to trigger alert (e.g., send email, push notification, etc.)
+    elif velocity_cm_hr >= threshold_velocity_alert_2_cm_hr:
+        print(f"Velocity Threshold Alert 2 exceeded for {rover_name}! Velocity: {velocity_cm_hr:.2f} cm/hr")
+        # Code to trigger alert (e.g., send email, push notification, etc.)
+        
+
+def check_threshold_and_alert():
+    gnss_table_names = fetch_gnss_table_names()
+
+    for table_name in gnss_table_names:
+        ts, fix_type, latitude, longitude, hacc, vacc, msl, sat_num = fetch_latest_gps_data(table_name)
+        sanity_filtered_data = prepare_and_apply_sanity_filters((ts, fix_type, latitude, longitude, hacc, vacc, msl, sat_num), horizontal_accuracy, vertical_accuracy)
+
+        if sanity_filtered_data is None:
+            continue
+
+        if not all([ts, latitude, longitude]):
+            continue
+
+        rover_name = table_name.replace('gnss_', '', 1)
+        base_name = fetch_base_name_for_rover(rover_name)
+
+        if not base_name:
+            continue
+
+        #base_lat, base_lon = fetch_base_coordinates(base_name)
+        base_lat, base_lon = fetch_reference_coordinates(base_name)
+
         if not (base_lat and base_lon):
-            continue  # Base station coordinates not found
+            continue
 
         rover_coords = (latitude, longitude)
         base_coords = (base_lat, base_lon)
-        
-        window_data = fetch_window_data(table_name, ts, window_size=10) #fetch window data
-        filtered_window_data = outlier_filter_for_latlon(window_data) # Apply outlier filter to window data
-        latest_fetched_data = filtered_window_data.iloc[0] # Check if the latest fetched data (index 0) is an outlier
-        
-        # Check if any of the values in the latest fetched data are NaN (indicating they were filtered out)
-        if latest_fetched_data.isnull().values.any():
-            print("Latest fetched data is an outlier and was filtered out.")
-        else:
-            print("Latest fetched data is not an outlier.")
-            # Proceed with distance computation using the latest fetched data
-            # Calculate distance...
-            displacement_cm = haversine_distance(rover_coords[0], rover_coords[1], base_coords[0], base_coords[1])
-            
-            # Check threshold
-            threshold_velocity_alert_2_cm_hr = 0.25
-            threshold_velocity_alert_3_cm_hr = 1.8
-            # Assuming you have time data as well for velocity calculation
-            time_difference_hours = 15/60  # Calculate time difference between current and previous GPS data
-            
-            # Calculate velocity in cm/hr
-            velocity_cm_hr = displacement_cm / time_difference_hours
-            
-            # Check velocity against thresholds
-            if velocity_cm_hr >= threshold_velocity_alert_3_cm_hr:
-                print(f"Velocity Threshold Alert 3 exceeded for {rover_name}! Velocity: {velocity_cm_hr:.2f} cm/hr")
-                # Code to trigger alert (e.g., send email, push notification, etc.)
-            elif velocity_cm_hr >= threshold_velocity_alert_2_cm_hr:
-                print(f"Velocity Threshold Alert 2 exceeded for {rover_name}! Velocity: {velocity_cm_hr:.2f} cm/hr")
-                # Code to trigger alert (e.g., send email, push notification, etc.)
-                
-                
+
+        if sanity_filtered_data:
+            window_data = fetch_window_data(table_name, ts, window_size=10)
+            filtered_window_data = outlier_filter_for_latlon(window_data)
+            latest_fetched_data = filtered_window_data.iloc[0]
+
+            if latest_fetched_data.isnull().values.any():
+                print("Latest fetched data is an outlier and was filtered out.")
+            else:
+                print("Latest fetched data is not an outlier.")
+
+                rover_distref_cm = haversine_distance(rover_coords[0], rover_coords[1], base_coords[0], base_coords[1])
+
+                try:
+                    connection = mysql.connector.connect(**db_config)
+                    cursor = connection.cursor()
+
+                    query = f"SELECT COUNT(*) FROM stored_dist_gnss_{rover_name} WHERE ts = %s"
+                    cursor.execute(query, (ts,))
+                    count = cursor.fetchone()[0]
+
+                    if count == 0:
+                        query = f"""
+                            INSERT INTO stored_dist_gnss_{rover_name} (ts, ts_written, distance_from_reference, displacement_from_previous) 
+                            VALUES (%s, NOW(), %s, NULL)
+                        """
+                        cursor.execute(query, (ts, rover_distref_cm))
+                        connection.commit()
+                        print("Displacement_cm stored successfully.")
+                    else:
+                        print("Duplicate entry found. Skipping insertion.")
+
+                    compute_and_update_displacement_from_previous(rover_name, ts, rover_distref_cm)
+
+                    # Calculate velocity in cm/hr
+                    time_difference_hours = 15/60  # Calculate time difference between current and previous GPS data
+                    velocity_cm_hr = rover_distref_cm / time_difference_hours
+
+                    # Call the alerting function
+                    alert_on_velocity_threshold(rover_name, velocity_cm_hr)
+
+                except mysql.connector.Error as error:
+                    print(f"Error storing rover_distref_cm or updating displacement_from_previous in the database: {error}")
+
+                finally:
+                    if 'connection' in locals() and connection.is_connected():
+                        cursor.close()
+                        connection.close()
