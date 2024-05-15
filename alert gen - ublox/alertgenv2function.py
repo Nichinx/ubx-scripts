@@ -522,6 +522,37 @@ def compute_and_update_displacement_from_previous(rover_name, ts, rover_distref_
             connection.close()
 
 
+def compute_velocity_cm_hr(rover_name, current_ts, time_difference_hours):
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+
+        # Fetch the displacement from the previous record
+        query = f"SELECT displacement_from_previous FROM stored_dist_gnss_{rover_name} WHERE ts = %s"
+        cursor.execute(query, (current_ts,))
+        displacement_from_previous = cursor.fetchone()
+
+        if displacement_from_previous is not None:
+            displacement_from_previous = displacement_from_previous[0]
+
+            # Calculate velocity in cm/hr
+            velocity_cm_hr = displacement_from_previous / time_difference_hours
+            return velocity_cm_hr
+
+        else:
+            print("No displacement from previous found for", rover_name)
+            return None
+
+    except mysql.connector.Error as error:
+        print(f"Error computing velocity in database for {rover_name}: {error}")
+        return None
+
+    finally:
+        if 'connection' in locals() and connection.is_connected():
+            cursor.close()
+            connection.close()
+
+
 
 # def check_threshold_and_alert():
 #     # Fetch all GNSS table names in the database
@@ -837,7 +868,8 @@ def check_threshold_and_alert():
 
                     # Calculate velocity in cm/hr
                     time_difference_hours = 15/60  # Calculate time difference between current and previous GPS data
-                    velocity_cm_hr = rover_distref_cm / time_difference_hours
+                    # velocity_cm_hr = rover_distref_cm / time_difference_hours
+                    velocity_cm_hr = compute_velocity_cm_hr(rover_name, ts, time_difference_hours)
 
                     # Call the alerting function
                     alert_on_velocity_threshold(rover_name, velocity_cm_hr)
