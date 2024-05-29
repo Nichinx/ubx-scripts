@@ -46,6 +46,26 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     distance_cm = earth_radius * c * 100
     return distance_cm #in centimeters
 
+def euclidean_distance(lat1, lon1, lat2, lon2):
+    # Convert latitude and longitude from degrees to radians
+    lat1_rad = math.radians(lat1)
+    lon1_rad = math.radians(lon1)
+    lat2_rad = math.radians(lat2)
+    lon2_rad = math.radians(lon2)
+
+    # Earth's radius in meters
+    R = 6371000  # Radius of the Earth in meters
+
+    # Calculate differences in coordinates
+    delta_lat = lat2_rad - lat1_rad
+    delta_lon = lon2_rad - lon1_rad
+
+    # Calculate Euclidean distance using the formula:
+    distance = math.sqrt((delta_lat * R)**2 + (delta_lon * R * math.cos((lat1_rad + lat2_rad) / 2))**2)
+    distance_cm = distance * 100
+
+    return distance_cm
+
 
 def fetch_gnss_table_names():
     try:
@@ -843,7 +863,7 @@ def check_threshold_and_alert():
             else:
                 print("Latest fetched data is not an outlier.")
 
-                rover_distref_cm = haversine_distance(rover_coords[0], rover_coords[1], base_coords[0], base_coords[1])
+                rover_distref_cm = euclidean_distance(rover_coords[0], rover_coords[1], base_coords[0], base_coords[1])
 
                 try:
                     connection = mysql.connector.connect(**db_config)
