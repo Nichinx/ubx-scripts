@@ -1,3 +1,17 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jun  4 11:38:11 2024
+
+@author: nichm
+"""
+
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jun  4 10:26:20 2024
+
+@author: nichm
+"""
+
 import mysql.connector
 import math
 import numpy as np
@@ -54,6 +68,8 @@ def fetch_gnss_table_names():
             connection.close()
 
 def fetch_all_gps_data(table_name):
+    all_data_instances = []  # List to store DataFrames for each instance
+
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
@@ -64,16 +80,40 @@ def fetch_all_gps_data(table_name):
 
         columns = ['ts', 'fix_type', 'latitude', 'longitude', 'hacc', 'vacc', 'msl', 'sat_num']
         all_data = pd.DataFrame(rows, columns=columns)
-        return all_data
+
+        # Iterate through each row and fetch the previous 4 hours of data
+        for _, row in all_data.iterrows():
+            ts = row['ts']
+            previous_ts = ts - timedelta(hours=4)
+            
+            # Convert timestamps to string representation in MySQL format
+            ts_str = ts.strftime('%Y-%m-%d %H:%M:%S')
+            previous_ts_str = previous_ts.strftime('%Y-%m-%d %H:%M:%S')
+            
+            # Adjust the query to fetch data within the 4-hour window
+            query = f"""
+            SELECT ts, fix_type, latitude, longitude, hacc, vacc, msl, sat_num 
+            FROM {table_name} 
+            WHERE ts >= %s AND ts <= %s
+            """
+            cursor.execute(query, (previous_ts_str, ts_str))
+            previous_rows = cursor.fetchall()
+
+            # Create a new DataFrame for each instance with the original and previous data
+            instance_data = pd.DataFrame(previous_rows, columns=columns)
+            instance_data['original_ts'] = ts  # Add original timestamp for reference
+            all_data_instances.append(instance_data)
 
     except mysql.connector.Error as error:
         print(f"Error fetching GPS data from {table_name}: {error}")
-        return pd.DataFrame()
 
     finally:
         if 'connection' in locals() and connection.is_connected():
             cursor.close()
             connection.close()
+
+    return all_data_instances
+
 
 def fetch_base_name_for_rover(rover_name):
     try:
@@ -135,8 +175,8 @@ def prepare_and_apply_sanity_filters(df, horizontal_accuracy, vertical_accuracy)
 
 def outlier_filter_for_latlon(df):
     df = df.copy()
-    dfmean = df[['latitude', 'longitude']].rolling(window=10, min_periods=1).mean()
-    dfsd = df[['latitude', 'longitude']].rolling(window=10, min_periods=1).std()
+    dfmean = df[['latitude', 'longitude']].rolling(window=8, min_periods=1).mean()
+    dfsd = df[['latitude', 'longitude']].rolling(window=8, min_periods=1).std()
 
     dfulimits = dfmean + dfsd
     dfllimits = dfmean - dfsd
@@ -148,21 +188,21 @@ def outlier_filter_for_latlon(df):
 
     return df
 
-def compute_and_update_displacement_from_previous(rover_name, ts_end_str, rover_distref_cm):
+def compute_and_update_displacement_from_previous(rover_name, ts, rover_distref_cm):
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
 
-        query = f"SELECT distance_from_reference FROM stored_dist_gnss_{rover_name} WHERE ts_end < %s ORDER BY ts_end DESC LIMIT 1"
-        cursor.execute(query, (ts_end_str,))
+        query = f"SELECT distance_from_reference FROM stored_dist_gnss_{rover_name} WHERE ts < %s ORDER BY ts DESC LIMIT 1"
+        cursor.execute(query, (ts,))
         previous_displacement_cm = cursor.fetchone()
 
         if previous_displacement_cm is not None:
             previous_displacement_cm = previous_displacement_cm[0]
             displacement_from_previous = abs(rover_distref_cm - previous_displacement_cm)
 
-            update_query = f"UPDATE stored_dist_gnss_{rover_name} SET displacement_from_previous = %s WHERE ts_end = %s"
-            cursor.execute(update_query, (displacement_from_previous, ts_end_str))
+            update_query = f"UPDATE stored_dist_gnss_{rover_name} SET displacement_from_previous = %s WHERE ts = %s"
+            cursor.execute(update_query, (displacement_from_previous, ts))
             connection.commit()
             print("Displacement from previous updated successfully.")
         else:
@@ -177,15 +217,15 @@ def compute_and_update_displacement_from_previous(rover_name, ts_end_str, rover_
             connection.close()
 
 
-def compute_velocity_cm_hr(rover_name, current_ts_end_str, time_difference_hours):
+def compute_velocity_cm_hr(rover_name, ts, time_difference_hours):
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
 
-        print(f"Computing velocity for {rover_name} at {current_ts_end_str}")
+        print(f"Computing velocity for {rover_name} at {ts}")
 
-        query = f"SELECT displacement_from_previous FROM stored_dist_gnss_{rover_name} WHERE ts_end = %s"
-        cursor.execute(query, (current_ts_end_str,))
+        query = f"SELECT displacement_from_previous FROM stored_dist_gnss_{rover_name} WHERE ts = %s"
+        cursor.execute(query, (ts,))
         displacement_from_previous = cursor.fetchone()
 
         if displacement_from_previous is not None:
@@ -218,36 +258,6 @@ def alert_on_velocity_threshold(rover_name, velocity_cm_hr):
     else:
         print("-----no alert------")
 
-# def get_8_hour_windows(df):
-#     df['ts'] = pd.to_datetime(df['ts'])
-#     df['date'] = df['ts'].dt.date  # Extract date from timestamp
-#     df = df.set_index('ts')  # Set 'ts' as the index
-#     df = df.sort_index()
-
-#     windows = {}
-#     time_boundaries = [
-#         ('00:00:01', '07:59:59'),
-#         ('08:00:01', '15:59:59'),
-#         ('16:00:01', '23:59:59')
-#     ]
-
-#     for start, end in time_boundaries:
-#         # start_time = pd.Timestamp(start).strftime('%H:%M:%S')
-#         # end_time = pd.Timestamp(end).strftime('%H:%M:%S')
-#         start_time = pd.to_datetime(start).time()
-#         end_time = pd.to_datetime(end).time()
-
-#         for date, group in df.groupby('date'):
-#             group_window = group.between_time(start_time, end_time)
-#             if date not in windows:
-#                 windows[date] = []
-#             if not group_window.empty:
-#                 # Reset the index to retain the 'ts' column
-#                 group_window = group_window.reset_index()
-#                 windows[date].append(group_window)
-
-#     return windows
-
 def get_8_hour_windows(df):
     df['ts'] = pd.to_datetime(df['ts'])
     df['date'] = df['ts'].dt.date  # Extract date from timestamp
@@ -268,39 +278,6 @@ def get_8_hour_windows(df):
             if not group_window.empty:
                 if date not in windows:
                     windows[date] = []
-                # Include the start timestamp in the window
-                windows[date].append(group_window.append(group_window.iloc[0]))
-
-    return windows
-
-
-def get_4_hour_windows(df):
-    df['ts'] = pd.to_datetime(df['ts'])
-    df['date'] = df['ts'].dt.date  # Extract date from timestamp
-    df = df.set_index('ts')  # Set 'ts' as the index
-    df = df.sort_index()
-
-    windows = {}
-    time_boundaries = [
-        ('00:01', '04:00'),
-        ('04:01', '08:00'),
-        ('08:01', '12:00'),
-        ('12:01', '16:00'),
-        ('16:01', '20:00'),
-        ('20:01', '00:00')
-    ]
-
-    for start, end in time_boundaries:
-        start_time = pd.Timestamp(start).strftime('%H:%M:%S')
-        end_time = pd.Timestamp(end).strftime('%H:%M:%S')
-
-        for date, group in df.groupby('date'):
-            group_window = group.between_time(start_time, end_time)
-            if date not in windows:
-                windows[date] = []
-            if not group_window.empty:
-                # Reset the index to retain the 'ts' column
-                group_window = group_window.reset_index()
                 windows[date].append(group_window)
 
     return windows
@@ -326,86 +303,89 @@ def is_processed(rover_name, ts_end_str):
             cursor.close()
             connection.close()
 
-
-##recent 8 hrs only:
+##all data fetching:
 def check_threshold_and_alert():
     gnss_table_names = fetch_gnss_table_names()
 
     for table_name in gnss_table_names:
-        recent_data = fetch_recent_gps_data(table_name)
-        if recent_data.empty:
+        all_data_instances = fetch_all_gps_data(table_name)
+        if not all_data_instances:
             continue
         
         rover_name = table_name.replace('gnss_', '', 1)
         base_name = fetch_base_name_for_rover(rover_name)
         if not base_name:
             continue
-        
+
         base_coords = fetch_reference_coordinates(base_name)
         if not base_coords:
             continue
-        
+
         base_lat, base_lon = base_coords
 
-        for _, row in recent_data.iterrows():
-            ts_end_str = row['ts'].strftime('%Y-%m-%d %H:%M:%S')
-
-            if is_processed(rover_name, ts_end_str):
-                print(f"Entry for {rover_name} at {ts_end_str} has already been processed. Skipping...")
+        for instance_data in all_data_instances:
+            print('instance_data len: ', len(instance_data))
+            if instance_data.empty:
                 continue
+
+            filtered_data = prepare_and_apply_sanity_filters(instance_data, horizontal_accuracy, vertical_accuracy)
+            if filtered_data.empty:
+                continue
+
+            filtered_data = outlier_filter_for_latlon(filtered_data)
+            print('filtered_data len:', len(filtered_data), '', 'filtered_data: ', filtered_data)
+            if filtered_data.empty:
+                continue
+
+            # Compute average latitude and longitude
+            avg_latitude = filtered_data['latitude'].mean()
+            avg_longitude = filtered_data['longitude'].mean()
+
+            # Use the average latitude and longitude for calculations
+            rover_coords = (avg_latitude, avg_longitude)
+            print("avg_latitude: ", avg_latitude, " ", "avg_longitude: ", avg_longitude)
+
+            rover_distref_cm = euclidean_distance(avg_latitude, avg_longitude, base_lat, base_lon)
+            print('rover_distref_cm: ', rover_distref_cm)
             
             try:
                 connection = mysql.connector.connect(**db_config)
                 cursor = connection.cursor()
-                
-                ts_start = recent_data['ts'].iloc[0]
-                ts_end = recent_data['ts'].iloc[-1]
 
-                filtered_data = prepare_and_apply_sanity_filters(recent_data, horizontal_accuracy, vertical_accuracy)
-                if filtered_data.empty:
-                    continue
+                ts = instance_data['ts'].iloc[-1]
 
-                filtered_data = outlier_filter_for_latlon(filtered_data)
-                if filtered_data.empty:
-                    continue
+                # Convert Python timestamp to MySQL-compatible string format
+                ts = ts.strftime('%Y-%m-%d %H:%M:%S')
+                print(f"Window ts time (string format): {ts}")
 
-                avg_latitude = filtered_data['latitude'].mean()
-                avg_longitude = filtered_data['longitude'].mean()
+                query = f"SELECT COUNT(*) FROM stored_dist_gnss_{rover_name} WHERE ts = %s"
+                cursor.execute(query, (ts,))
+                count = cursor.fetchone()[0]
 
-                rover_coords = (avg_latitude, avg_longitude)
-                rover_distref_cm = euclidean_distance(avg_latitude, avg_longitude, base_lat, base_lon)
-
-                
-                ts_start_str = ts_start.strftime('%Y-%m-%d %H:%M:%S')
-                ts_end_str = ts_end.strftime('%Y-%m-%d %H:%M:%S')
-                print(f"Window start time (string format): {ts_start_str}")
-                print(f"Window end time (string format): {ts_end_str}")
-
-                # Check for duplicate entries and update the database accordingly
-                if not is_processed(rover_name, ts_end_str):
-                    query = f"INSERT INTO stored_dist_gnss_{rover_name} (ts_start, ts_end, ts_written, distance_from_reference, displacement_from_previous) VALUES (%s, %s, NOW(), %s, NULL)"
-                    cursor.execute(query, (ts_start_str, ts_end_str, rover_distref_cm))
+                if count == 0:
+                    query = f"INSERT INTO stored_dist_gnss_{rover_name} (ts, ts_written, distance_from_reference, displacement_from_previous) VALUES (%s, NOW(), %s, NULL)"
+                    cursor.execute(query, (ts, rover_distref_cm))
                     connection.commit()
                     print("Distance from reference stored successfully.")
                 else:
                     print("Duplicate entry found. Skipping insertion.")
 
-                # Calculate time difference and update displacement and velocity information
-                previous_ts_query = f"SELECT ts_end FROM stored_dist_gnss_{rover_name} WHERE ts_end < %s ORDER BY ts_end DESC LIMIT 1"
-                cursor.execute(previous_ts_query, (ts_end_str,))
+
+                previous_ts_query = f"SELECT ts FROM stored_dist_gnss_{rover_name} WHERE ts < %s ORDER BY ts DESC LIMIT 1"
+                cursor.execute(previous_ts_query, (ts,))
                 previous_ts_row = cursor.fetchone()
 
                 if previous_ts_row is not None:
                     previous_ts = previous_ts_row[0]
-                    time_difference_hours = (ts_end - previous_ts).total_seconds() / 3600  # Calculate time difference in hours
+                    time_difference_hours = 4  # Explicitly setting to 4 hours
 
-                    compute_and_update_displacement_from_previous(rover_name, ts_end_str, rover_distref_cm)
+                    compute_and_update_displacement_from_previous(rover_name, ts, rover_distref_cm)
 
-                    velocity_cm_hr = compute_velocity_cm_hr(rover_name, ts_end_str, time_difference_hours)
+                    velocity_cm_hr = compute_velocity_cm_hr(rover_name, ts, time_difference_hours)
 
                     if velocity_cm_hr is not None:
-                        update_velocity_query = f"UPDATE stored_dist_gnss_{rover_name} SET velocity_cm_hr = %s WHERE ts_end = %s"
-                        cursor.execute(update_velocity_query, (velocity_cm_hr, ts_end_str))
+                        update_velocity_query = f"UPDATE stored_dist_gnss_{rover_name} SET velocity_cm_hr = %s WHERE ts = %s"
+                        cursor.execute(update_velocity_query, (velocity_cm_hr, ts))
                         connection.commit()
                         print("Velocity updated successfully.")
                         alert_on_velocity_threshold(rover_name, velocity_cm_hr)
@@ -418,107 +398,9 @@ def check_threshold_and_alert():
                     cursor.close()
                     connection.close()
 
-##all data fetching:
-# def check_threshold_and_alert():
-#     gnss_table_names = fetch_gnss_table_names()
-
-#     for table_name in gnss_table_names:
-#         all_data = fetch_all_gps_data(table_name) ##--> fetching all stored data from table and not gathering latest/recent
-#         if all_data.empty:
-#             continue
-
-#         #windows = get_4_hour_windows(all_data)
-#         windows = get_8_hour_windows(all_data) #deactivate function if running realtime
-#         rover_name = table_name.replace('gnss_', '', 1)
-#         base_name = fetch_base_name_for_rover(rover_name)
-#         if not base_name:
-#             continue
-
-#         base_coords = fetch_reference_coordinates(base_name)
-#         if not base_coords:
-#             continue
-
-#         base_lat, base_lon = base_coords
-
-#         for date, window_list in windows.items():
-#             for window_df in window_list:
-#                 if window_df.empty:
-#                     continue
-
-#                 filtered_data = prepare_and_apply_sanity_filters(window_df, horizontal_accuracy, vertical_accuracy)
-#                 if filtered_data.empty:
-#                     continue
-
-#                 filtered_data = outlier_filter_for_latlon(filtered_data)
-#                 if filtered_data.empty:
-#                     continue
-
-#                 # Compute average latitude and longitude
-#                 avg_latitude = filtered_data['latitude'].mean()
-#                 avg_longitude = filtered_data['longitude'].mean()
-
-#                 # Use the average latitude and longitude for calculations
-#                 rover_coords = (avg_latitude, avg_longitude)
-#                 print("avg_latitude: ", avg_latitude, " ", "avg_longitude: ", avg_longitude)
-
-#                 rover_distref_cm = euclidean_distance(avg_latitude, avg_longitude, base_lat, base_lon)
-
-#                 try:
-#                     connection = mysql.connector.connect(**db_config)
-#                     cursor = connection.cursor()
-
-#                     ts_start = filtered_data['ts'].iloc[0]
-#                     ts_end = filtered_data['ts'].iloc[-1]
-
-#                     # Convert Python timestamp to MySQL-compatible string format
-#                     ts_start_str = ts_start.strftime('%Y-%m-%d %H:%M:%S')
-#                     ts_end_str = ts_end.strftime('%Y-%m-%d %H:%M:%S')
-#                     print(f"Window start time (string format): {ts_start_str}")
-#                     print(f"Window end time (string format): {ts_end_str}")
-
-#                     query = f"SELECT COUNT(*) FROM stored_dist_gnss_{rover_name} WHERE ts_start = %s AND ts_end = %s"
-#                     cursor.execute(query, (ts_start_str, ts_end_str))
-#                     count = cursor.fetchone()[0]
-
-#                     if count == 0:
-#                         query = f"INSERT INTO stored_dist_gnss_{rover_name} (ts_start, ts_end, ts_written, distance_from_reference, displacement_from_previous) VALUES (%s, %s, NOW(), %s, NULL)"
-#                         cursor.execute(query, (ts_start_str, ts_end_str, rover_distref_cm))
-#                         connection.commit()
-#                         print("Distance from reference stored successfully.")
-#                     else:
-#                         print("Duplicate entry found. Skipping insertion.")
-
-#                     previous_ts_query = f"SELECT ts_end FROM stored_dist_gnss_{rover_name} WHERE ts_end < %s ORDER BY ts_end DESC LIMIT 1"
-#                     cursor.execute(previous_ts_query, (ts_end_str,))
-#                     previous_ts_row = cursor.fetchone()
-
-#                     if previous_ts_row is not None:
-#                         previous_ts = previous_ts_row[0]
-#                         time_difference_hours = 8  # Explicitly setting to 8 hours
-
-#                         compute_and_update_displacement_from_previous(rover_name, ts_end_str, rover_distref_cm)
-
-#                         velocity_cm_hr = compute_velocity_cm_hr(rover_name, ts_end_str, time_difference_hours)
-
-#                         if velocity_cm_hr is not None:
-#                             update_velocity_query = f"UPDATE stored_dist_gnss_{rover_name} SET velocity_cm_hr = %s WHERE ts_end = %s"
-#                             cursor.execute(update_velocity_query, (velocity_cm_hr, ts_end_str))
-#                             connection.commit()
-#                             print("Velocity updated successfully.")
-#                             alert_on_velocity_threshold(rover_name, velocity_cm_hr)
-
-#                 except mysql.connector.Error as error:
-#                     print(f"Error: {error}")
-
-#                 finally:
-#                     if 'connection' in locals() and connection.is_connected():
-#                         cursor.close()
-#                         connection.close()
-
 
 # Schedule this function to run every 4 hours using a scheduling library like 'schedule' or cron jobs in a real deployment.
 check_threshold_and_alert()
-
 
 ##fetching data timedelta 8hrs
 def data_exists_in_stored_table(rover_name, ts_start, ts_end):
