@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jun  4 11:38:11 2024
-
-@author: nichm
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Created on Tue Jun  4 10:26:20 2024
 
 @author: nichm
@@ -178,8 +171,8 @@ def outlier_filter_for_latlon(df):
     dfmean = df[['latitude', 'longitude']].rolling(window=8, min_periods=1).mean()
     dfsd = df[['latitude', 'longitude']].rolling(window=8, min_periods=1).std()
 
-    dfulimits = dfmean + dfsd
-    dfllimits = dfmean - dfsd
+    dfulimits = dfmean + (1 * dfsd) #1std
+    dfllimits = dfmean - (1 * dfsd)
 
     df['latitude'] = df['latitude'].where((df['latitude'] <= dfulimits['latitude']) & (df['latitude'] >= dfllimits['latitude']), np.nan)
     df['longitude'] = df['longitude'].where((df['longitude'] <= dfulimits['longitude']) & (df['longitude'] >= dfllimits['longitude']), np.nan)
