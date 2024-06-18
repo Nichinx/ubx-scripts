@@ -23,6 +23,27 @@ db_config = {
 horizontal_accuracy = 0.0141
 vertical_accuracy = 0.01205
 
+
+######################### UTM
+# from pyproj import Proj, transform
+
+# # Define the projection for WGS84 (latitude and longitude)
+# wgs84 = Proj(proj='latlong', datum='WGS84')
+
+# # Define the projection for UTM Zone 51N
+# utm_zone_51 = Proj(proj='utm', zone=51, datum='WGS84')
+
+# def convert_to_utm(lat, lon):
+#     easting, northing = transform(wgs84, utm_zone_51, lon, lat)
+#     return easting, northing
+
+# def euclidean_distance(x1, y1, x2, y2):
+#     distance = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+#     distance_cm = distance * 100  # Convert to centimeters
+#     return distance_cm
+#################################
+
+
 def euclidean_distance(lat1, lon1, lat2, lon2):
     lat1_rad = math.radians(lat1)
     lon1_rad = math.radians(lon1)
@@ -166,18 +187,19 @@ def prepare_and_apply_sanity_filters(df, horizontal_accuracy, vertical_accuracy)
 
     return df
 
-def outlier_filter_for_latlon(df):
+def outlier_filter_for_latlon_with_msl(df):
     df = df.copy()
-    dfmean = df[['latitude', 'longitude']].rolling(window=8, min_periods=1).mean()
-    dfsd = df[['latitude', 'longitude']].rolling(window=8, min_periods=1).std()
+    dfmean = df[['latitude', 'longitude', 'msl']].rolling(window=8, min_periods=1).mean()
+    dfsd = df[['latitude', 'longitude', 'msl']].rolling(window=8, min_periods=1).std()
 
-    dfulimits = dfmean + (1 * dfsd) #1std
+    dfulimits = dfmean + (1 * dfsd)  # 1 std
     dfllimits = dfmean - (1 * dfsd)
 
     df['latitude'] = df['latitude'].where((df['latitude'] <= dfulimits['latitude']) & (df['latitude'] >= dfllimits['latitude']), np.nan)
     df['longitude'] = df['longitude'].where((df['longitude'] <= dfulimits['longitude']) & (df['longitude'] >= dfllimits['longitude']), np.nan)
+    df['msl'] = df['msl'].where((df['msl'] <= dfulimits['msl']) & (df['msl'] >= dfllimits['msl']), np.nan)
 
-    df = df.dropna(subset=['latitude', 'longitude'])
+    df = df.dropna(subset=['latitude', 'longitude', 'msl'])
 
     return df
 
@@ -325,7 +347,7 @@ def check_threshold_and_alert():
             if filtered_data.empty:
                 continue
 
-            filtered_data = outlier_filter_for_latlon(filtered_data)
+            filtered_data = outlier_filter_for_latlon_with_msl(filtered_data)
             print('filtered_data len:', len(filtered_data), '', 'filtered_data: ', filtered_data)
             if filtered_data.empty:
                 continue
@@ -393,7 +415,7 @@ def check_threshold_and_alert():
 
 
 # Schedule this function to run every 4 hours using a scheduling library like 'schedule' or cron jobs in a real deployment.
-check_threshold_and_alert()
+# check_threshold_and_alert()
 
 ##fetching data timedelta 8hrs
 def data_exists_in_stored_table(rover_name, ts_start, ts_end):
