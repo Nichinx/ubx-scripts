@@ -178,6 +178,19 @@ spearman_corr_temp_msl, spearman_p_temp_msl = spearmanr(temp, msl)
 pearson_corr_temp_distance, pearson_p_temp_distance = pearsonr(temp, distance)
 spearman_corr_temp_distance, spearman_p_temp_distance = spearmanr(temp, distance)
 
+# Print results
+print("Pearson Correlation Results:")
+print(f"Latitude vs Temp: Correlation = {pearson_corr_temp_latitude}, p-value = {pearson_p_temp_latitude}")
+print(f"Longitude vs Temp: Correlation = {pearson_corr_temp_longitude}, p-value = {pearson_p_temp_longitude}")
+print(f"MSL vs Temp: Correlation = {pearson_corr_temp_msl}, p-value = {pearson_p_temp_msl}")
+print(f"Distance vs Temp: Correlation = {pearson_corr_temp_distance}, p-value = {pearson_p_temp_distance}")
+
+print("\nSpearman Correlation Results:")
+print(f"Latitude vs Temp: Correlation = {spearman_corr_temp_latitude}, p-value = {spearman_p_temp_latitude}")
+print(f"Longitude vs Temp: Correlation = {spearman_corr_temp_longitude}, p-value = {spearman_p_temp_longitude}")
+print(f"MSL vs Temp: Correlation = {spearman_corr_temp_msl}, p-value = {spearman_p_temp_msl}")
+print(f"Distance vs Temp: Correlation = {spearman_corr_temp_distance}, p-value = {spearman_p_temp_distance}")
+
 # Interpretation function
 def interpret_correlation_results(correlation, p_value, alpha=0.05):
     interpretation = ""

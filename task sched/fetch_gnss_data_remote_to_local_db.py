@@ -41,7 +41,7 @@ def fetch_latest_data_from_remote(table_name):
         dyna_db_cursor = dyna_db.cursor()
         
         # Fetch the latest data
-        query = f"SELECT ts, fix_type, latitude, longitude, hacc, vacc, msl, sat_num, temp, volt FROM {table_name} WHERE ts > NOW() - INTERVAL 2 hour"
+        query = f"SELECT ts, fix_type, latitude, longitude, hacc, vacc, msl, sat_num, temp, volt FROM {table_name} WHERE ts > NOW() - INTERVAL 4 hour"
         dyna_db_cursor.execute(query)
         latest_data = dyna_db_cursor.fetchall()
         

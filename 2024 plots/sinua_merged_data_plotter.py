@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jun  7 22:44:23 2024
+Created on Sat Jun 29 03:13:02 2024
 
 @author: nichm
 """
@@ -13,6 +13,46 @@ import math
 from matplotlib.ticker import MaxNLocator
 import matplotlib.dates as mdates
 from matplotlib.ticker import ScalarFormatter
+
+
+
+# Connect to the database
+dyna_db = mysql.connector.connect(
+            host="192.168.150.112",
+            database="analysis_db",
+            user="pysys_local",
+            password="NaCAhztBgYZ3HwTkvHwwGVtJn5sVMFgg",
+            )
+
+
+query_old = "SELECT * FROM analysis_db.old_gnss_sinsa where ts between '2022-07-27' and '2023-06-10' order by ts"
+query_new = "SELECT * FROM analysis_db.gnss_sinua where ts > '2024-03-18' order by ts"
+df_old = pd.read_sql(query_old, dyna_db)
+df_new = pd.read_sql(query_new, dyna_db)
+
+# Standardize column names
+df_old.rename(columns={'accuracy': 'hacc'}, inplace=True)
+
+# Add missing columns with null values in df_old
+df_old['vacc'] = None
+df_old['sat_num'] = None
+
+# Merge DataFrames (append)
+df_merged = pd.concat([df_old, df_new], ignore_index=True)
+
+# Sort by 'ts' column
+df_merged.sort_values(by='ts', inplace=True)
+
+# Rearrange columns if needed
+df_merged = df_merged[['ts', 'fix_type', 'latitude', 'longitude', 'hacc', 'vacc', 'msl', 'sat_num', 'temp', 'volt']]
+
+# Optionally, reset index
+df_merged.reset_index(drop=True, inplace=True)
+df = df_merged
+
+# Fixed coordinates - SIN
+fixed_lat = 16.723467
+fixed_lon = 120.7812924
 
 
 def euclidean_distance(lat1, lon1, lat2, lon2):
@@ -31,14 +71,24 @@ def euclidean_distance(lat1, lon1, lat2, lon2):
 
     return distance_cm
 
+
+# Calculate distances
+df['distance'] = df.apply(lambda row: euclidean_distance(row['latitude'], row['longitude'], fixed_lat, fixed_lon), axis=1)
+print('df = ', len(df))
+
+
 def prepare_and_apply_sanity_filters(df, hacc, vacc):
+    # Fill None values in vacc and sat_num
+    df['vacc'].fillna(np.inf, inplace=True)
+    df['sat_num'].fillna(0, inplace=True)
+    
     df['msl'] = np.round(df['msl'], 2)
-    df = df[(df['fix_type'] == 2) & (df['sat_num'] > 28)]
+    df = df[(df['fix_type'] == 2)] #& (df['sat_num'] > 28)]
 
     if df.empty:
         return df
 
-    df = df[(df['hacc'] == hacc) & (df['vacc'] <= vacc)]
+    df = df[(df['hacc'] == hacc)] #& (df['vacc'] <= vacc)]
     df = df.reset_index(drop=True).sort_values(by='ts', ascending=True, ignore_index=True)
 
     return df
@@ -48,7 +98,7 @@ def outlier_filter_for_latlon_with_msl(df):
     dfmean = df[['latitude', 'longitude', 'msl']].rolling(window=20, min_periods=1).mean()
     dfsd = df[['latitude', 'longitude', 'msl']].rolling(window=20, min_periods=1).std()
 
-    dfulimits = dfmean + (2 * dfsd)  # 1 std
+    dfulimits = dfmean + (2 * dfsd)  # 2 std
     dfllimits = dfmean - (2 * dfsd)
 
     df['latitude'] = df['latitude'].where((df['latitude'] <= dfulimits['latitude']) & (df['latitude'] >= dfllimits['latitude']), np.nan)
@@ -94,54 +144,6 @@ def hybrid_outlier_filter_for_latlon_with_msl(df, rolling_window=20, rolling_fac
     return df
 
 
-# Connect to the database
-dyna_db = mysql.connector.connect(
-            host="192.168.150.112",
-            database="analysis_db",
-            user="pysys_local",
-            password="NaCAhztBgYZ3HwTkvHwwGVtJn5sVMFgg",
-            )
-
-# Query data
-# query = "SELECT * FROM analysis_db.gnss_nagua where ts between '2024-05-10' and '2024-06-10' order by ts"
-# query = "SELECT * FROM analysis_db.gnss_nagua where ts > '2024-03-22' order by ts"
-query = "SELECT * FROM analysis_db.gnss_nagua where ts > '2024-04-22' order by ts"
-# query = "SELECT * FROM analysis_db.gnss_sinua where ts > '2024-03-18' order by ts"
-# query = "SELECT ts, latitude, longitude, msl FROM old_gnss_sinsa UNION ALL SELECT ts, latitude, longitude, msl FROM gnss_sinua order by ts"
-# query = """SELECT ts, latitude, longitude, msl 
-#             FROM old_gnss_sinsa 
-#             WHERE ts BETWEEN '2022-07-27' AND '2023-06-10' 
-#             UNION ALL 
-#             SELECT ts, latitude, longitude, msl 
-#             FROM gnss_sinua 
-#             WHERE ts > '2024-03-17' 
-#             ORDER BY ts"""
-# query = "SELECT * FROM analysis_db.old_gnss_sinsa where ts between '2022-07-27' and '2023-06-10' order by ts"
-# query = "SELECT * FROM analysis_db.gnss_sinua where ts > '2024-03-18' order by ts"
-df = pd.read_sql(query, dyna_db)
-
-# Fixed coordinates - NAG
-fixed_lat = 16.6267267
-fixed_lon = 120.417167
-
-# # Fixed coordinates - SIN
-# fixed_lat = 16.723467
-# fixed_lon = 120.7812924
-
-# Calculate distances
-df['distance'] = df.apply(lambda row: euclidean_distance(row['latitude'], row['longitude'], fixed_lat, fixed_lon), axis=1)
-print('df len = ', len(df))
-
-# Unfiltered plot
-fig, axs = plt.subplots(4, 1, sharex=True, figsize=(12, 12))
-fig.suptitle('NAGUA (outlier plot)')
-
-# Unfiltered plot (optional)
-# axs[0].plot(df['ts'], df['latitude'], 'b-', alpha=0.3)
-# axs[1].plot(df['ts'], df['longitude'], 'g-', alpha=0.3)
-# axs[2].plot(df['ts'], df['msl'], 'r-', alpha=0.3)
-# axs[3].plot(df['ts'], df['distance'], 'k-', alpha=0.3)
-
 # Apply filters
 df_filtered_sanity = prepare_and_apply_sanity_filters(df, hacc=0.0141, vacc=0.0121)
 print('df_filtered sanity len = ', len(df_filtered_sanity))
@@ -152,36 +154,21 @@ print('df_filtered outlier len = ', len(df_filtered_outlier))
 df_filtered_hybrid = hybrid_outlier_filter_for_latlon_with_msl(df_filtered_sanity)
 print('df_filtered hybrid len = ', len(df_filtered_hybrid))
 
-# df_filtered = df
-# Filtered plot with labels and legends
-# axs[0].plot(df_filtered['ts'], df_filtered['latitude'], 'b-', label='Filtered Latitude')
-# axs[0].set_ylabel('Latitude')
-# axs[0].legend()
-# axs[0].set_title('Latitude vs Timestamp')
 
-# axs[1].plot(df_filtered['ts'], df_filtered['longitude'], 'g-', label='Filtered Longitude')
-# axs[1].set_ylabel('Longitude')
-# axs[1].legend()
-# axs[1].set_title('Longitude vs Timestamp')
-
-# axs[2].plot(df_filtered['ts'], df_filtered['msl'], 'r-', label='Filtered MSL')
-# axs[2].set_ylabel('MSL')
-# axs[2].legend()
-# axs[2].set_title('MSL vs Timestamp')
-
-# axs[3].plot(df_filtered['ts'], df_filtered['distance'], 'k-', label='Filtered Distance')
-# axs[3].set_ylabel('Distance (cm)')
-# axs[3].set_xlabel('Timestamp')
-# axs[3].legend()
-# axs[3].set_title('Distance vs Timestamp')
-
-# # Show legends
-# for ax in axs:
-#     ax.legend()
+df_filtered = df_filtered_outlier #change if outlier or hybrid
 
 
+# Unfiltered plot
+fig, axs = plt.subplots(4, 1, sharex=True, figsize=(12, 12))
+fig.suptitle('2022 to 2024 SINUA (outlier plot)')
 
-df_filtered = df_filtered_outlier #change here if outlier or hybrid
+# Unfiltered plot (optional)
+# axs[0].plot(df['ts'], df['latitude'], 'b-', alpha=0.3)
+# axs[1].plot(df['ts'], df['longitude'], 'g-', alpha=0.3)
+# axs[2].plot(df['ts'], df['msl'], 'r-', alpha=0.3)
+# axs[3].plot(df['ts'], df['distance'], 'k-', alpha=0.3)
+
+
 # Scalar formatter for y-axis
 formatter = ScalarFormatter(useOffset=False, useMathText=False)
 formatter.set_scientific(False)
@@ -216,73 +203,8 @@ axs[3].set_title('Distance vs Timestamp')
 for ax in axs:
     ax.legend()
 
-
-
 plt.show()
 
-# # Close the connection
-# dyna_db.close()
-
-
-
-#######################
-# # Calculate distances
-# df['distance'] = df.apply(lambda row: euclidean_distance(row['latitude'], row['longitude'], fixed_lat, fixed_lon), axis=1)
-# print('df len = ', len(df))
-
-# # # Apply filters
-# df_filtered = prepare_and_apply_sanity_filters(df, hacc=0.0141, vacc=0.0121)
-# print('df_filtered 1 len = ', len(df_filtered))
-# df_filtered = outlier_filter_for_latlon_with_msl(df)
-# print('df_filtered 2 len = ', len(df_filtered))
-
-# df_filtered=df
-
-# # Convert timestamps to strings for categorical plotting
-# # df_filtered['ts'] = df_filtered['ts'].astype(str)
-
-# # Ensure 'ts' column is in datetime format
-# df_filtered['ts'] = pd.to_datetime(df_filtered['ts'])
-
-# # Plotting
-# fig, axs = plt.subplots(4, 1, sharex=True, figsize=(12, 12))
-# fig.suptitle('Data Analysis')
-
-# # Create an index for the available data points
-# index = range(len(df_filtered))
-
-# # Filtered plot with labels and legends
-# axs[0].plot(index, df_filtered['latitude'], 'b-', label='Filtered Latitude')
-# axs[0].set_ylabel('Latitude')
-# axs[0].legend()
-# axs[0].set_title('Latitude vs Timestamp')
-
-# axs[1].plot(index, df_filtered['longitude'], 'g-', label='Filtered Longitude')
-# axs[1].set_ylabel('Longitude')
-# axs[1].legend()
-# axs[1].set_title('Longitude vs Timestamp')
-
-# axs[2].plot(index, df_filtered['msl'], 'r-', label='Filtered MSL')
-# axs[2].set_ylabel('MSL')
-# axs[2].legend()
-# axs[2].set_title('MSL vs Timestamp')
-
-# axs[3].plot(index, df_filtered['distance'], 'k-', label='Filtered Distance')
-# axs[3].set_ylabel('Distance (cm)')
-# axs[3].set_xlabel('Timestamp')
-# axs[3].legend()
-# axs[3].set_title('Distance vs Timestamp')
-
-# # # Set x-tick labels for the fourth subplot
-# # axs[3].set_xticks(index[::len(index)//10])  # Limit the number of ticks
-# # axs[3].set_xticklabels(df_filtered['ts'].dt.strftime('%Y-%m-%d %H:%M').iloc[::len(index)//10], rotation=45)
-
-# # # Suppress x-ticks for the first three subplots
-# # for ax in axs[:-1]:
-# #     ax.set_xticklabels([])
-
-# # plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-# plt.show()
 
 # Close the connection
 dyna_db.close()

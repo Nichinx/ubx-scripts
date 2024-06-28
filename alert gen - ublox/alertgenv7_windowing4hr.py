@@ -17,14 +17,14 @@ db_config = {
     'host': 'localhost',
     'user': 'root',
     'password': 'admin123',
-    'database': 'new_schema'
+    'database': 'new_schema_2'
 }
 
 horizontal_accuracy = 0.0141
 vertical_accuracy = 0.01205
 
 
-######################### UTM
+# ######################## UTM
 # from pyproj import Proj, transform
 
 # # Define the projection for WGS84 (latitude and longitude)
@@ -33,15 +33,17 @@ vertical_accuracy = 0.01205
 # # Define the projection for UTM Zone 51N
 # utm_zone_51 = Proj(proj='utm', zone=51, datum='WGS84')
 
+
 # def convert_to_utm(lat, lon):
 #     easting, northing = transform(wgs84, utm_zone_51, lon, lat)
 #     return easting, northing
+
 
 # def euclidean_distance(x1, y1, x2, y2):
 #     distance = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
 #     distance_cm = distance * 100  # Convert to centimeters
 #     return distance_cm
-#################################
+# ################################
 
 
 def euclidean_distance(lat1, lon1, lat2, lon2):
@@ -55,7 +57,8 @@ def euclidean_distance(lat1, lon1, lat2, lon2):
     delta_lat = lat2_rad - lat1_rad
     delta_lon = lon2_rad - lon1_rad
 
-    distance = math.sqrt((delta_lat * R)**2 + (delta_lon * R * math.cos((lat1_rad + lat2_rad) / 2))**2)
+    distance = math.sqrt((delta_lat * R)**2 + \
+                    (delta_lon * R * math.cos((lat1_rad + lat2_rad) / 2))**2)
     distance_cm = distance * 100
 
     return distance_cm
