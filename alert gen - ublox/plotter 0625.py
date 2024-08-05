@@ -93,6 +93,46 @@ def hybrid_outlier_filter_for_latlon_with_msl(df, rolling_window=20, rolling_fac
 
     return df
 
+def v2_hybrid_outlier_filter_for_latlon_with_msl(df, rolling_window=16, rolling_factor=2, global_factor=3, global_window_factor=9):
+    df = df.copy()
+    
+    # Rolling window-based filtering
+    dfmean = df[['latitude', 'longitude', 'msl']].rolling(window=rolling_window, min_periods=1).mean()
+    dfsd = df[['latitude', 'longitude', 'msl']].rolling(window=rolling_window, min_periods=1).std()
+
+    dfulimits = dfmean + (rolling_factor * dfsd)
+    dfllimits = dfmean - (rolling_factor * dfsd)
+
+    df['latitude'] = df['latitude'].where((df['latitude'] <= dfulimits['latitude']) & (df['latitude'] >= dfllimits['latitude']), np.nan)
+    df['longitude'] = df['longitude'].where((df['longitude'] <= dfulimits['longitude']) & (df['longitude'] >= dfllimits['longitude']), np.nan)
+    df['msl'] = df['msl'].where((df['msl'] <= dfulimits['msl']) & (df['msl'] >= dfllimits['msl']), np.nan)
+
+    # Drop rows with NaN values after rolling window filtering
+    df = df.dropna(subset=['latitude', 'longitude', 'msl'])
+    
+    # Global limit-based filtering with a window size 9 times the rolling window size
+    global_window = rolling_window * global_window_factor
+
+    dfglobalmean = df[['latitude', 'longitude', 'msl']].rolling(window=global_window, min_periods=1).mean()
+    dfglobalsd = df[['latitude', 'longitude', 'msl']].rolling(window=global_window, min_periods=1).std()
+
+    dfulimits_global = dfglobalmean + (global_factor * dfglobalsd)
+    dfllimits_global = dfglobalmean - (global_factor * dfglobalsd)
+
+    df['latitude'] = df['latitude'].where((df['latitude'] <= dfulimits_global['latitude']) & (df['latitude'] >= dfllimits_global['latitude']), np.nan)
+    df['longitude'] = df['longitude'].where((df['longitude'] <= dfulimits_global['longitude']) & (df['longitude'] >= dfllimits_global['longitude']), np.nan)
+    df['msl'] = df['msl'].where((df['msl'] <= dfulimits_global['msl']) & (df['msl'] >= dfllimits_global['msl']), np.nan)
+
+    # Drop rows with NaN values after global filtering
+    df = df.dropna(subset=['latitude', 'longitude', 'msl'])
+
+    return df
+
+
+def resample_df(df):
+    df['ts'] = pd.to_datetime(df['ts'], unit='s')
+    df = df.set_index('ts').resample('30min').first().reset_index()
+    return df
 
 # Connect to the database
 dyna_db = mysql.connector.connect(
@@ -105,7 +145,8 @@ dyna_db = mysql.connector.connect(
 # Query data
 # query = "SELECT * FROM analysis_db.gnss_nagua where ts between '2024-05-10' and '2024-06-10' order by ts"
 # query = "SELECT * FROM analysis_db.gnss_nagua where ts > '2024-03-22' order by ts"
-query = "SELECT * FROM analysis_db.gnss_nagua where ts > '2024-04-22' order by ts"
+#query = "SELECT * FROM analysis_db.gnss_nagua where ts > '2024-04-22' order by ts"
+query = "SELECT * FROM analysis_db.gnss_nagua where ts > '2024-05-01' order by ts"
 # query = "SELECT * FROM analysis_db.gnss_sinua where ts > '2024-03-18' order by ts"
 # query = "SELECT ts, latitude, longitude, msl FROM old_gnss_sinsa UNION ALL SELECT ts, latitude, longitude, msl FROM gnss_sinua order by ts"
 # query = """SELECT ts, latitude, longitude, msl 
@@ -119,6 +160,8 @@ query = "SELECT * FROM analysis_db.gnss_nagua where ts > '2024-04-22' order by t
 # query = "SELECT * FROM analysis_db.old_gnss_sinsa where ts between '2022-07-27' and '2023-06-10' order by ts"
 # query = "SELECT * FROM analysis_db.gnss_sinua where ts > '2024-03-18' order by ts"
 df = pd.read_sql(query, dyna_db)
+df = resample_df(df)
+
 
 # Fixed coordinates - NAG
 fixed_lat = 16.6267267
@@ -134,7 +177,7 @@ print('df len = ', len(df))
 
 # Unfiltered plot
 fig, axs = plt.subplots(4, 1, sharex=True, figsize=(12, 12))
-fig.suptitle('NAGUA (outlier plot)')
+fig.suptitle('NAGUA (hybrid v2 outlier plot)')
 
 # Unfiltered plot (optional)
 # axs[0].plot(df['ts'], df['latitude'], 'b-', alpha=0.3)
@@ -151,6 +194,9 @@ print('df_filtered outlier len = ', len(df_filtered_outlier))
 
 df_filtered_hybrid = hybrid_outlier_filter_for_latlon_with_msl(df_filtered_sanity)
 print('df_filtered hybrid len = ', len(df_filtered_hybrid))
+
+df_filtered_hybrid_v2 = v2_hybrid_outlier_filter_for_latlon_with_msl(df_filtered_sanity)
+print('df_filtered hybrid len = ', len(df_filtered_hybrid_v2))
 
 # df_filtered = df
 # Filtered plot with labels and legends
@@ -181,7 +227,10 @@ print('df_filtered hybrid len = ', len(df_filtered_hybrid))
 
 
 
-df_filtered = df_filtered_outlier #change here if outlier or hybrid
+# df_filtered = df_filtered_outlier #change here if outlier or hybrid
+# df_filtered = df_filtered_hybrid
+df_filtered = df_filtered_hybrid_v2
+
 # Scalar formatter for y-axis
 formatter = ScalarFormatter(useOffset=False, useMathText=False)
 formatter.set_scientific(False)

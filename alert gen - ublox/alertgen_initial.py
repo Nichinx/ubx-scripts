@@ -34,10 +34,12 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     # Haversine formula
     delta_lat = lat2_rad - lat1_rad
     delta_lon = lon2_rad - lon1_rad
-    a = math.sin(delta_lat / 2)**2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(delta_lon / 2)**2
+    a = math.sin(delta_lat / 2)**2 + math.cos(lat1_rad) * \
+            math.cos(lat2_rad) * math.sin(delta_lon / 2)**2
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
-    # Radius of the Earth in meters (use 6371000 meters for average Earth radius)
+    # Radius of the Earth in meters 
+    # Use 6371000 meters for average Earth radius
     earth_radius = 6371000
 
     # Calculate the distance
