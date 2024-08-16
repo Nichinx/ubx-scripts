@@ -32,7 +32,7 @@ def euclidean_distance(lat1, lon1, lat2, lon2):
     return distance_cm
 
 def prepare_and_apply_sanity_filters(df, hacc, vacc):
-    df['msl'] = np.round(df['msl'], 2)
+    df['msl'] = np.round(df['msl'], 3)
     df = df[(df['fix_type'] == 2) & (df['sat_num'] > 28)]
 
     if df.empty:
@@ -45,8 +45,8 @@ def prepare_and_apply_sanity_filters(df, hacc, vacc):
 
 def outlier_filter_for_latlon_with_msl(df):
     df = df.copy()
-    dfmean = df[['latitude', 'longitude', 'msl']].rolling(window=20, min_periods=1).mean()
-    dfsd = df[['latitude', 'longitude', 'msl']].rolling(window=20, min_periods=1).std()
+    dfmean = df[['latitude', 'longitude', 'msl','distance_cm']].rolling(window=6, min_periods=1).mean()
+    dfsd = df[['latitude', 'longitude', 'msl','distance_cm']].rolling(window=6, min_periods=1).std()
 
     dfulimits = dfmean + (2 * dfsd)  # 1 std
     dfllimits = dfmean - (2 * dfsd)
@@ -54,8 +54,10 @@ def outlier_filter_for_latlon_with_msl(df):
     df['latitude'] = df['latitude'].where((df['latitude'] <= dfulimits['latitude']) & (df['latitude'] >= dfllimits['latitude']), np.nan)
     df['longitude'] = df['longitude'].where((df['longitude'] <= dfulimits['longitude']) & (df['longitude'] >= dfllimits['longitude']), np.nan)
     df['msl'] = df['msl'].where((df['msl'] <= dfulimits['msl']) & (df['msl'] >= dfllimits['msl']), np.nan)
+    df['distance_cm'] = df['distance_cm'].where((df['distance_cm'] <= dfulimits['distance_cm']) & (df['distance_cm'] >= dfllimits['distance_cm']), np.nan)
 
-    df = df.dropna(subset=['latitude', 'longitude', 'msl'])
+
+    df = df.dropna(subset=['latitude', 'longitude', 'msl','distance_cm'])
 
     return df
 
@@ -131,7 +133,7 @@ def v2_hybrid_outlier_filter_for_latlon_with_msl(df, rolling_window=16, rolling_
 
 def resample_df(df):
     df['ts'] = pd.to_datetime(df['ts'], unit='s')
-    df = df.set_index('ts').resample('30min').first().reset_index()
+    df = df.set_index('ts').resample('10min').first().reset_index()
     return df
 
 # Connect to the database
@@ -146,7 +148,7 @@ dyna_db = mysql.connector.connect(
 # query = "SELECT * FROM analysis_db.gnss_nagua where ts between '2024-05-10' and '2024-06-10' order by ts"
 # query = "SELECT * FROM analysis_db.gnss_nagua where ts > '2024-03-22' order by ts"
 #query = "SELECT * FROM analysis_db.gnss_nagua where ts > '2024-04-22' order by ts"
-query = "SELECT * FROM analysis_db.gnss_nagua where ts > '2024-05-01' order by ts"
+# query = "SELECT * FROM analysis_db.gnss_nagua where ts > '2024-05-01' order by ts"
 # query = "SELECT * FROM analysis_db.gnss_sinua where ts > '2024-03-18' order by ts"
 # query = "SELECT ts, latitude, longitude, msl FROM old_gnss_sinsa UNION ALL SELECT ts, latitude, longitude, msl FROM gnss_sinua order by ts"
 # query = """SELECT ts, latitude, longitude, msl 
@@ -159,25 +161,38 @@ query = "SELECT * FROM analysis_db.gnss_nagua where ts > '2024-05-01' order by t
 #             ORDER BY ts"""
 # query = "SELECT * FROM analysis_db.old_gnss_sinsa where ts between '2022-07-27' and '2023-06-10' order by ts"
 # query = "SELECT * FROM analysis_db.gnss_sinua where ts > '2024-03-18' order by ts"
+
+query = "SELECT * FROM analysis_db.gnss_tesua where ts > '2024-08-09 16:00:00' order by ts"
 df = pd.read_sql(query, dyna_db)
+
+#resample + ffillna
 df = resample_df(df)
+df = df.fillna(method='ffill')
 
-
-# Fixed coordinates - NAG
-fixed_lat = 16.6267267
-fixed_lon = 120.417167
+# # Fixed coordinates - NAG
+# fixed_lat = 16.6267267
+# fixed_lon = 120.417167
 
 # # Fixed coordinates - SIN
 # fixed_lat = 16.723467
 # fixed_lon = 120.7812924
 
+# # Fixed coordinates - TES
+# fixed_lat = 14.6519327
+# fixed_lon = 121.0584508
+
+# Fixed coordinates - assumed rover position
+fixed_lat = 14.651944
+fixed_lon = 121.058402
+fixed_lat, fixed_lon = convert_to_utm(fixed_lat, fixed_lon)
+
 # Calculate distances
-df['distance'] = df.apply(lambda row: euclidean_distance(row['latitude'], row['longitude'], fixed_lat, fixed_lon), axis=1)
+df['distance_cm'] = df.apply(lambda row: euclidean_distance(row['latitude'], row['longitude'], fixed_lat, fixed_lon), axis=1)
 print('df len = ', len(df))
 
 # Unfiltered plot
-fig, axs = plt.subplots(4, 1, sharex=True, figsize=(12, 12))
-fig.suptitle('NAGUA (hybrid v2 outlier plot)')
+# fig, axs = plt.subplots(4, 1, sharex=True, figsize=(12, 12))
+# fig.suptitle('NAGUA (hybrid v2 outlier plot)')
 
 # Unfiltered plot (optional)
 # axs[0].plot(df['ts'], df['latitude'], 'b-', alpha=0.3)
@@ -186,17 +201,17 @@ fig.suptitle('NAGUA (hybrid v2 outlier plot)')
 # axs[3].plot(df['ts'], df['distance'], 'k-', alpha=0.3)
 
 # Apply filters
-df_filtered_sanity = prepare_and_apply_sanity_filters(df, hacc=0.0141, vacc=0.0121)
+df_filtered_sanity = prepare_and_apply_sanity_filters(df, hacc=0.0141, vacc=0.0141)
 print('df_filtered sanity len = ', len(df_filtered_sanity))
 
 df_filtered_outlier = outlier_filter_for_latlon_with_msl(df_filtered_sanity)
 print('df_filtered outlier len = ', len(df_filtered_outlier))
 
-df_filtered_hybrid = hybrid_outlier_filter_for_latlon_with_msl(df_filtered_sanity)
-print('df_filtered hybrid len = ', len(df_filtered_hybrid))
+# df_filtered_hybrid = hybrid_outlier_filter_for_latlon_with_msl(df_filtered_sanity)
+# print('df_filtered hybrid len = ', len(df_filtered_hybrid))
 
-df_filtered_hybrid_v2 = v2_hybrid_outlier_filter_for_latlon_with_msl(df_filtered_sanity)
-print('df_filtered hybrid len = ', len(df_filtered_hybrid_v2))
+# df_filtered_hybrid_v2 = v2_hybrid_outlier_filter_for_latlon_with_msl(df_filtered_sanity)
+# print('df_filtered hybrid len = ', len(df_filtered_hybrid_v2))
 
 # df_filtered = df
 # Filtered plot with labels and legends
@@ -229,45 +244,47 @@ print('df_filtered hybrid len = ', len(df_filtered_hybrid_v2))
 
 # df_filtered = df_filtered_outlier #change here if outlier or hybrid
 # df_filtered = df_filtered_hybrid
-df_filtered = df_filtered_hybrid_v2
+# df_filtered = df_filtered_hybrid_v2
 
-# Scalar formatter for y-axis
-formatter = ScalarFormatter(useOffset=False, useMathText=False)
-formatter.set_scientific(False)
+df_filtered = df
 
-# Filtered plot with labels and legends
-axs[0].plot(df_filtered['ts'], df_filtered['latitude'], 'b-', label='Filtered Latitude')
-axs[0].set_ylabel('Latitude')
-axs[0].yaxis.set_major_formatter(formatter)
-axs[0].legend()
-axs[0].set_title('Latitude vs Timestamp')
+# # Scalar formatter for y-axis
+# formatter = ScalarFormatter(useOffset=False, useMathText=False)
+# formatter.set_scientific(False)
 
-axs[1].plot(df_filtered['ts'], df_filtered['longitude'], 'g-', label='Filtered Longitude')
-axs[1].set_ylabel('Longitude')
-axs[1].yaxis.set_major_formatter(formatter)
-axs[1].legend()
-axs[1].set_title('Longitude vs Timestamp')
+# # Filtered plot with labels and legends
+# axs[0].plot(df_filtered['ts'], df_filtered['latitude'], 'b-', label='Filtered Latitude')
+# axs[0].set_ylabel('Latitude')
+# axs[0].yaxis.set_major_formatter(formatter)
+# axs[0].legend()
+# axs[0].set_title('Latitude vs Timestamp')
 
-axs[2].plot(df_filtered['ts'], df_filtered['msl'], 'r-', label='Filtered MSL')
-axs[2].set_ylabel('MSL')
-axs[2].yaxis.set_major_formatter(formatter)
-axs[2].legend()
-axs[2].set_title('MSL vs Timestamp')
+# axs[1].plot(df_filtered['ts'], df_filtered['longitude'], 'g-', label='Filtered Longitude')
+# axs[1].set_ylabel('Longitude')
+# axs[1].yaxis.set_major_formatter(formatter)
+# axs[1].legend()
+# axs[1].set_title('Longitude vs Timestamp')
 
-axs[3].plot(df_filtered['ts'], df_filtered['distance'], 'k-', label='Filtered Distance')
-axs[3].set_ylabel('Distance (cm)')
-axs[3].set_xlabel('Timestamp')
-axs[3].yaxis.set_major_formatter(formatter)
-axs[3].legend()
-axs[3].set_title('Distance vs Timestamp')
+# axs[2].plot(df_filtered['ts'], df_filtered['msl'], 'r-', label='Filtered MSL')
+# axs[2].set_ylabel('MSL')
+# axs[2].yaxis.set_major_formatter(formatter)
+# axs[2].legend()
+# axs[2].set_title('MSL vs Timestamp')
 
-# Show legends
-for ax in axs:
-    ax.legend()
+# axs[3].plot(df_filtered['ts'], df_filtered['distance'], 'k-', label='Filtered Distance')
+# axs[3].set_ylabel('Distance (cm)')
+# axs[3].set_xlabel('Timestamp')
+# axs[3].yaxis.set_major_formatter(formatter)
+# axs[3].legend()
+# axs[3].set_title('Distance vs Timestamp')
+
+# # Show legends
+# for ax in axs:
+#     ax.legend()
 
 
 
-plt.show()
+# plt.show()
 
 # # Close the connection
 # dyna_db.close()
