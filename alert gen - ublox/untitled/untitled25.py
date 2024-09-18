@@ -17,13 +17,10 @@ import mysql.connector
 db_config = {'host': 'localhost',
             'user': 'root',
             'password': 'admin123',
-            'database': 'new_schema_2'
+            'database': 'new_schema_3'
 }
 
-query = "SELECT * FROM new_schema_2.gnss_nagua order by ts"
-df = pd.read_sql(query, db_config)
 
-    
 # Define the projection for WGS84 and UTM Zone 51N
 wgs84 = Proj(proj='latlong', datum='WGS84')
 utm_zone_51 = Proj(proj='utm', zone=51, datum='WGS84')
@@ -54,8 +51,8 @@ def prepare_and_apply_sanity_filters(df, hacc=0.0141, vacc=0.0141):
 
 def outlier_filter_for_latlon_with_msl(df):
     df = df.copy()
-    dfmean = df[['latitude', 'longitude', 'msl','distance_cm']].rolling(window=6, min_periods=1).mean()
-    dfsd = df[['latitude', 'longitude', 'msl','distance_cm']].rolling(window=6, min_periods=1).std()
+    dfmean = df[['latitude', 'longitude', 'msl','distance_cm']].rolling(window=16, min_periods=1).mean()
+    dfsd = df[['latitude', 'longitude', 'msl','distance_cm']].rolling(window=16, min_periods=1).std()
 
     dfulimits = dfmean + (2 * dfsd)  # 1 std
     dfllimits = dfmean - (2 * dfsd)
@@ -136,24 +133,6 @@ def fetch_reference_coordinates(base_name):
             connection.close()
 
 
-# Fixed coordinates - TES
-fixed_lat = 14.6519327
-fixed_lon = 121.0584508
-fixed_lat, fixed_lon = convert_to_utm(fixed_lat, fixed_lon)
-
-
-df[['latitude', 'longitude']] = df.apply(
-    lambda row: convert_to_utm(row['latitude'], row['longitude']), 
-    axis=1, 
-    result_type='expand'
-)
-# Calculate distances
-df['distance_cm'] = df.apply(lambda row: euclidean_distance(row['latitude'], row['longitude'], fixed_lat, fixed_lon), axis=1)
-print('df len = ', len(df))
-
-# Convert 'ts' column to datetime
-df['ts'] = pd.to_datetime(df['ts'])
-df = resample_df(df).fillna(method='ffill')
 
 
 # # Function to process the entire existing data in the table
