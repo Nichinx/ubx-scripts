@@ -140,15 +140,15 @@ fixed_lat, fixed_lon = 290895.34846509795, 1620726.5411689582
 #     result_type='expand'
 # )
 
-# # Calculate distances
+# Calculate distances
 # df['distance_cm'] = df.apply(lambda row: euclidean_distance(row['latitude'], row['longitude'], fixed_lat, fixed_lon), axis=1)
 # print('df len = ', len(df))
 
 # start_ts = pd.to_datetime(df['ts'].min())
 # end_ts = pd.to_datetime(df['ts'].max())
 
-# Convert 'ts' column to datetime
-# df['ts'] = pd.to_datetime(df['ts'])
+#Convert 'ts' column to datetime
+# df['ts'] = pd.tdfo_datetime(df['ts'])
 # df = resample_df(df).fillna(method='ffill')
 
 
@@ -292,161 +292,161 @@ def format_column(column):
 
 
 
-##############################################################################
-# query1 = "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-29 14:20' and '2024-08-29 16:50' order by ts" #ref.point resoak
-query1 = "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-31 13:00' and '2024-08-31 18:00' order by ts" #ref.point resoak 2
+############################################################################## MSL TEST
+# # query1 = "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-29 14:20' and '2024-08-29 16:50' order by ts" #ref.point resoak
+# query1 = "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-31 13:00' and '2024-08-31 18:00' order by ts" #ref.point resoak 2
 
 # query2 = "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-29 17:00' and '2024-08-29 20:00' order by ts" #3xm z axis
 # query2 = "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-30 11:40' and '2024-08-30 14:40' order by ts" #5xm z axis
 # query2 = "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-30 15:00' and '2024-08-30 18:00' order by ts" #8xm z axis
-query2 = "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-31 09:00' and '2024-08-31 12:00' order by ts" #10xm z axis
+# query2 = "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-31 09:00' and '2024-08-31 12:00' order by ts" #10xm z axis
 
 
-# Fetch data from query1 and query2
-df_query1 = pd.read_sql(query1, connection)
-df_query2 = pd.read_sql(query2, connection)
+# # Fetch data from query1 and query2
+# df_query1 = pd.read_sql(query1, connection)
+# df_query2 = pd.read_sql(query2, connection)
 
 
-df_query1[['latitude', 'longitude']] = df_query1.apply(
-    lambda row: convert_to_utm(row['latitude'], row['longitude']), 
-    axis=1, 
-    result_type='expand'
-)
-mean_msl_query1 = df_query1['msl'].mean()
-# df_query1['msl_difference'] = (df_query1['msl'] - mean_msl_query1) * 100  # Convert to centimeters
-# df_query1['distance_cm'] = df_query1['msl_difference']
+# df_query1[['latitude', 'longitude']] = df_query1.apply(
+#     lambda row: convert_to_utm(row['latitude'], row['longitude']), 
+#     axis=1, 
+#     result_type='expand'
+# )
+# mean_msl_query1 = df_query1['msl'].mean()
+# # df_query1['msl_difference'] = (df_query1['msl'] - mean_msl_query1) * 100  # Convert to centimeters
+# # df_query1['distance_cm'] = df_query1['msl_difference']
 
-num_timestamps_ahead = 12
-timestamp_freq = '10T'  # Frequency of timestamps in original data
-rolling_window_size = num_timestamps_ahead # Adjust this based on your actual window size
+# num_timestamps_ahead = 12
+# timestamp_freq = '10T'  # Frequency of timestamps in original data
+# rolling_window_size = num_timestamps_ahead # Adjust this based on your actual window size
 
-start_ts_query1_orig = df_query1['ts'].min()
-end_ts_query1 = df_query1['ts'].max()
-existing_data_before_query1 = df_query1[df_query1['ts'] < start_ts_query1_orig].shape[0]
-num_needed_initial_ts_query1 = rolling_window_size - existing_data_before_query1
-num_needed_initial_ts_query1 = max(num_needed_initial_ts_query1, 0)
+# start_ts_query1_orig = df_query1['ts'].min()
+# end_ts_query1 = df_query1['ts'].max()
+# existing_data_before_query1 = df_query1[df_query1['ts'] < start_ts_query1_orig].shape[0]
+# num_needed_initial_ts_query1 = rolling_window_size - existing_data_before_query1
+# num_needed_initial_ts_query1 = max(num_needed_initial_ts_query1, 0)
 
-if num_needed_initial_ts_query1 > 0:
-    start_ts_query1 = df_query1['ts'].min() - pd.Timedelta(timestamp_freq) * num_needed_initial_ts_query1
-    new_ts_query1 = pd.date_range(start=start_ts_query1, periods=num_needed_initial_ts_query1, freq=timestamp_freq)
+# if num_needed_initial_ts_query1 > 0:
+#     start_ts_query1 = df_query1['ts'].min() - pd.Timedelta(timestamp_freq) * num_needed_initial_ts_query1
+#     new_ts_query1 = pd.date_range(start=start_ts_query1, periods=num_needed_initial_ts_query1, freq=timestamp_freq)
     
-    df_new_timestamps_query1 = pd.DataFrame({
-        'ts': new_ts_query1,
-        'latitude': [np.nan] * len(new_ts_query1),
-        'longitude': [np.nan] * len(new_ts_query1),
-        'msl': [np.nan] * len(new_ts_query1)
-    })
+#     df_new_timestamps_query1 = pd.DataFrame({
+#         'ts': new_ts_query1,
+#         'latitude': [np.nan] * len(new_ts_query1),
+#         'longitude': [np.nan] * len(new_ts_query1),
+#         'msl': [np.nan] * len(new_ts_query1)
+#     })
     
-    df_query1_extended = pd.concat([df_new_timestamps_query1, df_query1], ignore_index=True)
-else:
-    df_query1_extended = df_query1.copy()
+#     df_query1_extended = pd.concat([df_new_timestamps_query1, df_query1], ignore_index=True)
+# else:
+#     df_query1_extended = df_query1.copy()
 
-df_query1_filled = df_query1_extended.fillna(method='bfill')
-df_query1_filtered = prepare_and_apply_sanity_filters(df_query1_filled)
-df_query1_filtered = outlier_filter_for_latlon_with_msl(df_query1_filtered)
+# df_query1_filled = df_query1_extended.fillna(method='bfill')
+# df_query1_filtered = prepare_and_apply_sanity_filters(df_query1_filled)
+# df_query1_filtered = outlier_filter_for_latlon_with_msl(df_query1_filtered)
 
-# df_query1_result = resample_df(df_query1_filtered).fillna(method='ffill')
+# # df_query1_result = resample_df(df_query1_filtered).fillna(method='ffill')
 
-original_end_ts_query1 = df_query1['ts'].max()
-result_end_ts_query1 = df_query1_filtered['ts'].max()
+# original_end_ts_query1 = df_query1['ts'].max()
+# result_end_ts_query1 = df_query1_filtered['ts'].max()
 
-if result_end_ts_query1 < original_end_ts_query1:
-    end_row_query1 = df_query1_filtered.iloc[-1].copy()
-    end_row_query1['ts'] = original_end_ts_query1
-    df_query1_result = pd.concat([df_query1_filtered, pd.DataFrame([end_row_query1])], ignore_index=True)
-    df_query1_filtered = df_query1_filtered[(df_query1_filtered['ts'] >= start_ts_query1_orig) & (df_query1_filtered['ts'] <= end_ts_query1)]
-else:
-    df_query1_filtered = df_query1_filtered[(df_query1_filtered['ts'] >= start_ts_query1_orig) & (df_query1_filtered['ts'] <= end_ts_query1)]
-
-
-
-df = df_query2
-print("df = ", len(df))
-
-df[['latitude', 'longitude']] = df.apply(
-    lambda row: convert_to_utm(row['latitude'], row['longitude']), 
-    axis=1, 
-    result_type='expand'
-)
-
-start_ts = pd.to_datetime(df['ts'].min())
-end_ts = pd.to_datetime(df['ts'].max())
-
-# Step 1: Calculate the mean MSL from query1
-df_query1 = df_query1_filtered
-mean_msl_query1 = df_query1['msl'].mean()
-
-# Step 2: Calculate the MSL difference for query2
-df['msl_difference'] = (df['msl'] - mean_msl_query1) * 100  # Convert to centimeters
-
-# Step 3: Replace the 'distance_cm' column with 'msl_difference'
-df['distance_cm'] = df['msl_difference']
+# if result_end_ts_query1 < original_end_ts_query1:
+#     end_row_query1 = df_query1_filtered.iloc[-1].copy()
+#     end_row_query1['ts'] = original_end_ts_query1
+#     df_query1_result = pd.concat([df_query1_filtered, pd.DataFrame([end_row_query1])], ignore_index=True)
+#     df_query1_filtered = df_query1_filtered[(df_query1_filtered['ts'] >= start_ts_query1_orig) & (df_query1_filtered['ts'] <= end_ts_query1)]
+# else:
+#     df_query1_filtered = df_query1_filtered[(df_query1_filtered['ts'] >= start_ts_query1_orig) & (df_query1_filtered['ts'] <= end_ts_query1)]
 
 
 
-num_timestamps_ahead = 12
-timestamp_freq = '10T'  # Frequency of timestamps in original data
-rolling_window_size = num_timestamps_ahead # Adjust this based on your actual window size
+# df = df_query2
+# print("df = ", len(df))
 
-# Calculate the starting timestamp and generate new timestamps if needed
-start_ts = df['ts'].min()
-end_ts = df['ts'].max()
+# df[['latitude', 'longitude']] = df.apply(
+#     lambda row: convert_to_utm(row['latitude'], row['longitude']), 
+#     axis=1, 
+#     result_type='expand'
+# )
 
-# Get existing data points before the initial timestamp
-existing_data_before = df[df['ts'] < start_ts].shape[0]
+# start_ts = pd.to_datetime(df['ts'].min())
+# end_ts = pd.to_datetime(df['ts'].max())
 
-# Calculate how many timestamps are needed to fill the rolling window
-num_needed_initial_ts = rolling_window_size - existing_data_before
-num_needed_initial_ts = max(num_needed_initial_ts, 0)  # Ensure no negative values
+# # Step 1: Calculate the mean MSL from query1
+# df_query1 = df_query1_filtered
+# mean_msl_query1 = df_query1['msl'].mean()
 
-if num_needed_initial_ts > 0:
-    # Generate extra timestamps ahead of the initial timestamp if not enough data
-    start_ts = df['ts'].min() - pd.Timedelta(timestamp_freq) * num_needed_initial_ts
-    new_ts = pd.date_range(start=start_ts, periods=num_needed_initial_ts, freq=timestamp_freq)
+# # Step 2: Calculate the MSL difference for query2
+# df['msl_difference'] = (df['msl'] - mean_msl_query1) * 100  # Convert to centimeters
+
+# # Step 3: Replace the 'distance_cm' column with 'msl_difference'
+# df['distance_cm'] = df['msl_difference']
+
+
+
+# num_timestamps_ahead = 12
+# timestamp_freq = '10T'  # Frequency of timestamps in original data
+# rolling_window_size = num_timestamps_ahead # Adjust this based on your actual window size
+
+# # Calculate the starting timestamp and generate new timestamps if needed
+# start_ts = df['ts'].min()
+# end_ts = df['ts'].max()
+
+# # Get existing data points before the initial timestamp
+# existing_data_before = df[df['ts'] < start_ts].shape[0]
+
+# # Calculate how many timestamps are needed to fill the rolling window
+# num_needed_initial_ts = rolling_window_size - existing_data_before
+# num_needed_initial_ts = max(num_needed_initial_ts, 0)  # Ensure no negative values
+
+# if num_needed_initial_ts > 0:
+#     # Generate extra timestamps ahead of the initial timestamp if not enough data
+#     start_ts = df['ts'].min() - pd.Timedelta(timestamp_freq) * num_needed_initial_ts
+#     new_ts = pd.date_range(start=start_ts, periods=num_needed_initial_ts, freq=timestamp_freq)
     
-    # Create a dataframe with new timestamps
-    df_new_timestamps = pd.DataFrame({
-        'ts': new_ts,
-        'latitude': [np.nan] * len(new_ts),
-        'longitude': [np.nan] * len(new_ts),
-        'msl': [np.nan] * len(new_ts)
-    })
+#     # Create a dataframe with new timestamps
+#     df_new_timestamps = pd.DataFrame({
+#         'ts': new_ts,
+#         'latitude': [np.nan] * len(new_ts),
+#         'longitude': [np.nan] * len(new_ts),
+#         'msl': [np.nan] * len(new_ts)
+#     })
     
-    # Concatenate the new timestamps dataframe with the original dataframe
-    df_extended = pd.concat([df_new_timestamps, df], ignore_index=True)
-else:
-    # If existing data is sufficient, use the original dataframe directly
-    df_extended = df.copy()
+#     # Concatenate the new timestamps dataframe with the original dataframe
+#     df_extended = pd.concat([df_new_timestamps, df], ignore_index=True)
+# else:
+#     # If existing data is sufficient, use the original dataframe directly
+#     df_extended = df.copy()
 
 
-df_filled = df_extended.fillna(method='bfill')
-df_filtered = prepare_and_apply_sanity_filters(df_filled)
-df_filtered = outlier_filter_for_latlon_with_msl(df_filtered)
+# df_filled = df_extended.fillna(method='bfill')
+# df_filtered = prepare_and_apply_sanity_filters(df_filled)
+# df_filtered = outlier_filter_for_latlon_with_msl(df_filtered)
 
 
-df_result = df_filtered[df_filtered['ts'] >= df['ts'].min()]
+# df_result = df_filtered[df_filtered['ts'] >= df['ts'].min()]
 
-df_filtered_orig_retained_length = df_result
-print('df_filtered_orig_retained_length = ', len(df_filtered_orig_retained_length))
-print('data percentage after filtering: ', np.round((len(df_filtered_orig_retained_length)/len(df))*100, 2))
+# df_filtered_orig_retained_length = df_result
+# print('df_filtered_orig_retained_length = ', len(df_filtered_orig_retained_length))
+# print('data percentage after filtering: ', np.round((len(df_filtered_orig_retained_length)/len(df))*100, 2))
 
-df_result = resample_df(df_result).fillna(method='ffill')
+# df_result = resample_df(df_result).fillna(method='ffill')
+# # print('df_result = ', len(df_result))
+
+# # Ensure the end timestamp matches the original df's end timestamp
+# original_end_ts = df['ts'].max()
+# result_end_ts = df_result['ts'].max()
+
+# if result_end_ts < original_end_ts:
+#     # Add a row with the original end timestamp if it's missing
+#     end_row = df_result.iloc[-1].copy()
+#     end_row['ts'] = original_end_ts
+#     df_result = pd.concat([df_result, pd.DataFrame([end_row])], ignore_index=True)
+
+
+# # Forward-fill again to ensure data continuity
+# df_result = resample_df(df_result).fillna(method='ffill')
 # print('df_result = ', len(df_result))
-
-# Ensure the end timestamp matches the original df's end timestamp
-original_end_ts = df['ts'].max()
-result_end_ts = df_result['ts'].max()
-
-if result_end_ts < original_end_ts:
-    # Add a row with the original end timestamp if it's missing
-    end_row = df_result.iloc[-1].copy()
-    end_row['ts'] = original_end_ts
-    df_result = pd.concat([df_result, pd.DataFrame([end_row])], ignore_index=True)
-
-
-# Forward-fill again to ensure data continuity
-df_result = resample_df(df_result).fillna(method='ffill')
-print('df_result = ', len(df_result))
 
 
 
@@ -531,23 +531,180 @@ print('df_result = ', len(df_result))
 
 
 
-######################
+###################### export list of queries to csv:
+queries = {
+    # 'ref' : "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-13 17:00' and '2024-08-14 13:00' order by ts",
+    '3cm_lat': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-15 08:00' and '2024-08-15 11:00' order by ts",
+    '5cm_lat': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-15 13:00' and '2024-08-15 16:10' order by ts",
+    '10cm_lat': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-16 15:00' and '2024-08-16 18:00' order by ts",
+    '3cm_lon': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-16 18:30' and '2024-08-16 21:30' order by ts",
+    '5cm_lon': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-20 22:30' and '2024-08-21 01:30' order by ts",
+    '10cm_lon': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-20 09:00' and '2024-08-20 12:00' order by ts",
+    '3cm_diag': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-20 12:30' and '2024-08-20 15:30' order by ts",
+    '5cm_diag': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-21 6:30' and '2024-08-21 09:30' order by ts",
+    '10cm_diag': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-22 13:30' and '2024-08-22 16:30' order by ts"
+}
+
+# Process each query
+for query_name, query in queries.items():
+    # Fetch data
+    df_raw = pd.read_sql(query, connection)
+    
+    # Convert lat/lon to UTM
+    df_raw[['latitude_utm', 'longitude_utm']] = df_raw.apply(
+        lambda row: convert_to_utm(row['latitude'], row['longitude']), 
+        axis=1, 
+        result_type='expand'
+    )
+    
+    # Fixed reference point for distance calculation
+    fixed_lat, fixed_lon = 290895.34846509795, 1620726.5411689582
+    df_raw['distance_cm'] = df_raw.apply(lambda row: euclidean_distance(row['latitude_utm'], row['longitude_utm'], fixed_lat, fixed_lon), axis=1)
+    
+    print('df_raw len: ', len(df_raw))
+    print(df_raw)
+    
+    # Fill timestamps if needed
+    num_timestamps_ahead = 12
+    timestamp_freq = '10T'
+    rolling_window_size = num_timestamps_ahead
+
+    start_ts = df_raw['ts'].min()
+    end_ts = df_raw['ts'].max()
+
+    # Calculate the existing data before start_ts
+    existing_data_before = df_raw[df_raw['ts'] < start_ts].shape[0]
+    
+    # Calculate how many timestamps we need before the initial timestamp
+    num_needed_initial_ts = max(rolling_window_size - existing_data_before, 0)
+
+    if num_needed_initial_ts > 0:
+        start_ts = df_raw['ts'].min() - pd.Timedelta(timestamp_freq) * num_needed_initial_ts
+        new_ts = pd.date_range(start=start_ts, periods=num_needed_initial_ts, freq=timestamp_freq)
+        df_new_timestamps = pd.DataFrame({
+            'ts': new_ts,
+            'latitude': [np.nan] * len(new_ts),
+            'longitude': [np.nan] * len(new_ts),
+            'msl': [np.nan] * len(new_ts)
+        })
+        df_raw_extended = pd.concat([df_new_timestamps, df_raw], ignore_index=True)
+    else:
+        df_raw_extended = df_raw.copy()
+
+    # Backward-fill missing data
+    df_raw_filled = df_raw_extended.fillna(method='bfill')
+    
+    # Apply filters (custom functions)
+    df_filtered = prepare_and_apply_sanity_filters(df_raw_filled)
+    df_filtered = outlier_filter_for_latlon_with_msl(df_filtered)
+    
+    # Keep only data after the original minimum timestamp
+    df_filtered = df_filtered[df_filtered['ts'] >= df_raw['ts'].min()]
+    df_filtered_orig_retained_length = df_filtered
+    print('df_filtered_orig_retained_length = ', len(df_filtered_orig_retained_length))
+    print('data percentage after filtering: ', np.round((len(df_filtered_orig_retained_length)/len(df_raw))*100, 2))
+
+    # Resample and forward-fill
+    df_result = resample_df(df_filtered).fillna(method='ffill')
+
+    # Ensure the end timestamp matches
+    original_end_ts = df_raw['ts'].max()
+    result_end_ts = df_result['ts'].max()
+
+    if result_end_ts < original_end_ts:
+        # Add a row with the original end timestamp if it's missing
+        end_row = df_result.iloc[-1].copy()
+        end_row['ts'] = original_end_ts
+        df_result = pd.concat([df_result, pd.DataFrame([end_row])], ignore_index=True)
+
+    # Forward-fill again to ensure data continuity
+    df_result = resample_df(df_result).fillna(method='ffill')
+    print('df_result len: ', len(df_result))
+    print(df_result)
+    print('* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *')
+
+    # Export raw and filtered data to CSV
+    # df_raw.to_csv(f'df_raw_{query_name}.csv', index=False)
+    # df_result.to_csv(f'df_filtered_{query_name}.csv', index=False)
+
+    df_result = df_result[['latitude','longitude']]
+    df_result.to_csv(f'df_filtered_{query_name}.csv', index=False)
+
+
+##############################################################################
+##MSL queries to csv
+
+
+# query1 = "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-31 13:00' and '2024-08-31 18:00' order by ts" #ref.point resoak 2
+# df_query1 = pd.read_sql(query1, connection)
+
+
+# df_query1[['latitude', 'longitude']] = df_query1.apply(
+#     lambda row: convert_to_utm(row['latitude'], row['longitude']), 
+#     axis=1, 
+#     result_type='expand'
+# )
+# mean_msl_query1 = df_query1['msl'].mean()
+# df_query1['msl_difference'] = (df_query1['msl'] - mean_msl_query1) * 100  # Convert to centimeters
+# df_query1['distance_cm'] = df_query1['msl_difference']
+
+# num_timestamps_ahead = 12
+# timestamp_freq = '10T'  # Frequency of timestamps in original data
+# rolling_window_size = num_timestamps_ahead # Adjust this based on your actual window size
+
+# start_ts_query1_orig = df_query1['ts'].min()
+# end_ts_query1 = df_query1['ts'].max()
+# existing_data_before_query1 = df_query1[df_query1['ts'] < start_ts_query1_orig].shape[0]
+# num_needed_initial_ts_query1 = rolling_window_size - existing_data_before_query1
+# num_needed_initial_ts_query1 = max(num_needed_initial_ts_query1, 0)
+
+# if num_needed_initial_ts_query1 > 0:
+#     start_ts_query1 = df_query1['ts'].min() - pd.Timedelta(timestamp_freq) * num_needed_initial_ts_query1
+#     new_ts_query1 = pd.date_range(start=start_ts_query1, periods=num_needed_initial_ts_query1, freq=timestamp_freq)
+    
+#     df_new_timestamps_query1 = pd.DataFrame({
+#         'ts': new_ts_query1,
+#         'latitude': [np.nan] * len(new_ts_query1),
+#         'longitude': [np.nan] * len(new_ts_query1),
+#         'msl': [np.nan] * len(new_ts_query1)
+#     })
+    
+#     df_query1_extended = pd.concat([df_new_timestamps_query1, df_query1], ignore_index=True)
+# else:
+#     df_query1_extended = df_query1.copy()
+
+# df_query1_filled = df_query1_extended.fillna(method='bfill')
+# df_query1_filtered = prepare_and_apply_sanity_filters(df_query1_filled)
+# df_query1_filtered = outlier_filter_for_latlon_with_msl(df_query1_filtered)
+
+# # df_query1_result = resample_df(df_query1_filtered).fillna(method='ffill')
+
+# original_end_ts_query1 = df_query1['ts'].max()
+# result_end_ts_query1 = df_query1_filtered['ts'].max()
+
+# if result_end_ts_query1 < original_end_ts_query1:
+#     end_row_query1 = df_query1_filtered.iloc[-1].copy()
+#     end_row_query1['ts'] = original_end_ts_query1
+#     df_query1_result = pd.concat([df_query1_filtered, pd.DataFrame([end_row_query1])], ignore_index=True)
+#     df_query1_filtered = df_query1_filtered[(df_query1_filtered['ts'] >= start_ts_query1_orig) & (df_query1_filtered['ts'] <= end_ts_query1)]
+# else:
+#     df_query1_filtered = df_query1_filtered[(df_query1_filtered['ts'] >= start_ts_query1_orig) & (df_query1_filtered['ts'] <= end_ts_query1)]
+
+
+# df_query1 = df_query1_filtered
+# mean_msl_query1 = df_query1['msl'].mean()
+
+
 # queries = {
-#     'ref' : "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-13 17:00' and '2024-08-14 13:00' order by ts",
-#     '3cm_lat': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-15 08:00' and '2024-08-15 11:00' order by ts",
-#     '5cm_lat': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-15 13:00' and '2024-08-15 16:10' order by ts",
-#     '10cm_lat': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-16 15:00' and '2024-08-16 18:00' order by ts",
-#     '3cm_lon': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-16 18:30' and '2024-08-16 21:30' order by ts",
-#     '5cm_lon': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-20 22:30' and '2024-08-21 01:30' order by ts",
-#     '10cm_lon': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-20 09:00' and '2024-08-20 12:00' order by ts",
-#     '3cm_diag': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-20 12:30' and '2024-08-20 15:30' order by ts",
-#     '5cm_diag': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-21 6:30' and '2024-08-21 09:30' order by ts",
-#     '10cm_diag': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-22 13:30' and '2024-08-22 16:30' order by ts"
+#     'query2_3xm': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-29 17:00' and '2024-08-29 20:00' order by ts",
+#     'query2_5xm': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-30 11:40' and '2024-08-30 14:40' order by ts",
+#     'query2_8xm': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-30 15:00' and '2024-08-30 18:00' order by ts",
+#     'query2_10xm': "SELECT * FROM analysis_db.gnss_tesua where ts between '2024-08-31 09:00' and '2024-08-31 12:00' order by ts"
 # }
 
-# # Process each query
+
+
 # for query_name, query in queries.items():
-#     # Fetch data
 #     df_raw = pd.read_sql(query, connection)
     
 #     # Convert lat/lon to UTM
@@ -557,12 +714,8 @@ print('df_result = ', len(df_result))
 #         result_type='expand'
 #     )
     
-#     # Fixed reference point for distance calculation
-#     fixed_lat, fixed_lon = 290895.34846509795, 1620726.5411689582
-#     df_raw['distance_cm'] = df_raw.apply(lambda row: euclidean_distance(row['latitude_utm'], row['longitude_utm'], fixed_lat, fixed_lon), axis=1)
-    
-#     print('df_raw len: ', len(df_raw))
-#     print(df_raw)
+#     df_raw['msl_difference'] = (df_raw['msl'] - mean_msl_query1) * 100  # Convert to centimeters
+#     df_raw['distance_cm'] = df_raw['msl_difference']
     
 #     # Fill timestamps if needed
 #     num_timestamps_ahead = 12
@@ -572,10 +725,7 @@ print('df_result = ', len(df_result))
 #     start_ts = df_raw['ts'].min()
 #     end_ts = df_raw['ts'].max()
 
-#     # Calculate the existing data before start_ts
 #     existing_data_before = df_raw[df_raw['ts'] < start_ts].shape[0]
-    
-#     # Calculate how many timestamps we need before the initial timestamp
 #     num_needed_initial_ts = max(rolling_window_size - existing_data_before, 0)
 
 #     if num_needed_initial_ts > 0:
@@ -591,37 +741,23 @@ print('df_result = ', len(df_result))
 #     else:
 #         df_raw_extended = df_raw.copy()
 
-#     # Backward-fill missing data
 #     df_raw_filled = df_raw_extended.fillna(method='bfill')
-    
-#     # Apply filters (custom functions)
+
+#     # Apply sanity filters and outlier removal
 #     df_filtered = prepare_and_apply_sanity_filters(df_raw_filled)
 #     df_filtered = outlier_filter_for_latlon_with_msl(df_filtered)
-    
-#     # Keep only data after the original minimum timestamp
-#     df_filtered = df_filtered[df_filtered['ts'] >= df_raw['ts'].min()]
-#     df_filtered_orig_retained_length = df_filtered
-#     print('df_filtered_orig_retained_length = ', len(df_filtered_orig_retained_length))
-#     print('data percentage after filtering: ', np.round((len(df_filtered_orig_retained_length)/len(df_raw))*100, 2))
+#     df_result = df_filtered[df_filtered['ts'] >= df_raw['ts'].min()]
 
-#     # Resample and forward-fill
-#     df_result = resample_df(df_filtered).fillna(method='ffill')
-
-#     # Ensure the end timestamp matches
+#     # Add missing end timestamp if needed
 #     original_end_ts = df_raw['ts'].max()
 #     result_end_ts = df_result['ts'].max()
-
 #     if result_end_ts < original_end_ts:
-#         # Add a row with the original end timestamp if it's missing
 #         end_row = df_result.iloc[-1].copy()
 #         end_row['ts'] = original_end_ts
 #         df_result = pd.concat([df_result, pd.DataFrame([end_row])], ignore_index=True)
 
 #     # Forward-fill again to ensure data continuity
 #     df_result = resample_df(df_result).fillna(method='ffill')
-#     print('df_result len: ', len(df_result))
-#     print(df_result)
-#     print('* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *')
 
 #     # Export raw and filtered data to CSV
 #     df_raw.to_csv(f'df_raw_{query_name}.csv', index=False)

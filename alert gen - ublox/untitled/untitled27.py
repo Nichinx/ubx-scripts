@@ -11,7 +11,9 @@ import numpy as np
 from datetime import datetime, timedelta
 # from pyproj import Proj, transform
 from pyproj import Transformer
-import mysql.connector
+# import mysql.connector
+from sqlalchemy import create_engine
+from sqlalchemy.engine import Connection
 import statsmodels.api as sm
 from statsmodels.regression.rolling import RollingOLS
 
@@ -28,23 +30,38 @@ db_config = {
 transformer = Transformer.from_crs("epsg:4326", "epsg:32651", always_xy=True)
 # transformer = Transformer.from_crs("epsg:4326", "epsg:32651")
 
+# def create_db_connection():
+#     """Create and return a MySQL database connection."""
+#     try:
+#         connection = mysql.connector.connect(**db_config)
+#         return connection
+#     except mysql.connector.Error as err:
+#         print(f"Error: {err}")
+#         return None
+
+# def close_db_connection(connection):
+#     """Close the database connection."""
+#     if connection.is_connected():
+#         connection.close()
+
 def create_db_connection():
-    """Create and return a MySQL database connection."""
+    """Create and return a SQLAlchemy database connection (engine)."""
     try:
-        connection = mysql.connector.connect(**db_config)
-        return connection
-    except mysql.connector.Error as err:
+        connection_string = f"mysql+pymysql://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config.get('port', 3306)}/{db_config['database']}"
+        engine = create_engine(connection_string)
+        return engine.connect() 
+    except Exception as err:
         print(f"Error: {err}")
         return None
 
-def close_db_connection(connection):
+def close_db_connection(connection: Connection):
     """Close the database connection."""
-    if connection.is_connected():
+    if connection:
         connection.close()
 
 def resample_df(df):
     df['ts'] = pd.to_datetime(df['ts'])
-    df = df.set_index('ts').resample('10min').mean().reset_index()
+    df = df.set_index('ts').resample('30min').mean().reset_index()
     return df
 
 def sanity_filters(df, hacc=0.0141, vacc=0.0141):
@@ -60,8 +77,8 @@ def sanity_filters(df, hacc=0.0141, vacc=0.0141):
 
 def outlier_filter_for_latlon_with_msl(df):
     df = df.copy()
-    dfmean = df[['easting', 'northing', 'msl', 'distance_cm']].rolling(window=36, min_periods=1).mean()
-    dfsd = df[['easting', 'northing', 'msl', 'distance_cm']].rolling(window=36, min_periods=1).std()
+    dfmean = df[['easting', 'northing', 'msl', 'distance_cm']].rolling(window=12, min_periods=1).mean()
+    dfsd = df[['easting', 'northing', 'msl', 'distance_cm']].rolling(window=12, min_periods=1).std()
 
     dfulimits = dfmean + (2 * dfsd)
     dfllimits = dfmean - (2 * dfsd)
@@ -78,11 +95,10 @@ def fetch_gnss_rover_table_names():
     """Fetch GNSS rover table names from the database."""
     connection = create_db_connection()
     if connection:
-        with connection.cursor() as cursor:
-            cursor.execute("SHOW TABLES LIKE 'gnss_%';")
-            tables = cursor.fetchall()
+        query = "SHOW TABLES LIKE %s"
+        tables = pd.read_sql(query, connection, params=('gnss_%',))
         close_db_connection(connection)
-        return [table[0] for table in tables]
+        return tables.iloc[:, 0].tolist()
     return []
 
 def get_rover_name(table_name):
@@ -92,22 +108,25 @@ def get_rover_reference_point(rover_name):
     """Get the rover reference point (latitude, longitude)."""
     connection = create_db_connection()
     if connection:
-        with connection.cursor() as cursor:
-            query = f"SELECT latitude, longitude FROM rover_reference_point WHERE rover_name = '{rover_name}';"
-            cursor.execute(query)
-            result = cursor.fetchone()
+        query = f"SELECT latitude, longitude FROM rover_reference_point WHERE rover_name = '{rover_name}';"
+        result = pd.read_sql(query, connection)
         close_db_connection(connection)
-        return result if result else (None, None)
+        return result.iloc[0].tolist() if not result.empty else (None, None)
     return (None, None)
 
 def convert_to_utm(lon, lat):
     easting, northing = transformer.transform(lon, lat)
     return easting, northing  # in meters
 
-def euclidean_distance(lon, lat, ref_lon, ref_lat):
-    # ref_easting, ref_northing = convert_to_utm(ref_lon, ref_lat)
-    # distance = math.sqrt((ref_easting - lat) ** 2 + (ref_northing - lon) ** 2)
-    distance = math.sqrt((ref_lon - lon) ** 2 + (ref_lat - lat) ** 2)
+# def euclidean_distance(lon, lat, ref_lon, ref_lat):
+#     # ref_easting, ref_northing = convert_to_utm(ref_lon, ref_lat)
+#     # distance = math.sqrt((ref_easting - lat) ** 2 + (ref_northing - lon) ** 2)
+#     distance = math.sqrt((ref_lon - lon) ** 2 + (ref_lat - lat) ** 2)
+#     distance_cm = distance * 100  # Convert to centimeters
+#     return distance_cm
+
+def euclidean_distance(easting, northing, ref_easting, ref_northing):
+    distance = math.sqrt((easting - ref_easting) ** 2 + (northing - ref_northing) ** 2)
     distance_cm = distance * 100  # Convert to centimeters
     return distance_cm
 
@@ -122,7 +141,7 @@ def get_gnss_data(table_name, start_time, end_time):
     return pd.DataFrame()
 
 def fetch_all_ts_data(table_name):
-    """Fetch all distinct timestamps and process data with a start time of ts - 8 hours."""
+    """Fetch all distinct timestamps and process data with a start time of ts - 12 hours."""
     connection = create_db_connection()
     
     if connection:
@@ -148,11 +167,20 @@ def apply_filters(df):
         df_filtered = outlier_filter_for_latlon_with_msl(df_filtered)
     return df_filtered
 
-def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', easting_col='easting_diff', window=24):
+def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', easting_col='easting_diff', window=8):
     df = df.sort_values(by=time_col).copy()
-    df['timestamp_numeric'] = pd.to_numeric(df[time_col]/1e9)
+    df['ts'] = pd.to_datetime(df['ts'])
+    
+    if len(df) < window:
+       print(f"DataFrame has less than {window} rows, rolling OLS cannot be computed.")
+       df['northing_slope'] = np.nan
+       df['easting_slope'] = np.nan
+       df['velocity_cm_hr'] = np.nan
+       return df[['ts', 'northing_slope', 'easting_slope', 'velocity_cm_hr']]
+   
+    df['timestamp_numeric'] = pd.to_numeric(df[time_col])/1e9 #nanoseconds to seconds
     X = sm.add_constant(df['timestamp_numeric'])
-
+    
     rolling_model_northing = RollingOLS(df[northing_col], X, window=window).fit()
     df['northing_slope'] = rolling_model_northing.params['timestamp_numeric']
 
@@ -160,9 +188,9 @@ def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', ea
     df['easting_slope'] = rolling_model_easting.params['timestamp_numeric']
 
     df['velocity'] = np.sqrt(df['northing_slope']**2 + df['easting_slope']**2)
-    df['velocity_cm_per_hour'] = df['velocity'] * 360000
+    df['velocity_cm_hr'] = df['velocity'] * 360000
     
-    return df[['ts', 'northing_slope', 'easting_slope', 'velocity_cm_per_hour']]
+    return df[['ts', 'northing_slope', 'easting_slope', 'velocity_cm_hr']]
 
 
 def update_stored_data(table_name, df):
@@ -231,7 +259,7 @@ def process_gnss_data():
             df['easting_diff'] = df['easting'] - ref_easting
             df['northing_diff'] = df['northing'] - ref_northing
             
-            df['distance_cm'] = df.apply(lambda row: euclidean_distance(row['easting'], row['northing'], ref_lon, ref_lat), axis=1)
+            df['distance_cm'] = df.apply(lambda row: euclidean_distance(row['easting'], row['northing'], ref_easting, ref_northing), axis=1)
 
             # Apply filters
             df_filtered = apply_filters(df)
@@ -242,7 +270,8 @@ def process_gnss_data():
             df_velocity = compute_rolling_velocity(df_filtered)
 
             # # Check for alert levels
-            # df_alerts = check_alerts(df_velocity)
+            df_alerts = check_alerts(df_velocity)
+            # print(df_alerts)
 
             # # Update the database with the processed data
             # update_stored_data(table_name, df_alerts)
