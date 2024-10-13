@@ -172,7 +172,7 @@ def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', ea
     df['ts'] = pd.to_datetime(df['ts'])
     
     if len(df) < window:
-       print(f"DataFrame has less than {window} rows, rolling OLS cannot be computed.")
+       # print(f"DataFrame has less than {window} rows, rolling OLS cannot be computed.")
        df['northing_slope'] = np.nan
        df['easting_slope'] = np.nan
        df['velocity_cm_hr'] = np.nan
