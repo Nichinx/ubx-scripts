@@ -5,7 +5,7 @@ import os
 import numpy
 import csv
 
-com_port = 'COM4'
+com_port = 'COM12'
 
 try:
         ser = serial.Serial(
@@ -20,34 +20,51 @@ try:
 except serial.SerialException:
         print ("ERROR: Could Not Open COM %r!" % (com_port))
 
-
-position = ('ubx_data')
+mohon_no = input('Mohon No.: ')
+file_name = (f'UPMHN_{mohon_no}')
 
 OutputFP = os.path.dirname(os.path.realpath(__file__))+"\\data"
 if not os.path.exists(OutputFP):
     os.makedirs(OutputFP)
     
-fileraw = '{}\\{}.csv'.format(OutputFP,position)
+fileraw = '{}\\{}.csv'.format(OutputFP,file_name)
 
 
-data = "site,fix,lat,lon,hacc,vacc,msl,sat_num,temp,volt,ts\n"
-fraw = open(fileraw, 'a')   #append
-fraw.write(data)
-fraw.close()
+# data = "site,fix_type,latitude,longitude,hacc,vacc,msl,sat_num,temp,volt,ts\n"
+# fraw = open(fileraw, 'a')   #append
+# fraw.write(data)
+# fraw.close()
 
 
-while True:
-    data = ser.readline().decode()
-    data = "{}".format(data)
+# while True:
+#     data = ser.readline().decode()
+#     data = "{}".format(data)
 
-    data = data.translate(str.maketrans('','','\r'))
+#     data = data.translate(str.maketrans('','','\r'))
 
-    fraw = open(fileraw, 'a')
-    fraw.write(data)
-    fraw.close()   
+#     fraw = open(fileraw, 'a')
+#     fraw.write(data)
+#     fraw.close()   
         
-    print(data)
+#     print(data)
      
       
+# Create a file with the headers if not already created
+if not os.path.isfile(fileraw):
+    data = "site,fix_type,latitude,longitude,hacc,vacc,msl,sat_num,temp,volt,ts\n"
+    with open(fileraw, 'a') as fraw:
+        fraw.write(data)
+
+# Continuously read data from the serial port
+while True:
+    data = ser.readline().decode().strip()  # Remove any leading/trailing whitespace
+
+    # Only process lines that start with ">>"
+    if data.startswith(">>"):
+        data = data[2:]
+        with open(fileraw, 'a') as fraw:
+            fraw.write(data + '\n')
+        
+        print(data)
 
  
