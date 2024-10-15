@@ -13,7 +13,7 @@ SFE_UBLOX_GNSS myGNSS;
 
 char sitecode[6] = "UPMHN"; //logger name - sensor site code
 int MIN_SAT = 20; //binaba from 30
-int AVE_COUNT = 12;
+int AVE_COUNT = 1; //12 counts
 
 bool READ_FLAG = false;
 bool UBX_INIT_FLAG = false;
@@ -220,27 +220,28 @@ void getGNSSData(char *dataToSend, unsigned int bufsize) {
   if (checkRTKFixType() == 2 && checkSatelliteCount() >= MIN_SAT) {
     readUbloxData();
     getRTCM();
-    RX_LORA_FLAG == 1;
-    READ_FLAG = true;
+    // RX_LORA_FLAG == 1;
+    // READ_FLAG = true;
+
+    readTimeStamp();
+    strncat(dataToSend, "*", 2);
+    strncat(dataToSend, Ctimestamp, 13);
+    Serial.println(dataToSend);
   }
 
   else if (((checkRTKFixType() != 2) || (checkSatelliteCount() < MIN_SAT))) {
     getRTCM();
   }
 
-  if (READ_FLAG = true) {
-    READ_FLAG = false;
-    RX_LORA_FLAG == 0;
+  // if (READ_FLAG = true) {
+  //   READ_FLAG = false;
+  //   RX_LORA_FLAG == 0;
 
-    readTimeStamp();
-    strncat(dataToSend, "*", 2);
-    strncat(dataToSend, Ctimestamp, 13);
-    Serial.println(dataToSend);
-
-    for (int i = 0; i < 200; i++) {
-      dataToSend[i] = (uint8_t)'\0';
-    }
-  }
+  //   readTimeStamp();
+  //   strncat(dataToSend, "*", 2);
+  //   strncat(dataToSend, Ctimestamp, 13);
+  //   Serial.println(dataToSend);
+  // }
 }
 
 void readUbloxData() {
@@ -275,51 +276,58 @@ void readUbloxData() {
   snprintf(volt, sizeof volt, "%.2f", readBatteryVoltage(10));
   snprintf(temp, sizeof temp, "%.2f", readTemp());
 
-  for (int i = 1; i <= AVE_COUNT; i++) {
-      getRTCM();
+  for (int j = 1; j <= AVE_COUNT; j++) {
+    getRTCM();
 
-      // First, let's collect the position data
-      int32_t latitude = myGNSS.getHighResLatitude();
-      int8_t latitudeHp = myGNSS.getHighResLatitudeHp();
-      int32_t longitude = myGNSS.getHighResLongitude();
-      int8_t longitudeHp = myGNSS.getHighResLongitudeHp();
-      int32_t msl = myGNSS.getMeanSeaLevel();
-      int8_t mslHp = myGNSS.getMeanSeaLevelHp();
-      uint32_t hor_acc = myGNSS.getHorizontalAccuracy();
-      uint32_t ver_acc = myGNSS.getVerticalAccuracy();
+    // First, let's collect the position data
+    int32_t latitude = myGNSS.getHighResLatitude();
+    int8_t latitudeHp = myGNSS.getHighResLatitudeHp();
+    int32_t longitude = myGNSS.getHighResLongitude();
+    int8_t longitudeHp = myGNSS.getHighResLongitudeHp();
+    int32_t msl = myGNSS.getMeanSeaLevel();
+    int8_t mslHp = myGNSS.getMeanSeaLevelHp();
+    uint32_t hor_acc = myGNSS.getHorizontalAccuracy();
+    uint32_t ver_acc = myGNSS.getVerticalAccuracy();
 
-      // Assemble the high precision latitude and longitude
-      d_lat = ((double)latitude) / 10000000.0; // Convert latitude from degrees * 10^-7 to degrees
-      d_lat += ((double)latitudeHp) / 1000000000.0; // Now add the high resolution component (degrees * 10^-9 )
-      d_lon = ((double)longitude) / 10000000.0; // Convert longitude from degrees * 10^-7 to degrees
-      d_lon += ((double)longitudeHp) / 1000000000.0; // Now add the high resolution component (degrees * 10^-9 )
+    // Assemble the high precision latitude and longitude
+    d_lat = ((double)latitude) / 10000000.0; // Convert latitude from degrees * 10^-7 to degrees
+    d_lat += ((double)latitudeHp) / 1000000000.0; // Now add the high resolution component (degrees * 10^-9 )
+    d_lon = ((double)longitude) / 10000000.0; // Convert longitude from degrees * 10^-7 to degrees
+    d_lon += ((double)longitudeHp) / 1000000000.0; // Now add the high resolution component (degrees * 10^-9 )
 
-      // Calculate the height above mean sea level in mm * 10^-1
-      f_msl = (msl * 10) + mslHp;  // Now convert to m
-      f_msl = f_msl / 10000.0; // Convert from mm * 10^-1 to m
+    // Calculate the height above mean sea level in mm * 10^-1
+    f_msl = (msl * 10) + mslHp;  // Now convert to m
+    f_msl = f_msl / 10000.0; // Convert from mm * 10^-1 to m
 
-      // Convert the accuracy (mm * 10^-1) to a float
-      f_accuracy_hor = hor_acc / 10000.0; // Convert from mm * 10^-1 to m
-      f_accuracy_ver = ver_acc / 10000.0; // Convert from mm * 10^-1 to m
+    // Convert the accuracy (mm * 10^-1) to a float
+    f_accuracy_hor = hor_acc / 10000.0; // Convert from mm * 10^-1 to m
+    f_accuracy_ver = ver_acc / 10000.0; // Convert from mm * 10^-1 to m
 
-      if ((checkHorizontalAccuracy() == 141 && checkVerticalAccuracy() <= 141)) {
-        // Accumulation
-        accu_lat += d_lat;
-        accu_lon += d_lon;
-        accu_msl += f_msl;
-        accu_accuracy_hor += f_accuracy_hor;
-        accu_accuracy_ver += f_accuracy_ver;
-        accu_count++;
-        Serial.print("accu_count: ");
-        Serial.println(accu_count);
+    // if ((checkHorizontalAccuracy() == 141 && checkVerticalAccuracy() <= 141)) {
+    //   // Accumulation
+    //   accu_lat += d_lat;
+    //   accu_lon += d_lon;
+    //   accu_msl += f_msl;
+    //   accu_accuracy_hor += f_accuracy_hor;
+    //   accu_accuracy_ver += f_accuracy_ver;
+    //   accu_count++;
+    //   Serial.print("accu_count: ");
+    //   Serial.println(accu_count);
 
-      } else {
-        i--; //loop until hacc&vacc conditions are satisfied or until timeout reached
-        getRTCM();
-      }
+    // } else {
+    //   i--; //loop until hacc&vacc conditions are satisfied or until timeout reached
+    //   getRTCM();
+    // }
+
+    //NO CONDITIONS ON HACC & VACC
+    accu_lat += d_lat;
+    accu_lon += d_lon;
+    accu_msl += f_msl;
+    accu_accuracy_hor += f_accuracy_hor;
+    accu_accuracy_ver += f_accuracy_ver;
   }
 
-  // Averagin
+  // Averaging
   d_lat = accu_lat / accu_count; 
   d_lon = accu_lon / accu_count;
   f_msl = accu_msl / accu_count; 
@@ -419,5 +427,5 @@ void setup() {
 
 void loop() {
   getGNSSData(dataToSend, sizeof(dataToSend));
-  delay(1000);
+  delay(100);
 }

@@ -49,15 +49,13 @@ fileraw = '{}\\{}.csv'.format(OutputFP,file_name)
 #     print(data)
      
       
-# Create a file with the headers if not already created
 if not os.path.isfile(fileraw):
     data = "site,fix_type,latitude,longitude,hacc,vacc,msl,sat_num,temp,volt,ts\n"
     with open(fileraw, 'a') as fraw:
         fraw.write(data)
 
-# Continuously read data from the serial port
 while True:
-    data = ser.readline().decode().strip()  # Remove any leading/trailing whitespace
+    data = ser.readline().decode().strip()
 
     # Only process lines that start with ">>"
     if data.startswith(">>"):
@@ -66,5 +64,3 @@ while True:
             fraw.write(data + '\n')
         
         print(data)
-
- 
