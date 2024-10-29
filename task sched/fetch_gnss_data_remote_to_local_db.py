@@ -7,8 +7,8 @@ def get_gnss_tables():
         dyna_db = mysql.connector.connect(
                     host="192.168.150.112",
                     database="analysis_db",
-                    user="pysys_local",
-                    password="NaCAhztBgYZ3HwTkvHwwGVtJn5sVMFgg",
+                    user="hardwareinfra",
+                    password="veug3r4MTKfsuk5H4rdw4r3",
                     charset="utf8mb4"  # Explicitly setting charset
                     )
         dyna_db_cursor = dyna_db.cursor()
@@ -34,8 +34,8 @@ def fetch_latest_data_from_remote(table_name):
         dyna_db = mysql.connector.connect(
                     host="192.168.150.112",
                     database="analysis_db",
-                    user="pysys_local",
-                    password="NaCAhztBgYZ3HwTkvHwwGVtJn5sVMFgg",
+                    user="hardwareinfra",
+                    password="veug3r4MTKfsuk5H4rdw4r3",
                     charset="utf8mb4"  # Explicitly setting charset
                     )
         dyna_db_cursor = dyna_db.cursor()

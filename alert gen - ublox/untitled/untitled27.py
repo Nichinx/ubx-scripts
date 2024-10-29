@@ -16,6 +16,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Connection
 import statsmodels.api as sm
 from statsmodels.regression.rolling import RollingOLS
+import matplotlib.pyplot as plt
 
 db_config = {
     'host': 'localhost',
@@ -167,7 +168,7 @@ def apply_filters(df):
         df_filtered = outlier_filter_for_latlon_with_msl(df_filtered)
     return df_filtered
 
-def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', easting_col='easting_diff', window=8):
+def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', easting_col='easting_diff', window=8, plot=True):
     df = df.sort_values(by=time_col).copy()
     df['ts'] = pd.to_datetime(df['ts'])
     
@@ -189,6 +190,48 @@ def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', ea
 
     df['velocity'] = np.sqrt(df['northing_slope']**2 + df['easting_slope']**2)
     df['velocity_cm_hr'] = df['velocity'] * 360000
+    
+    
+    # Optional plotting
+    if plot:
+        # Plot for Northing
+        plt.figure(figsize=(10, 6))
+        
+        # Scatter plot for actual northing_diff points
+        plt.scatter(df['ts'], df[northing_col], label='Northing Points', color='blue', alpha=0.5)
+        
+        # Line plot for the rolling slope (best fit line)
+        plt.plot(df['ts'], df['northing_slope'] * (df['timestamp_numeric'] - df['timestamp_numeric'].mean()) + df[northing_col].mean(), 
+                 label='Rolling Regression (Northing Slope)', color='red', linewidth=2)
+    
+        plt.xlabel('Timestamp')
+        plt.ylabel('Northing Diff')
+        plt.title('Northing Diff vs Timestamp with Rolling Slope')
+        plt.grid(True)
+        plt.xticks(rotation=45)
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
+    
+        # Plot for Easting
+        plt.figure(figsize=(10, 6))
+        
+        # Scatter plot for actual easting_diff points
+        plt.scatter(df['ts'], df[easting_col], label='Easting Points', color='green', alpha=0.5)
+        
+        # Line plot for the rolling slope (best fit line)
+        plt.plot(df['ts'], df['easting_slope'] * (df['timestamp_numeric'] - df['timestamp_numeric'].mean()) + df[easting_col].mean(), 
+                 label='Rolling Regression (Easting Slope)', color='orange', linewidth=2)
+    
+        plt.xlabel('Timestamp')
+        plt.ylabel('Easting Diff')
+        plt.title('Easting Diff vs Timestamp with Rolling Slope')
+        plt.grid(True)
+        plt.xticks(rotation=45)
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
+    
     
     return df[['ts', 'northing_slope', 'easting_slope', 'velocity_cm_hr']]
 
@@ -264,9 +307,10 @@ def process_gnss_data():
             # Apply filters
             df_filtered = apply_filters(df)
             df_filtered = resample_df(df_filtered).fillna(method='ffill')
+            
+            # df_filtered = df_filtered.drop(columns=['fix_type','latitude','longitude','hacc','vacc','temp','volt'])
 
             # Compute velocity based on the rolling window (4-hour window equivalent)
-            # df_velocity = compute_rolling_velocity(df_filtered)
             df_velocity = compute_rolling_velocity(df_filtered)
 
             # # Check for alert levels
