@@ -1,0 +1,36 @@
+BASE INFO
+
+
+UP Baseline
+
+lat: 14.655230940
+lon: 121.059707000
+alt: 98.5660 m (added yung height ng tripod sa testing)
+msl:
+
+
+
+
+Tarlac Base
+
+lat: 15.490612200
+lon: 120.564817800
+alt: 98 m
+msl: 62.356 m
+
+
+
+
+~4sec interval sa unang code, madaming get_rtcm at may delays
+in 5 minutes, ~60 data lang
+
+
+~2sec interval lowest tested
+in 5 minutes, ~150 data
+in 15 minutes, ~450 data
+in 30 minutes, ~900 data
+
+tests
+1: 5 minutes (~4sec interval)
+2: 15 minutes (~2sec i.)
+3: 30 minutes (~2sec i.)

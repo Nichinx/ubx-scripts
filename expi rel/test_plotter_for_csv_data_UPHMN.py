@@ -45,7 +45,7 @@ ref_lat, ref_lon = 15.490612200, 120.564817800  # Example reference point; repla
 ref_easting, ref_northing = convert_to_utm(ref_lon, ref_lat)
 
 # Load the GNSS data from CSV instead of database
-file_path = "C:\\Users\\Nichi\\Downloads\\UPMHN_2.csv"  # Update this to your actual file path
+file_path = "C:\\Users\\Nichi\\Downloads\\UPMHN_3.csv"  # Update this to your actual file path
 
 dataframes = []
 logger_names = set()
@@ -61,16 +61,18 @@ if dataframes:
     gnss_data = pd.concat(dataframes, ignore_index=True)
     
     # Convert latitude and longitude columns to numeric
+    gnss_data['ts'] = pd.to_datetime(gnss_data['ts'], format='%y%m%d%H%M%S')
     gnss_data["latitude"] = pd.to_numeric(gnss_data["latitude"], errors='coerce')
     gnss_data["longitude"] = pd.to_numeric(gnss_data["longitude"], errors='coerce')
+    gnss_data["msl"] = pd.to_numeric(gnss_data["msl"], errors='coerce')
+    gnss_data['vacc'] = pd.to_numeric(gnss_data['vacc'], errors='coerce')
+    
     gnss_data.dropna(subset=["latitude", "longitude"], inplace=True)
     
     # Convert lat/lon to UTM and calculate distances
     gnss_data[['easting', 'northing']] = gnss_data.apply(lambda row: convert_to_utm(row['longitude'], row['latitude']), axis=1, result_type='expand')
     gnss_data['distance_m'] = gnss_data.apply(lambda row: euclidean_distance(row['easting'], row['northing'], ref_easting, ref_northing), axis=1)
-    
-    gnss_data['ts'] = pd.to_datetime(gnss_data['ts'], format='%y%m%d%H%M%S')
-    gnss_data['vacc'] = pd.to_numeric(gnss_data['vacc'], errors='coerce')
+
     
     # # Plot the GNSS data
     # plt.figure(figsize=(12, 6))
@@ -123,14 +125,19 @@ if dataframes:
     
     # Define VACC range for color bar scaling
     vacc_min, vacc_max = gnss_data['vacc'].min(), gnss_data['vacc'].max()
-
     
     # Line plot for Distance vs. Timestamp without markers
     ax1.plot(gnss_data['ts'], gnss_data['distance_m'], color='blue', label='Distance (m)', zorder=1)
     
     # Scatter plot with VACC intensity-based color markers
     sc = ax1.scatter(gnss_data['ts'], gnss_data['distance_m'], c=gnss_data['vacc'], cmap='plasma', marker='o', vmin=vacc_min, vmax=vacc_max, zorder=2)
-    plt.colorbar(sc, ax=ax1, label='VACC (Vertical Accuracy)')  # Color bar for VACC intensity
+    plt.colorbar(sc, ax=ax1, label='VACC (Vertical Accuracy, in meters)')  # Color bar for VACC intensity
+    
+    # Create a secondary y-axis for MSL values
+    ax2 = ax1.twinx()  # Create a twin y-axis sharing the same x-axis
+    ax2.plot(gnss_data['ts'], gnss_data['msl'], color='green', label='MSL (meters)', zorder=3, alpha=0.5)  # Adjust alpha for visibility
+    ax2.set_ylabel('Mean Sea Level (meters)', color='green')
+    ax2.tick_params(axis='y', labelcolor='green')
     
     # Label and tick formatting
     ax1.set_xlabel('Timestamp')
@@ -138,7 +145,8 @@ if dataframes:
     ax1.tick_params(axis='y', labelcolor='blue')
     
     # Title and grid
-    plt.title('Distance to Reference Point from UP Baseline, with VACC-Intensity Colored Markers over Time', fontweight='bold')
+    # plt.title('Distance to Reference Point from UP Baseline, with VACC-Intensity Colored Markers over Time', fontweight='bold')
+    plt.title('Distance to Reference Point from UP Baseline, with VACC-Intensity Colored Markers and MSL over Time', fontweight='bold')
     ax1.grid()
     plt.tight_layout()
     plt.show()
