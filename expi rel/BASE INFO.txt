@@ -10,7 +10,6 @@ msl:
 
 
 
-
 Tarlac Base
 
 lat: 15.490612200
@@ -20,6 +19,8 @@ msl: 62.356 m
 
 
 
+CONTINUOUS SAMPLING MODE:
+***RTK=2 (matic/meaning HACC=1.41), sat>20, no VACC condi.
 
 ~4sec interval sa unang code, madaming get_rtcm at may delays
 in 5 minutes, ~60 data lang
@@ -30,7 +31,37 @@ in 5 minutes, ~150 data
 in 15 minutes, ~450 data
 in 30 minutes, ~900 data
 
-tests
-1: 5 minutes (~4sec interval)
-2: 15 minutes (~2sec i.)
-3: 30 minutes (~2sec i.)
+
+tests conducted
+1: 5 minutes (~4sec interval) --- done (10/31)
+2: 15 minutes (~2sec interval) --- done (10/31)
+3: 30 minutes (~2sec interval) --- done (10/31)
+4: 1 hour (~2sec interval)
+
+
+
+
+
+* * * * * * * * * * * * * * * 
+
+UBLOX CONFIGS
+
+***BASE:
+/Ports:
+            PIN		POUT        BR
+UART1 ---  none   --- 5-RTCM3 --- 115200
+UART2 --- 5-RTCM3 --- 5-RTCM3 --- 115200
+
+/Rates: 	All = 200ms
+/TMODE3: 	Set lat, lon, msl
+/CFG:		Save all configs!
+
+
+***ROVER:
+/Ports:
+            PIN		  POUT           BR
+UART1 --- 5-RTCM3 --- 0+1-UBX+NMEA --- 115200
+UART2 --- 5-RTCM3 ---    1-NMEA    --- 115200
+
+/Rates: 	All = 200ms
+/CFG:		Save all configs!
