@@ -19,8 +19,11 @@ msl: 62.356 m
 
 
 
-CONTINUOUS SAMPLING MODE:
-***RTK=2 (matic/meaning HACC=1.41), sat>20, no VACC condi.
+
+CONTINUOUS SAMPLING MODE :
+***RTK=2 (matic/meaning HACC=1.41)
+***sat>20
+***no VACC condi.
 
 ~4sec interval sa unang code, madaming get_rtcm at may delays
 in 5 minutes, ~60 data lang
@@ -38,6 +41,28 @@ tests conducted
 3: 30 minutes (~2sec interval) --- done (10/31)
 4: 1 hour (~2sec interval)
 
+
+
+
+
+CONT.SAMP. MODE v2
+***add VACC condition of less than 1.41 only
+***upload on different feather --label v2
+
+
+~xxsec interval
+
+
+
+
+
+CORRELATION ANALYSIS
+- msl to distance
+- distance to vacc
+- vacc to msl
+- vacc to lat to lon
+- vacc to distance
+-
 
 
 

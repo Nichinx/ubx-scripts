@@ -5,7 +5,10 @@ import os
 import numpy
 import csv
 
-com_port = 'COM34'
+execution_time = datetime.datetime.now().strftime("Execution Time: %m-%d-%Y %H:%M:%S")
+print(f"Execution Time: {execution_time}")
+
+com_port = 'COM35'
 
 try:
         ser = serial.Serial(
@@ -50,7 +53,9 @@ fileraw = '{}\\{}.csv'.format(OutputFP,file_name)
      
       
 if not os.path.isfile(fileraw):
-    data = "site,fix_type,latitude,longitude,hacc,vacc,msl,sat_num,temp,volt,ts\n"
+    # data = "site,fix_type,latitude,longitude,hacc,vacc,msl,sat_num,temp,volt,ts\n"
+    data = f"{execution_time}\nsite,fix_type,latitude,longitude,hacc,vacc,msl,sat_num,temp,volt,ts\n"
+    
     with open(fileraw, 'a') as fraw:
         fraw.write(data)
 

@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import math
 from pyproj import Transformer
+import itertools
 
 
 transformer = Transformer.from_crs("epsg:4326", "epsg:32651", always_xy=True)
@@ -43,16 +44,24 @@ def euclidean_distance(easting, northing, ref_easting, ref_northing):
 ref_lat, ref_lon = 15.490612200, 120.564817800  # Example reference point; replace with your actual values
 ref_easting, ref_northing = convert_to_utm(ref_lon, ref_lat)
 
-file_path = "C:\\Users\\Nichi\\Downloads\\UPMHN_2.csv"  # Update this to your actual file path
+file_path = "C:\\Users\\Nichi\\Downloads\\UPMHN_3.csv"  # Update this to your actual file path
 
 dataframes = []
 logger_names = set()
+# with open(file_path, 'r') as file:
+#     for line in file:
+#         logger_name, parsed_data = parse_line(line)
+#         if parsed_data is not None:
+#             dataframes.append(parsed_data)
+#             # logger_names.add(logger_name)
+
 with open(file_path, 'r') as file:
-    for line in file:
+    # Skip the first two lines
+    for line in itertools.islice(file, 1, None):
         logger_name, parsed_data = parse_line(line)
         if parsed_data is not None:
             dataframes.append(parsed_data)
-            logger_names.add(logger_name)
+
 
 if dataframes:
     gnss_data = pd.concat(dataframes, ignore_index=True)
@@ -83,7 +92,8 @@ if dataframes:
     ax1.set_ylabel('Distance (meters)', color='blue')
     ax1.tick_params(axis='y', labelcolor='blue')
 
-    plt.title('Distance to Reference Point from UP Baseline, with VACC-Intensity Colored Markers and MSL over Time', fontweight='bold')
+    # plt.title('Distance to Reference Point from UP Baseline, with VACC-Intensity Colored Markers and MSL over Time', fontweight='bold')
+    plt.title('Distance to Rover from Base, with VACC-Intensity Colored Markers and MSL over Time', fontweight='bold')
     ax1.grid()
     plt.tight_layout()
     plt.show()

@@ -218,6 +218,7 @@ void getGNSSData(char *dataToSend, unsigned int bufsize) {
   getRTCM();
 
   if (checkRTKFixType() == 2 && checkSatelliteCount() >= MIN_SAT) {
+    // getRTCM();
     readUbloxData();
     getRTCM();
 
@@ -291,26 +292,24 @@ void readUbloxData() {
   f_accuracy_hor = hor_acc / 10000.0;  // Convert from mm * 10^-1 to m
   f_accuracy_ver = ver_acc / 10000.0;  // Convert from mm * 10^-1 to m
 
-  // if ((checkHorizontalAccuracy() == 141 && checkVerticalAccuracy() <= 141)) {
-  //   // Accumulation
-  //   accu_lat += d_lat;
-  //   accu_lon += d_lon;
-  //   accu_msl += f_msl;
-  //   accu_accuracy_hor += f_accuracy_hor;
-  //   accu_accuracy_ver += f_accuracy_ver;
-  //   accu_count++;
+  if ((checkHorizontalAccuracy() == 141 && checkVerticalAccuracy() <= 141)) {
+    // Accumulation
+    accu_lat += d_lat;
+    accu_lon += d_lon;
+    accu_msl += f_msl;
+    accu_accuracy_hor += f_accuracy_hor;
+    accu_accuracy_ver += f_accuracy_ver;
+    // accu_count++;
+    // Serial.print("accu_count: ");
+    // Serial.println(accu_count);
 
-  // } else {
-  //   i--; //loop until hacc&vacc conditions are satisfied or until timeout reached
-  //   getRTCM();
-  // }
-
-  //NO CONDITIONS ON HACC & VACC
-  accu_lat += d_lat;
-  accu_lon += d_lon;
-  accu_msl += f_msl;
-  accu_accuracy_hor += f_accuracy_hor;
-  accu_accuracy_ver += f_accuracy_ver;
+  } 
+  // //NO CONDITIONS ON HACC & VACC
+  // accu_lat += d_lat;
+  // accu_lon += d_lon;
+  // accu_msl += f_msl;
+  // accu_accuracy_hor += f_accuracy_hor;
+  // accu_accuracy_ver += f_accuracy_ver;
 // }
 
   // Averaging
@@ -327,7 +326,7 @@ void readUbloxData() {
     strncat(dataToSend, temp, sizeof(temp));
     strncat(dataToSend, ",", 2);
     strncat(dataToSend, volt, sizeof(volt));
-  }
+  } 
 
   d_lat, d_lon, f_msl, f_accuracy_hor, f_accuracy_ver = 0.0;
   accu_lat, accu_lon, accu_msl, accu_accuracy_hor, accu_accuracy_ver = 0.0;  //reset accumulators to zero
@@ -374,5 +373,8 @@ void setup() {
 }
 
 void loop() {
+  // getRTCM();
   getGNSSData(dataToSend, sizeof(dataToSend));
+  // delay(100);
+  // getRTCM();
 }
