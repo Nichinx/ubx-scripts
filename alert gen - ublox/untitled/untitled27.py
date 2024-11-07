@@ -22,7 +22,7 @@ db_config = {
     'host': 'localhost',
     'user': 'root',
     'password': 'admin123',
-    'database': 'new_schema_3'
+    'database': 'new_schema_4'
 }
 
 # Define the projection for WGS84 and UTM Zone 51N
@@ -62,7 +62,7 @@ def close_db_connection(connection: Connection):
 
 def resample_df(df):
     df['ts'] = pd.to_datetime(df['ts'])
-    df = df.set_index('ts').resample('30min').mean().reset_index()
+    df = df.set_index('ts').resample('15min').mean().reset_index()
     return df
 
 def sanity_filters(df, hacc=0.0141, vacc=0.0141):
@@ -141,25 +141,36 @@ def get_gnss_data(table_name, start_time, end_time):
         return df
     return pd.DataFrame()
 
+# def fetch_all_ts_data(table_name):
+#     """Fetch all distinct timestamps and process data with a start time of ts - 12 hours."""
+#     connection = create_db_connection()
+    
+#     if connection:
+#         query = f"SELECT DISTINCT ts FROM {table_name} ORDER BY ts;"
+#         all_ts = pd.read_sql(query, connection)['ts']
+#         all_ts = pd.to_datetime(all_ts)
+#         close_db_connection(connection)
+    
+#     dataframes = []
+#     for ts in all_ts:
+#         start_time = ts - timedelta(hours=12)
+#         end_time = ts
+#         df = get_gnss_data(table_name, start_time, end_time)
+
+#         if not df.empty:
+#             dataframes.append(df)
+    
+#     return dataframes 
+
 def fetch_all_ts_data(table_name):
     """Fetch all distinct timestamps and process data with a start time of ts - 12 hours."""
     connection = create_db_connection()
     
     if connection:
-        query = f"SELECT DISTINCT ts FROM {table_name} ORDER BY ts;"
-        all_ts = pd.read_sql(query, connection)['ts']
-        all_ts = pd.to_datetime(all_ts)
+        query = f"SELECT * FROM {table_name} ORDER BY ts;"
+        dataframes = pd.read_sql(query, connection)
         close_db_connection(connection)
-    
-    dataframes = []
-    for ts in all_ts:
-        start_time = ts - timedelta(hours=12)
-        end_time = ts
-        df = get_gnss_data(table_name, start_time, end_time)
-
-        if not df.empty:
-            dataframes.append(df)
-    
+       
     return dataframes 
 
 def apply_filters(df):
@@ -168,72 +179,234 @@ def apply_filters(df):
         df_filtered = outlier_filter_for_latlon_with_msl(df_filtered)
     return df_filtered
 
-def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', easting_col='easting_diff', window=8, plot=True):
+# def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', easting_col='easting_diff', window=32, plot=True):
+#     df = df.sort_values(by=time_col).copy()
+#     df['ts'] = pd.to_datetime(df['ts'])
+    
+#     if len(df) < window:
+#        # print(f"DataFrame has less than {window} rows, rolling OLS cannot be computed.")
+#        df['northing_slope'] = np.nan
+#        df['easting_slope'] = np.nan
+#        df['velocity_cm_hr'] = np.nan
+#        return df[['ts', 'northing_slope', 'easting_slope', 'velocity_cm_hr']]
+   
+#     df['timestamp_numeric'] = pd.to_numeric(df[time_col])/1e9 #nanoseconds to seconds
+#     X = sm.add_constant(df['timestamp_numeric'])
+    
+#     rolling_model_northing = RollingOLS(df[northing_col], X, window=window).fit()
+#     df['northing_slope'] = rolling_model_northing.params['timestamp_numeric']
+
+#     rolling_model_easting = RollingOLS(df[easting_col], X, window=window).fit()
+#     df['easting_slope'] = rolling_model_easting.params['timestamp_numeric']
+
+#     df['velocity'] = np.sqrt(df['northing_slope']**2 + df['easting_slope']**2)
+#     df['velocity_cm_hr'] = df['velocity'] * 360000
+    
+    
+#     # Optional plotting
+#     if plot:
+#         # Plot for Northing
+#         plt.figure(figsize=(10, 6))
+        
+#         # Scatter plot for actual northing_diff points
+#         plt.scatter(df['ts'], df[northing_col], label='Northing Points', color='blue', alpha=0.5)
+        
+#         # Line plot for the rolling slope (best fit line)
+#         plt.plot(df['ts'], df['northing_slope'] * (df['timestamp_numeric'] - df['timestamp_numeric'].mean()) + df[northing_col].mean(), 
+#                  label='Rolling Regression (Northing Slope)', color='red', linewidth=2)
+    
+#         plt.xlabel('Timestamp')
+#         plt.ylabel('Northing Diff')
+#         plt.title('Northing Diff vs Timestamp with Rolling Slope')
+#         plt.grid(True)
+#         plt.xticks(rotation=45)
+#         plt.legend()
+#         plt.tight_layout()
+#         plt.show()
+    
+#         # Plot for Easting
+#         plt.figure(figsize=(10, 6))
+        
+#         # Scatter plot for actual easting_diff points
+#         plt.scatter(df['ts'], df[easting_col], label='Easting Points', color='green', alpha=0.5)
+        
+#         # Line plot for the rolling slope (best fit line)
+#         plt.plot(df['ts'], df['easting_slope'] * (df['timestamp_numeric'] - df['timestamp_numeric'].mean()) + df[easting_col].mean(), 
+#                  label='Rolling Regression (Easting Slope)', color='orange', linewidth=2)
+    
+#         plt.xlabel('Timestamp')
+#         plt.ylabel('Easting Diff')
+#         plt.title('Easting Diff vs Timestamp with Rolling Slope')
+#         plt.grid(True)
+#         plt.xticks(rotation=45)
+#         plt.legend()
+#         plt.tight_layout()
+#         plt.show()
+        
+        
+#         # Plot for Velocity
+#         plt.figure(figsize=(10, 6))
+#         plt.plot(df['ts'], df['velocity_cm_hr'], label='Rolling Velocity', color='purple', linewidth=2)
+#         plt.xlabel('Timestamp')
+#         plt.ylabel('Velocity (cm/hr)')
+#         plt.title('Rolling Velocity vs Timestamp')
+#         plt.grid(True)
+#         plt.xticks(rotation=45)
+#         plt.legend()
+#         plt.tight_layout()
+#         plt.show()
+                
+    
+#     return df[['ts', 'northing_slope', 'easting_slope', 'velocity_cm_hr']]
+
+
+######### - - - - - - So far ito yung tamang nagpplot:
+# def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', easting_col='easting_diff', window=24, plot=True):
+#     df = df.sort_values(by=time_col).copy()
+#     df['ts'] = pd.to_datetime(df['ts'])
+    
+#     if len(df) < window:
+#         df['northing_slope'] = np.nan
+#         df['easting_slope'] = np.nan
+#         df['velocity_cm_hr'] = np.nan
+#         return df[['ts', 'northing_slope', 'easting_slope', 'velocity_cm_hr']]
+    
+#     df['timestamp_numeric'] = pd.to_numeric(df[time_col]) / 1e9  # nanoseconds to seconds
+#     X = sm.add_constant(df['timestamp_numeric'])
+    
+#     # Rolling OLS for northing
+#     rolling_model_northing = RollingOLS(df[northing_col], X, window=window).fit()
+#     df['northing_slope'] = rolling_model_northing.params['timestamp_numeric']
+#     df['northing_intercept'] = rolling_model_northing.params['const']
+    
+#     # Rolling OLS for easting
+#     rolling_model_easting = RollingOLS(df[easting_col], X, window=window).fit()
+#     df['easting_slope'] = rolling_model_easting.params['timestamp_numeric']
+#     df['easting_intercept'] = rolling_model_easting.params['const']
+    
+#     # Compute velocity (in meters/second and then converted to cm/hour)
+#     df['velocity'] = np.sqrt(df['northing_slope']**2 + df['easting_slope']**2)
+#     df['velocity_cm_hr'] = df['velocity'] * 360000  # convert m/s to cm/hr
+    
+#     # Prepare to plot the best fit line for each window
+#     df['best_fit_northing'] = np.nan
+#     df['best_fit_easting'] = np.nan
+
+    
+#     # Iterate over the rolling windows to calculate the best fit lines
+#     for i in range(window - 1, len(df)):
+#         # Get the current window
+#         window_df = df.iloc[i - window + 1:i + 1]
+#         if len(window_df) == window:
+#             X_window = sm.add_constant(window_df['timestamp_numeric'])
+#             model_northing = sm.OLS(window_df[northing_col], X_window).fit()
+#             model_easting = sm.OLS(window_df[easting_col], X_window).fit()
+            
+#             # Calculate the best fit line using the model parameters
+#             df.loc[i, 'best_fit_northing'] = model_northing.predict(X_window).mean()  # mean for the last timestamp in window
+#             df.loc[i, 'best_fit_easting'] = model_easting.predict(X_window).mean()  # mean for the last timestamp in window
+
+#     # Plotting
+#     plt.figure(figsize=(12, 6))
+    
+#     # Northing plot
+#     plt.subplot(2, 1, 1)
+#     plt.scatter(df['ts'], df[northing_col], label='Northing Data Points', color='lightblue', alpha=0.5)
+#     plt.plot(df['ts'], df['best_fit_northing'], label='Rolling Best Fit (Northing)', color='red', linewidth=2)
+#     plt.title('Northing Data Points and Rolling Best Fit')
+#     plt.xlabel('Timestamp')
+#     plt.ylabel('Northing Difference')
+#     plt.legend()
+
+#     # Easting plot
+#     plt.subplot(2, 1, 2)
+#     plt.scatter(df['ts'], df[easting_col], label='Easting Data Points', color='lightgreen', alpha=0.5)
+#     plt.plot(df['ts'], df['best_fit_easting'], label='Rolling Best Fit (Easting)', color='green', linewidth=2)
+#     plt.title('Easting Data Points and Rolling Best Fit')
+#     plt.xlabel('Timestamp')
+#     plt.ylabel('Easting Difference')
+#     plt.legend()
+    
+#     plt.tight_layout()
+#     plt.show()
+
+#     return df[['ts', 'northing_slope', 'easting_slope', 'velocity_cm_hr']]
+
+
+def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', easting_col='easting_diff', window=24, plot=True):
     df = df.sort_values(by=time_col).copy()
     df['ts'] = pd.to_datetime(df['ts'])
     
     if len(df) < window:
-       # print(f"DataFrame has less than {window} rows, rolling OLS cannot be computed.")
-       df['northing_slope'] = np.nan
-       df['easting_slope'] = np.nan
-       df['velocity_cm_hr'] = np.nan
-       return df[['ts', 'northing_slope', 'easting_slope', 'velocity_cm_hr']]
-   
-    df['timestamp_numeric'] = pd.to_numeric(df[time_col])/1e9 #nanoseconds to seconds
+        df['northing_slope'] = np.nan
+        df['easting_slope'] = np.nan
+        df['velocity_cm_hr'] = np.nan
+        return df[['ts', 'northing_slope', 'easting_slope', 'velocity_cm_hr']]
+    
+    df['timestamp_numeric'] = pd.to_numeric(df[time_col]) / 1e9  # nanoseconds to seconds
     X = sm.add_constant(df['timestamp_numeric'])
     
+    # Rolling OLS for northing
     rolling_model_northing = RollingOLS(df[northing_col], X, window=window).fit()
     df['northing_slope'] = rolling_model_northing.params['timestamp_numeric']
-
+    df['northing_intercept'] = rolling_model_northing.params['const']
+    
+    # Rolling OLS for easting
     rolling_model_easting = RollingOLS(df[easting_col], X, window=window).fit()
     df['easting_slope'] = rolling_model_easting.params['timestamp_numeric']
-
+    df['easting_intercept'] = rolling_model_easting.params['const']
+    
+    # Compute velocity (in meters/second and then converted to cm/hour)
     df['velocity'] = np.sqrt(df['northing_slope']**2 + df['easting_slope']**2)
-    df['velocity_cm_hr'] = df['velocity'] * 360000
+    df['velocity_cm_hr'] = df['velocity'] * 360000  # convert m/s to cm/hr
     
+    # Prepare to plot the best fit line for each window
+    df['best_fit_northing'] = np.nan
+    df['best_fit_easting'] = np.nan
+
+    # Iterate over the rolling windows to calculate the best fit lines
+    for i in range(window - 1, len(df)):
+        # Get the current window
+        window_df = df.iloc[i - window + 1:i + 1]
+        if len(window_df) == window:
+            X_window = sm.add_constant(window_df['timestamp_numeric'])
+            model_northing = sm.OLS(window_df[northing_col], X_window).fit()
+            model_easting = sm.OLS(window_df[easting_col], X_window).fit()
+            
+            # Calculate the best fit line using the model parameters
+            df.loc[i, 'best_fit_northing'] = model_northing.predict(X_window).mean()  # mean for the last timestamp in window
+            df.loc[i, 'best_fit_easting'] = model_easting.predict(X_window).mean()  # mean for the last timestamp in window
+
+    # Plotting
+    fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 9), sharex=True)
     
-    # Optional plotting
-    if plot:
-        # Plot for Northing
-        plt.figure(figsize=(10, 6))
-        
-        # Scatter plot for actual northing_diff points
-        plt.scatter(df['ts'], df[northing_col], label='Northing Points', color='blue', alpha=0.5)
-        
-        # Line plot for the rolling slope (best fit line)
-        plt.plot(df['ts'], df['northing_slope'] * (df['timestamp_numeric'] - df['timestamp_numeric'].mean()) + df[northing_col].mean(), 
-                 label='Rolling Regression (Northing Slope)', color='red', linewidth=2)
+    # Northing plot
+    ax1.scatter(df['ts'], df[northing_col], label='Northing Data Points', color='lightblue', alpha=0.5)
+    ax1.plot(df['ts'], df['best_fit_northing'], label='Rolling Best Fit (Northing)', color='red', linewidth=2, marker='o', markersize=4)
+    ax1.set_title('Northing Data Points and Rolling Best Fit')
+    ax1.set_ylabel('Northing Difference')
+    ax1.legend()
+
+    # Easting plot
+    ax2.scatter(df['ts'], df[easting_col], label='Easting Data Points', color='lightgreen', alpha=0.5)
+    ax2.plot(df['ts'], df['best_fit_easting'], label='Rolling Best Fit (Easting)', color='green', linewidth=2, marker='o', markersize=4)
+    ax2.set_title('Easting Data Points and Rolling Best Fit')
+    ax2.set_ylabel('Easting Difference')
+    ax2.legend()
+
+    # Velocity plot
+    ax3.plot(df['ts'], df['velocity_cm_hr'], label='Rolling Velocity (cm/hr)', color='purple', linewidth=2, marker='o', markersize=4)
+    ax3.set_title('Rolling Velocity')
+    ax3.set_xlabel('Timestamp')
+    ax3.set_ylabel('Velocity (cm/hr)')
+    ax3.legend()
     
-        plt.xlabel('Timestamp')
-        plt.ylabel('Northing Diff')
-        plt.title('Northing Diff vs Timestamp with Rolling Slope')
-        plt.grid(True)
-        plt.xticks(rotation=45)
-        plt.legend()
-        plt.tight_layout()
-        plt.show()
-    
-        # Plot for Easting
-        plt.figure(figsize=(10, 6))
-        
-        # Scatter plot for actual easting_diff points
-        plt.scatter(df['ts'], df[easting_col], label='Easting Points', color='green', alpha=0.5)
-        
-        # Line plot for the rolling slope (best fit line)
-        plt.plot(df['ts'], df['easting_slope'] * (df['timestamp_numeric'] - df['timestamp_numeric'].mean()) + df[easting_col].mean(), 
-                 label='Rolling Regression (Easting Slope)', color='orange', linewidth=2)
-    
-        plt.xlabel('Timestamp')
-        plt.ylabel('Easting Diff')
-        plt.title('Easting Diff vs Timestamp with Rolling Slope')
-        plt.grid(True)
-        plt.xticks(rotation=45)
-        plt.legend()
-        plt.tight_layout()
-        plt.show()
-    
-    
+    plt.tight_layout()
+    plt.show()
+
     return df[['ts', 'northing_slope', 'easting_slope', 'velocity_cm_hr']]
+
+
 
 
 def update_stored_data(table_name, df):
@@ -258,6 +431,7 @@ def check_alerts(df):
     df.loc[df['velocity_cm_hr'] > 1.8, 'alert_level'] = 3  # Alert level 3
     df['alert_level'].fillna(-1, inplace=True)  # -1 if no data
     return df
+
 
 # def process_gnss_data():
 #     """Main process to fetch GNSS data, apply filters, compute velocity, and check alerts."""

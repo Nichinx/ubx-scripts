@@ -8,7 +8,7 @@ import csv
 execution_time = datetime.datetime.now().strftime("Execution Time: %m-%d-%Y %H:%M:%S")
 print(f"Execution Time: {execution_time}")
 
-com_port = 'COM35'
+com_port = 'COM12'
 
 try:
         ser = serial.Serial(

@@ -2,20 +2,40 @@ BASE INFO
 
 
 UP Baseline
-
 lat: 14.655230940
 lon: 121.059707000
-alt: 98.5660 m (added yung height ng tripod sa testing)
-msl:
+alt: 98.5660 m (added yung height ng tripod sa testing --- 98.2 m (+ 0.366 m - ant.ht.))
+msl: *59.762m
+
+new tripod ht. = 103.5cm
+alt = 99.235 m
+msl = 60.431 m
+
+rovers:
+muhon 1 tripod ht. = 112.7cm
+muhon 2 tripod ht. = 112.5cm
+muhon 3 tripod ht. = 112.5cm
+muhon 4 tripod ht. = 112.5cm
+muhon 5 -- wala
+muhon 6 tripod ht. = 112cm
+muhon 7 tripod ht. = 112.5cm
 
 
 
 Tarlac Base
-
 lat: 15.490612200
 lon: 120.564817800
 alt: 98 m
-msl: 62.356 m
+msl: *62.356 m
+
+
+
+
+BASE#2 init config (test ata ito dati)
+lat: 14.651957300     ---->   14.6519148
+lon: 121.058445800    ---->  121.0584083
+alt: 148.8120 m       ---->  148.8120 m
+msl: *110.0 m          
 
 
 
