@@ -45,7 +45,7 @@ def euclidean_distance(easting, northing, ref_easting, ref_northing):
 ref_lat, ref_lon = 14.655230940, 121.059707000
 ref_easting, ref_northing = convert_to_utm(ref_lon, ref_lat)
 
-file_path = "C:\\Users\\nichm\\Documents\\GIT\\ubx-scripts\\expi rel\\data\\UPMHN_7.csv"  # Update this to your actual file path
+file_path = "C:\\Users\\nichm\\Documents\\GIT\\ubx-scripts\\expi rel\\data\\UPMHN_data_11072024\\UPMHN_7.csv"  # Update this to your actual file path
 
 dataframes = []
 logger_names = set()
