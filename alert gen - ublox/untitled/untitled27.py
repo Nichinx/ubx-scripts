@@ -22,7 +22,7 @@ db_config = {
     'host': 'localhost',
     'user': 'root',
     'password': 'admin123',
-    'database': 'new_schema_4'
+    'database': 'new_schema_2'
 }
 
 # Define the projection for WGS84 and UTM Zone 51N
@@ -62,7 +62,7 @@ def close_db_connection(connection: Connection):
 
 def resample_df(df):
     df['ts'] = pd.to_datetime(df['ts'])
-    df = df.set_index('ts').resample('15min').mean().reset_index()
+    df = df.set_index('ts').resample('30min').mean().reset_index()
     return df
 
 def sanity_filters(df, hacc=0.0141, vacc=0.0141):
@@ -76,20 +76,36 @@ def sanity_filters(df, hacc=0.0141, vacc=0.0141):
     df = df.reset_index(drop=True).sort_values(by='ts', ascending=True, ignore_index=True)
     return df
 
-def outlier_filter_for_latlon_with_msl(df):
-    df = df.copy()
-    dfmean = df[['easting', 'northing', 'msl', 'distance_cm']].rolling(window=12, min_periods=1).mean()
-    dfsd = df[['easting', 'northing', 'msl', 'distance_cm']].rolling(window=12, min_periods=1).std()
+# def outlier_filter_for_latlon_with_msl(df):
+#     df = df.copy()
+#     dfmean = df[['easting', 'northing', 'msl', 'distance_cm']].rolling(window=12, min_periods=1).mean()
+#     dfsd = df[['easting', 'northing', 'msl', 'distance_cm']].rolling(window=12, min_periods=1).std()
 
-    dfulimits = dfmean + (2 * dfsd)
-    dfllimits = dfmean - (2 * dfsd)
+#     dfulimits = dfmean + (2 * dfsd)
+#     dfllimits = dfmean - (2 * dfsd)
 
-    df['easting'] = df['easting'].where((df['easting'] <= dfulimits['easting']) & (df['easting'] >= dfllimits['easting']), np.nan)
-    df['northing'] = df['northing'].where((df['northing'] <= dfulimits['northing']) & (df['northing'] >= dfllimits['northing']), np.nan)
-    df['msl'] = df['msl'].where((df['msl'] <= dfulimits['msl']) & (df['msl'] >= dfllimits['msl']), np.nan)
-    df['distance_cm'] = df['distance_cm'].where((df['distance_cm'] <= dfulimits['distance_cm']) & (df['distance_cm'] >= dfllimits['distance_cm']), np.nan)
+#     df['easting'] = df['easting'].where((df['easting'] <= dfulimits['easting']) & (df['easting'] >= dfllimits['easting']), np.nan)
+#     df['northing'] = df['northing'].where((df['northing'] <= dfulimits['northing']) & (df['northing'] >= dfllimits['northing']), np.nan)
+#     df['msl'] = df['msl'].where((df['msl'] <= dfulimits['msl']) & (df['msl'] >= dfllimits['msl']), np.nan)
+#     df['distance_cm'] = df['distance_cm'].where((df['distance_cm'] <= dfulimits['distance_cm']) & (df['distance_cm'] >= dfllimits['distance_cm']), np.nan)
 
-    df = df.dropna(subset=['northing', 'easting', 'msl', 'distance_cm'])
+#     df = df.dropna(subset=['northing', 'easting', 'msl', 'distance_cm'])
+#     return df
+
+def outlier_filter_for_latlon(df, freq='30min', rolling_window='12H', threshold=1.4):
+    # df = df.copy()
+    df = df.set_index('ts').resample(freq).mean()
+
+    rolling_mean = df[['easting', 'northing', 'distance_cm']].rolling(rolling_window, closed='both').mean()
+    rolling_std = df[['easting', 'northing', 'distance_cm']].rolling(rolling_window, closed='both').std()
+
+    upper_limit = rolling_mean + (threshold * rolling_std)
+    lower_limit = rolling_mean - (threshold * rolling_std)
+
+    for col in ['easting', 'northing', 'distance_cm']:
+        df[col] = df[col].where((df[col] <= upper_limit[col]) & (df[col] >= lower_limit[col]), np.nan)
+    df = df.dropna(subset=['easting', 'northing', 'distance_cm'])
+
     return df
 
 def fetch_gnss_rover_table_names():
@@ -141,42 +157,43 @@ def get_gnss_data(table_name, start_time, end_time):
         return df
     return pd.DataFrame()
 
-# def fetch_all_ts_data(table_name):
-#     """Fetch all distinct timestamps and process data with a start time of ts - 12 hours."""
-#     connection = create_db_connection()
-    
-#     if connection:
-#         query = f"SELECT DISTINCT ts FROM {table_name} ORDER BY ts;"
-#         all_ts = pd.read_sql(query, connection)['ts']
-#         all_ts = pd.to_datetime(all_ts)
-#         close_db_connection(connection)
-    
-#     dataframes = []
-#     for ts in all_ts:
-#         start_time = ts - timedelta(hours=12)
-#         end_time = ts
-#         df = get_gnss_data(table_name, start_time, end_time)
-
-#         if not df.empty:
-#             dataframes.append(df)
-    
-#     return dataframes 
-
 def fetch_all_ts_data(table_name):
     """Fetch all distinct timestamps and process data with a start time of ts - 12 hours."""
     connection = create_db_connection()
     
     if connection:
-        query = f"SELECT * FROM {table_name} ORDER BY ts;"
-        dataframes = pd.read_sql(query, connection)
+        query = f"SELECT DISTINCT ts FROM {table_name} ORDER BY ts;"
+        all_ts = pd.read_sql(query, connection)['ts']
+        all_ts = pd.to_datetime(all_ts)
         close_db_connection(connection)
-       
+    
+    dataframes = []
+    for ts in all_ts:
+        start_time = ts - timedelta(hours=12)
+        end_time = ts
+        df = get_gnss_data(table_name, start_time, end_time)
+
+        if not df.empty:
+            dataframes.append(df)
+    
     return dataframes 
+
+# def fetch_all_ts_data(table_name):
+#     """Fetch all distinct timestamps and process data with a start time of ts - 12 hours."""
+#     connection = create_db_connection()
+    
+#     if connection:
+#         query = f"SELECT * FROM {table_name} ORDER BY ts;"
+#         dataframes = pd.read_sql(query, connection)
+#         close_db_connection(connection)
+       
+#     return dataframes 
 
 def apply_filters(df):
     df_filtered = sanity_filters(df)
     if not df_filtered.empty:
-        df_filtered = outlier_filter_for_latlon_with_msl(df_filtered)
+        # df_filtered = outlier_filter_for_latlon_with_msl(df_filtered)
+        df_filtered = outlier_filter_for_latlon(df_filtered)
     return df_filtered
 
 # def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', easting_col='easting_diff', window=32, plot=True):
@@ -333,7 +350,7 @@ def apply_filters(df):
 #     return df[['ts', 'northing_slope', 'easting_slope', 'velocity_cm_hr']]
 
 
-def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', easting_col='easting_diff', window=24, plot=True):
+def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', easting_col='easting_diff', window=16, plot=True):
     df = df.sort_values(by=time_col).copy()
     df['ts'] = pd.to_datetime(df['ts'])
     
@@ -379,19 +396,20 @@ def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', ea
 
     # Plotting
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 9), sharex=True)
+    fig.suptitle("SINUA - 1.4std, 12H, 30T ; 16 velwindow", fontsize=16)
     
     # Northing plot
     ax1.scatter(df['ts'], df[northing_col], label='Northing Data Points', color='lightblue', alpha=0.5)
     ax1.plot(df['ts'], df['best_fit_northing'], label='Rolling Best Fit (Northing)', color='red', linewidth=2, marker='o', markersize=4)
     ax1.set_title('Northing Data Points and Rolling Best Fit')
-    ax1.set_ylabel('Northing Difference')
+    ax1.set_ylabel('Northing Difference (m)')
     ax1.legend()
 
     # Easting plot
     ax2.scatter(df['ts'], df[easting_col], label='Easting Data Points', color='lightgreen', alpha=0.5)
     ax2.plot(df['ts'], df['best_fit_easting'], label='Rolling Best Fit (Easting)', color='green', linewidth=2, marker='o', markersize=4)
     ax2.set_title('Easting Data Points and Rolling Best Fit')
-    ax2.set_ylabel('Easting Difference')
+    ax2.set_ylabel('Easting Difference (m)')
     ax2.legend()
 
     # Velocity plot
@@ -407,28 +425,62 @@ def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', ea
     return df[['ts', 'northing_slope', 'easting_slope', 'velocity_cm_hr']]
 
 
-
-
-def update_stored_data(table_name, df):
-    """Update stored GNSS data in the database."""
+def write_alert_ranges_to_db(rover_name, df):
+    """Write consecutive alert ranges to the ublox_alerts table."""
     connection = create_db_connection()
     if connection:
-        df['ts_written'] = pd.Timestamp.now()
-        with connection.cursor() as cursor:
-            for index, row in df.iterrows():
-                query = f"""
-                INSERT INTO stored_dist_gnss_{table_name.replace('gnss_', '')} 
-                (ts, ts_written, dist_from_ref, velocity_cm_hr, alert_level)
-                VALUES ('{row['ts']}', '{row['ts_written']}', {row['dist_from_ref']}, {row['velocity_cm_hr']}, {row['alert_level']})
-                """
-                cursor.execute(query)
-            connection.commit()
+        query = f"SELECT rover_id FROM rover_reference_point WHERE rover_name = '{rover_name}';"
+        rover_id = pd.read_sql(query, connection).iloc[0]['rover_id']
+
+        alert_df = df[df['alert_level'] >= 2].copy()
+
+        if not alert_df.empty:
+            alert_df['group'] = (alert_df['alert_level'] != alert_df['alert_level'].shift()).cumsum()
+
+            alert_ranges = alert_df.groupby(['alert_level', 'group']).agg(
+                ts_start=('ts', 'min'),
+                ts_end=('ts', 'max')
+            ).reset_index()
+
+            with connection.cursor() as cursor:
+                for _, row in alert_ranges.iterrows():
+                    query = f"""
+                    INSERT INTO ublox_alerts (rover_id, ts_start, ts_end, alert_level)
+                    VALUES ({rover_id}, '{row['ts_start']}', '{row['ts_end']}', {row['alert_level']});
+                    """
+                    cursor.execute(query)
+                connection.commit()
+
         close_db_connection(connection)
+
+
+# def update_stored_data(table_name, df):
+#     """Update stored GNSS data in the database."""
+#     connection = create_db_connection()
+#     if connection:
+#         df['ts_written'] = pd.Timestamp.now()
+#         with connection.cursor() as cursor:
+#             for index, row in df.iterrows():
+#                 query = f"""
+#                 INSERT INTO stored_dist_gnss_{table_name.replace('gnss_', '')} 
+#                 (ts, ts_written, dist_from_ref, velocity_cm_hr, alert_level)
+#                 VALUES ('{row['ts']}', '{row['ts_written']}', {row['dist_from_ref']}, {row['velocity_cm_hr']}, {row['alert_level']})
+#                 """
+#                 cursor.execute(query)
+#             connection.commit()
+#         close_db_connection(connection)
+
+# def check_alerts(df):
+#     df['alert_level'] = 0
+#     df.loc[df['velocity_cm_hr'] > 0.25, 'alert_level'] = 2  # Alert level 2
+#     df.loc[df['velocity_cm_hr'] > 1.8, 'alert_level'] = 3  # Alert level 3
+#     df['alert_level'].fillna(-1, inplace=True)  # -1 if no data
+#     return df
 
 def check_alerts(df):
     df['alert_level'] = 0
-    df.loc[df['velocity_cm_hr'] > 0.25, 'alert_level'] = 2  # Alert level 2
-    df.loc[df['velocity_cm_hr'] > 1.8, 'alert_level'] = 3  # Alert level 3
+    df.loc[df['velocity_cm_hr'] > 1.4, 'alert_level'] = 2  # Alert level 2
+    df.loc[df['velocity_cm_hr'] > 2.8, 'alert_level'] = 3  # Alert level 3
     df['alert_level'].fillna(-1, inplace=True)  # -1 if no data
     return df
 
@@ -480,7 +532,7 @@ def process_gnss_data():
 
             # Apply filters
             df_filtered = apply_filters(df)
-            df_filtered = resample_df(df_filtered).fillna(method='ffill')
+            df_filtered = resample_df(df_filtered).fillna(method='ffill')            
             
             # df_filtered = df_filtered.drop(columns=['fix_type','latitude','longitude','hacc','vacc','temp','volt'])
 
@@ -493,5 +545,6 @@ def process_gnss_data():
 
             # # Update the database with the processed data
             # update_stored_data(table_name, df_alerts)
+            write_alert_ranges_to_db(rover_name, df_alerts)
             
             
