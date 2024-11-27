@@ -92,21 +92,71 @@ def sanity_filters(df, hacc=0.0141, vacc=0.0141):
 #     df = df.dropna(subset=['northing', 'easting', 'msl', 'distance_cm'])
 #     return df
 
+# def outlier_filter_for_latlon(df, freq='30min', rolling_window='12H', threshold=1.4):
+#     # df = df.copy()
+#     df = df.set_index('ts').resample(freq).mean().reset_index()
+
+#     rolling_mean = df[['easting', 'northing', 'distance_cm']].rolling(rolling_window, closed='both').mean()
+#     rolling_std = df[['easting', 'northing', 'distance_cm']].rolling(rolling_window, closed='both').std()
+
+#     upper_limit = rolling_mean + (threshold * rolling_std)
+#     lower_limit = rolling_mean - (threshold * rolling_std)
+
+#     for col in ['easting', 'northing', 'distance_cm']:
+#         df[col] = df[col].where((df[col] <= upper_limit[col]) & (df[col] >= lower_limit[col]), np.nan)
+#     df = df.dropna(subset=['easting', 'northing', 'distance_cm'])
+
+#     return df
+
 def outlier_filter_for_latlon(df, freq='30min', rolling_window='12H', threshold=1.4):
-    # df = df.copy()
-    df = df.set_index('ts').resample(freq).mean()
+    """
+    Apply outlier filtering on latitude and longitude data using rolling statistics.
 
-    rolling_mean = df[['easting', 'northing', 'distance_cm']].rolling(rolling_window, closed='both').mean()
-    rolling_std = df[['easting', 'northing', 'distance_cm']].rolling(rolling_window, closed='both').std()
+    Parameters:
+    - df: DataFrame containing 'easting', 'northing', and 'distance_cm' columns.
+    - freq: Resampling frequency (default is '30min').
+    - rolling_window: Rolling window size as a time period (default is '12H').
+    - threshold: Threshold multiplier for the rolling standard deviation (default is 1.4).
 
+    Returns:
+    - Filtered DataFrame with outliers removed.
+    """
+
+    df = df.set_index('ts').resample(freq).mean().reset_index()
+
+    # Convert rolling window to an integer number of rows
+    rolling_window_rows = int(pd.Timedelta(rolling_window) / pd.Timedelta(freq))
+
+    # Check if DataFrame length is less than rolling window size
+    if len(df) < rolling_window_rows:
+        print("DataFrame length is less than the rolling window size. Returning unfiltered DataFrame.")
+        return df
+
+    df = df.dropna(subset=['easting', 'northing', 'distance_cm'])
+   
+    rolling_mean = (
+        df[['easting', 'northing', 'distance_cm']]
+        .rolling(window=rolling_window_rows, min_periods=1, closed='both')
+        .mean()
+    )
+    rolling_std = (
+        df[['easting', 'northing', 'distance_cm']]
+        .rolling(window=rolling_window_rows, min_periods=1, closed='both')
+        .std()
+    )
+    
     upper_limit = rolling_mean + (threshold * rolling_std)
     lower_limit = rolling_mean - (threshold * rolling_std)
 
+    # Filter out outliers
     for col in ['easting', 'northing', 'distance_cm']:
         df[col] = df[col].where((df[col] <= upper_limit[col]) & (df[col] >= lower_limit[col]), np.nan)
+
+
     df = df.dropna(subset=['easting', 'northing', 'distance_cm'])
 
     return df
+
 
 def fetch_gnss_rover_table_names():
     """Fetch GNSS rover table names from the database."""
@@ -122,14 +172,26 @@ def get_rover_name(table_name):
     return table_name.replace('gnss_', '')
 
 def get_rover_reference_point(rover_name):
-    """Get the rover reference point (latitude, longitude)."""
     connection = create_db_connection()
     if connection:
-        query = f"SELECT latitude, longitude FROM rover_reference_point WHERE rover_name = '{rover_name}';"
-        result = pd.read_sql(query, connection)
-        close_db_connection(connection)
-        return result.iloc[0].tolist() if not result.empty else (None, None)
-    return (None, None)
+        try:
+            query = f"""
+                SELECT rover_id, latitude, longitude 
+                FROM rover_reference_point 
+                WHERE rover_name = '{rover_name}';
+            """
+            result = pd.read_sql(query, connection)
+            close_db_connection(connection)
+            
+            if not result.empty:
+                return result.iloc[0]['rover_id'], result.iloc[0]['latitude'], result.iloc[0]['longitude']
+            else:
+                return None, None, None
+        except Exception as e:
+            print(f"Error fetching rover reference point: {e}")
+            close_db_connection(connection)
+            return None, None, None
+    return None, None, None
 
 def convert_to_utm(lon, lat):
     easting, northing = transformer.transform(lon, lat)
@@ -157,37 +219,37 @@ def get_gnss_data(table_name, start_time, end_time):
         return df
     return pd.DataFrame()
 
-def fetch_all_ts_data(table_name):
-    """Fetch all distinct timestamps and process data with a start time of ts - 12 hours."""
-    connection = create_db_connection()
-    
-    if connection:
-        query = f"SELECT DISTINCT ts FROM {table_name} ORDER BY ts;"
-        all_ts = pd.read_sql(query, connection)['ts']
-        all_ts = pd.to_datetime(all_ts)
-        close_db_connection(connection)
-    
-    dataframes = []
-    for ts in all_ts:
-        start_time = ts - timedelta(hours=12)
-        end_time = ts
-        df = get_gnss_data(table_name, start_time, end_time)
-
-        if not df.empty:
-            dataframes.append(df)
-    
-    return dataframes 
-
 # def fetch_all_ts_data(table_name):
 #     """Fetch all distinct timestamps and process data with a start time of ts - 12 hours."""
 #     connection = create_db_connection()
     
 #     if connection:
-#         query = f"SELECT * FROM {table_name} ORDER BY ts;"
-#         dataframes = pd.read_sql(query, connection)
+#         query = f"SELECT DISTINCT ts FROM {table_name} ORDER BY ts;"
+#         all_ts = pd.read_sql(query, connection)['ts']
+#         all_ts = pd.to_datetime(all_ts)
 #         close_db_connection(connection)
-       
+    
+#     dataframes = []
+#     for ts in all_ts:
+#         start_time = ts - timedelta(hours=12)
+#         end_time = ts
+#         df = get_gnss_data(table_name, start_time, end_time)
+
+#         if not df.empty:
+#             dataframes.append(df)
+    
 #     return dataframes 
+
+def fetch_all_ts_data(table_name):
+    """Fetch all distinct timestamps and process data with a start time of ts - 12 hours."""
+    connection = create_db_connection()
+    
+    if connection:
+        query = f"SELECT * FROM {table_name} ORDER BY ts;"
+        dataframes = pd.read_sql(query, connection)
+        close_db_connection(connection)
+       
+    return dataframes 
 
 def apply_filters(df):
     df_filtered = sanity_filters(df)
@@ -396,7 +458,7 @@ def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', ea
 
     # Plotting
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 9), sharex=True)
-    fig.suptitle("SINUA - 1.4std, 12H, 30T ; 16 velwindow", fontsize=16)
+    fig.suptitle(f"plot {i} - 1.4std, 12H, 30T ; 16 velwindow", fontsize=16)
     
     # Northing plot
     ax1.scatter(df['ts'], df[northing_col], label='Northing Data Points', color='lightblue', alpha=0.5)
@@ -425,33 +487,65 @@ def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', ea
     return df[['ts', 'northing_slope', 'easting_slope', 'velocity_cm_hr']]
 
 
-def write_alert_ranges_to_db(rover_name, df):
-    """Write consecutive alert ranges to the ublox_alerts table."""
+# def write_alert_ranges_to_db(rover_name, df):
+#     """Write consecutive alert ranges to the ublox_alerts table."""
+#     connection = create_db_connection()
+#     if connection:
+#         query = f"SELECT rover_id FROM rover_reference_point WHERE rover_name = '{rover_name}';"
+#         rover_id = pd.read_sql(query, connection).iloc[0]['rover_id']
+
+#         alert_df = df[df['alert_level'] >= 2].copy()
+
+#         if not alert_df.empty:
+#             alert_df['group'] = (alert_df['alert_level'] != alert_df['alert_level'].shift()).cumsum()
+
+#             alert_ranges = alert_df.groupby(['alert_level', 'group']).agg(
+#                 ts_start=('ts', 'min'),
+#                 ts_end=('ts', 'max')
+#             ).reset_index()
+
+#             with connection.cursor() as cursor:
+#                 for _, row in alert_ranges.iterrows():
+#                     query = f"""
+#                     INSERT INTO ublox_alerts (rover_id, ts_start, ts_end, alert_level)
+#                     VALUES ({rover_id}, '{row['ts_start']}', '{row['ts_end']}', {row['alert_level']});
+#                     """
+#                     cursor.execute(query)
+#                 connection.commit()
+
+#         close_db_connection(connection)
+
+def write_alert_ranges_to_db(rover_id, rover_name, df):
     connection = create_db_connection()
     if connection:
-        query = f"SELECT rover_id FROM rover_reference_point WHERE rover_name = '{rover_name}';"
-        rover_id = pd.read_sql(query, connection).iloc[0]['rover_id']
-
         alert_df = df[df['alert_level'] >= 2].copy()
-
         if not alert_df.empty:
-            alert_df['group'] = (alert_df['alert_level'] != alert_df['alert_level'].shift()).cumsum()
+            alert_df = alert_df.sort_values(by='ts').reset_index(drop=True)
+            alert_df['time_diff'] = alert_df['ts'].diff().dt.total_seconds().div(60)  # Difference in minutes
+            alert_df['group'] = (
+                (alert_df['time_diff'] > 30) | (alert_df['alert_level'] != alert_df['alert_level'].shift())
+            ).cumsum()
 
             alert_ranges = alert_df.groupby(['alert_level', 'group']).agg(
                 ts_start=('ts', 'min'),
                 ts_end=('ts', 'max')
             ).reset_index()
 
-            with connection.cursor() as cursor:
+            try:
                 for _, row in alert_ranges.iterrows():
                     query = f"""
                     INSERT INTO ublox_alerts (rover_id, ts_start, ts_end, alert_level)
-                    VALUES ({rover_id}, '{row['ts_start']}', '{row['ts_end']}', {row['alert_level']});
+                    VALUES ({rover_id}, '{row['ts_start']}', '{row['ts_end']}', {row['alert_level']})
+                    ON DUPLICATE KEY UPDATE 
+                        ts_start=VALUES(ts_start), 
+                        ts_end=VALUES(ts_end), 
+                        alert_level=VALUES(alert_level);
                     """
-                    cursor.execute(query)
-                connection.commit()
-
-        close_db_connection(connection)
+                    connection.execute(query)
+            except Exception as e:
+                print(f"Error writing alert ranges to DB: {e}")
+            finally:
+                close_db_connection(connection)
 
 
 # def update_stored_data(table_name, df):
@@ -470,19 +564,19 @@ def write_alert_ranges_to_db(rover_name, df):
 #             connection.commit()
 #         close_db_connection(connection)
 
-# def check_alerts(df):
-#     df['alert_level'] = 0
-#     df.loc[df['velocity_cm_hr'] > 0.25, 'alert_level'] = 2  # Alert level 2
-#     df.loc[df['velocity_cm_hr'] > 1.8, 'alert_level'] = 3  # Alert level 3
-#     df['alert_level'].fillna(-1, inplace=True)  # -1 if no data
-#     return df
-
 def check_alerts(df):
     df['alert_level'] = 0
-    df.loc[df['velocity_cm_hr'] > 1.4, 'alert_level'] = 2  # Alert level 2
-    df.loc[df['velocity_cm_hr'] > 2.8, 'alert_level'] = 3  # Alert level 3
+    df.loc[df['velocity_cm_hr'] > 0.25, 'alert_level'] = 2  # Alert level 2
+    df.loc[df['velocity_cm_hr'] > 1.8, 'alert_level'] = 3  # Alert level 3
     df['alert_level'].fillna(-1, inplace=True)  # -1 if no data
     return df
+
+# def check_alerts(df):
+#     df['alert_level'] = 0
+#     df.loc[df['velocity_cm_hr'] > 1.4, 'alert_level'] = 2  # Alert level 2
+#     df.loc[df['velocity_cm_hr'] > 2.8, 'alert_level'] = 3  # Alert level 3
+#     df['alert_level'].fillna(-1, inplace=True)  # -1 if no data
+#     return df
 
 
 # def process_gnss_data():
@@ -515,36 +609,39 @@ def process_gnss_data():
 
     for table_name in gnss_tables:
         rover_name = get_rover_name(table_name)
-        ref_lat, ref_lon = get_rover_reference_point(rover_name)
+        rover_id, ref_lat, ref_lon = get_rover_reference_point(rover_name)
         ref_easting, ref_northing = convert_to_utm(ref_lon, ref_lat)
 
         dataframes = fetch_all_ts_data(table_name)
+        df = dataframes
 
-        for df in dataframes:
-            # Convert lat/lon to UTM and compute distance from the reference point
-            df[['easting', 'northing']] = df.apply(lambda row: convert_to_utm(row['longitude'], row['latitude']), axis=1, result_type='expand')
-            
-            # Compute difference from the reference point
-            df['easting_diff'] = df['easting'] - ref_easting
-            df['northing_diff'] = df['northing'] - ref_northing
-            
-            df['distance_cm'] = df.apply(lambda row: euclidean_distance(row['easting'], row['northing'], ref_easting, ref_northing), axis=1)
+        # for df in dataframes:
+        # Convert lat/lon to UTM and compute distance from the reference point
+        df[['easting', 'northing']] = df.apply(lambda row: convert_to_utm(row['longitude'], row['latitude']), axis=1, result_type='expand')
+        
+        # Compute difference from the reference point
+        df['easting_diff'] = df['easting'] - ref_easting
+        df['northing_diff'] = df['northing'] - ref_northing
+        
+        df['distance_cm'] = df.apply(lambda row: euclidean_distance(row['easting'], row['northing'], ref_easting, ref_northing), axis=1)
 
-            # Apply filters
-            df_filtered = apply_filters(df)
-            df_filtered = resample_df(df_filtered).fillna(method='ffill')            
-            
-            # df_filtered = df_filtered.drop(columns=['fix_type','latitude','longitude','hacc','vacc','temp','volt'])
+        # Apply filters
+        df_filtered = apply_filters(df)
+        df_filtered = resample_df(df_filtered).fillna(method='ffill')            
+        
+        # df_filtered = df_filtered.drop(columns=['fix_type','latitude','longitude','hacc','vacc','temp','volt'])
 
-            # Compute velocity based on the rolling window (4-hour window equivalent)
-            df_velocity = compute_rolling_velocity(df_filtered)
+        # Compute velocity based on the rolling window (4-hour window equivalent)
+        df_velocity = compute_rolling_velocity(df_filtered, plot=False)
 
-            # # Check for alert levels
-            df_alerts = check_alerts(df_velocity)
-            # print(df_alerts)
+        # # Check for alert levels
+        df_alerts = check_alerts(df_velocity)
+        # print(df_alerts)
 
-            # # Update the database with the processed data
-            # update_stored_data(table_name, df_alerts)
-            write_alert_ranges_to_db(rover_name, df_alerts)
-            
+        # # Update the database with the processed data
+        # update_stored_data(table_name, df_alerts)
+        write_alert_ranges_to_db(rover_id, rover_name, df_alerts)
+        
+        
+
             
