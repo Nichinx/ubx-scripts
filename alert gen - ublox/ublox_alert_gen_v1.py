@@ -143,7 +143,7 @@ def apply_filters(df):
     df_filtered = sanity_filters(df)
     return outlier_filter_for_latlon(df_filtered) if not df_filtered.empty else df_filtered
 
-def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', easting_col='easting_diff', window=16, plot=True):
+def compute_rolling_velocity(rover_name, df, time_col='ts', northing_col='northing_diff', easting_col='easting_diff', window=16, plot=True):
     df = df.sort_values(by=time_col).copy()
     df['ts'] = pd.to_datetime(df['ts'])
     
@@ -178,7 +178,7 @@ def compute_rolling_velocity(df, time_col='ts', northing_col='northing_diff', ea
             df.loc[i, 'best_fit_easting'] = model_easting.predict(X_window).mean()  # mean for the last timestamp in window
 
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 9), sharex=True)
-    fig.suptitle(f"plot {i} - 1.4std, 12H, 30T ; 16 velwindow", fontsize=16)
+    fig.suptitle(f"plot {rover_name} - 1.4std, 12H, 30T ; 16 velwindow", fontsize=16)
     
     # Northing plot
     ax1.scatter(df['ts'], df[northing_col], label='Northing Data Points', color='lightblue', alpha=0.5)
@@ -265,7 +265,7 @@ def process_gnss_data():
         # Apply filters, resample, compute velocity and check alert
         df_filtered = apply_filters(df)
         df_filtered = resample_df(df_filtered).fillna(method='ffill')            
-        df_velocity = compute_rolling_velocity(df_filtered, plot=False)
+        df_velocity = compute_rolling_velocity(rover_name, df_filtered, plot=False)
         df_alerts = check_alerts(df_velocity)
 
         write_alert_ranges_to_db(rover_id, rover_name, df_alerts)
