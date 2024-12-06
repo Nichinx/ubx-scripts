@@ -108,7 +108,9 @@ def get_rover_reference_point(rover_name):
             result = pd.read_sql(query, connection)
             close_db_connection(connection)
             if not result.empty:
-                return result.iloc[0]['rover_id'], result.iloc[0]['latitude'], result.iloc[0]['longitude']
+                return result.iloc[0]['rover_id'], \
+                       result.iloc[0]['latitude'], \
+                       result.iloc[0]['longitude']
         except Exception as e:
             print(f"Error fetching rover reference point: {e}")
         finally:
@@ -119,21 +121,13 @@ def convert_to_utm(lon, lat):
     return transformer.transform(lon, lat) # in meters
 
 def euclidean_distance(easting, northing, ref_easting, ref_northing):
-    return math.sqrt((easting - ref_easting) ** 2 + (northing - ref_northing) ** 2) * 100 # Convert to centimeters
+    return math.sqrt((easting - ref_easting) ** 2 
+              + (northing - ref_northing) ** 2) * 100 # Convert to centimeters
 
-def get_gnss_data(table_name, start_time, end_time):
+def fetch_all_ts_data(rover_name):
     connection = create_db_connection()
     if connection:
-        query = f"SELECT * FROM {table_name} WHERE ts BETWEEN '{start_time}' AND '{end_time}';"
-        df = pd.read_sql(query, connection)
-        close_db_connection(connection)
-        return df
-    return pd.DataFrame()
-
-def fetch_all_ts_data(table_name):
-    connection = create_db_connection()
-    if connection:
-        query = f"SELECT * FROM {table_name} ORDER BY ts;"
+        query = f"SELECT * FROM gnss_{rover_name} ORDER BY ts;"
         dataframes = pd.read_sql(query, connection)
         close_db_connection(connection)
         return dataframes
@@ -141,7 +135,8 @@ def fetch_all_ts_data(table_name):
 
 def apply_filters(df):
     df_filtered = sanity_filters(df)
-    return outlier_filter_for_latlon(df_filtered) if not df_filtered.empty else df_filtered
+    return outlier_filter_for_latlon(df_filtered) \
+            if not df_filtered.empty else df_filtered
 
 def compute_rolling_velocity(rover_name, df, time_col='ts', northing_col='northing_diff', easting_col='easting_diff', window=16, plot=True):
     df = df.sort_values(by=time_col).copy()
@@ -251,16 +246,18 @@ def process_gnss_data():
     for table_name in gnss_tables:
         rover_name = get_rover_name(table_name)
         rover_id, ref_lat, ref_lon = get_rover_reference_point(rover_name)
-        ref_easting, ref_northing = convert_to_utm(ref_lon, ref_lat)
 
-        dataframes = fetch_all_ts_data(table_name)
-        df = dataframes
-        df[['easting', 'northing']] = df.apply(lambda row: convert_to_utm(row['longitude'], row['latitude']), axis=1, result_type='expand')
+        df = fetch_all_ts_data(rover_name)
+        ref_easting, ref_northing = convert_to_utm(ref_lon, ref_lat)
+        df[['easting', 'northing']] = df.apply(lambda row: 
+                        convert_to_utm(row['longitude'], row['latitude']), axis=1, result_type='expand')
         
         # Compute difference from the reference point
         df['easting_diff'] = df['easting'] - ref_easting
         df['northing_diff'] = df['northing'] - ref_northing
-        df['distance_cm'] = df.apply(lambda row: euclidean_distance(row['easting'], row['northing'], ref_easting, ref_northing), axis=1)
+        df['distance_cm'] = df.apply(lambda row: 
+                                     euclidean_distance(row['easting'], row['northing'], 
+                                                        ref_easting, ref_northing), axis=1)
 
         # Apply filters, resample, compute velocity and check alert
         df_filtered = apply_filters(df)
